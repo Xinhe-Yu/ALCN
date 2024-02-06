@@ -162,8 +162,57 @@ a.text-se {
     position: fixed;
     top: 21vh;
     /* Ajustez cette valeur si nécessaire, par exemple pour tenir compte d'une barre de navigation fixe */
-    height: 50vh;
+    height: 65vh;
     /* 100% de la hauteur de la fenêtre de visualisation */
     overflow-y: auto;
     /* Permettre le défilement si le contenu dépasse la hauteur */
+}
+
+.div-indent p {
+    text-indent: 30px;
+}
+
+div.entry {
+    cursor: pointer;
+}
+
+/* some cute animation for copy button */
+#copyButton.success {
+    --copy-success-background-color: #FAFAFA;
+    --copy-success-color: #5b995b;
+    --copy-success-background-color-hover: #f4fff4;
+    --copy-success-background-image: url('data:image/svg+xml, <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%235b995b" viewBox="0 0 16 16"><path d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0z"/><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/></svg>');
+    --copy-success-transform: rotate(360deg);
+}
+
+#copyButton {
+    background-color: var(--copy-success-background-color, $primary);
+    transition: 0.7s;
+    color: var(--copy-success-color, white);
+    border-color: var(--copy-success-color, $primary);
+
+    height: 2rem;
+    font-size: 1rem;
+
+    &:hover {
+        background-color: var(--copy-success-background-color-hover, #e97451);
+        color: var(--copy-success-color, white);
+    }
+}
+
+#copyButton span::before {
+    display: inline-flex;
+    content: "";
+    background-image: var(--copy-success-background-image, url("data:image/svg+xml, <svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' fill='white' viewBox='0 0 16 16'><path d='M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z'/><path d='M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z'/></svg>"));
+    background-size: 16px 16px;
+    height: 16px;
+    width: 16px;
+    transition: 0.7s;
+    transform: var(--copy-success-transform, rotate(0deg));
+}
+
+.copy-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
