@@ -1,0 +1,147 @@
+//m-1:m-16, p-1:p-16, 4px:768px
+$spacer: 1rem;
+$spacers: (
+    0: 0,
+    1: $spacer * .25,
+    2: $spacer * .5,
+    3: $spacer * .75,
+    4: $spacer,
+    5: $spacer * 1.5,
+    6: $spacer * 2,
+    7: $spacer * 3,
+    8: $spacer * 4,
+    9: $spacer * 6,
+    10: $spacer * 8,
+    11: $spacer * 12,
+    12: $spacer * 16,
+    13: $spacer * 24,
+    14: $spacer * 32,
+    15: $spacer * 40,
+    16: $spacer * 48,
+);
+
+//fs-1:fs-8, 48px:12px
+$font-size-base: 1rem;
+$h1-font-size: $font-size-base * 3;
+$h2-font-size: $font-size-base * 2;
+$h3-font-size: $font-size-base * 1.5;
+$h4-font-size: $font-size-base * 1.25;
+$h5-font-size: $font-size-base * 1.125;
+$h6-font-size: $font-size-base;
+$h7-font-size: $font-size-base * 0.875;
+$h8-font-size: $font-size-base * 0.75;
+
+$font-sizes: (
+    1: $h1-font-size,
+    2: $h2-font-size,
+    3: $h3-font-size,
+    4: $h4-font-size,
+    5: $h5-font-size,
+    6: $h6-font-size,
+    7: $h7-font-size,
+    8: $h8-font-size,
+);
+
+
+// $success : #4E342E;
+//gradient
+// $gradient: linear-gradient(.25turn, $primary, 50%, $success);
+
+
+//list-group
+// $list-group-color: white;
+// $list-group-action-hover-color: #B0BEC5;
+// $list-group-border-color: rgba(white, .125);
+
+@import "../node_modules/bootstrap/scss/functions";
+@import "../node_modules/bootstrap/scss/variables";
+@import "../node_modules/bootstrap/scss/mixins";
+
+// custom color variables
+$primary : #d4af37;
+$primary-text : #303030;
+$secondary : #e97451;
+$secondary-text: #8d8b7f;
+
+// Override Bootstrap variables
+$theme-colors: (
+    "primary": $primary,
+    "secondary": $secondary,
+    "success": $success,
+    "danger": $danger,
+    "warning": $warning,
+    "info": $info,
+    "light": $light,
+    "dark": $dark,
+);
+
+// Custom styles
+body {
+    color: $primary-text;
+    background-color: $secondary;
+}
+
+a,
+.btn-primary {
+    color: $primary-text;
+
+    &:hover {
+        color: darken($primary-text, 15%);
+    }
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: $primary-text;
+
+    &:hover {
+        color: darken($primary-text, 15%);
+    }
+}
+
+@import "../node_modules/bootstrap/scss/bootstrap.scss";
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.container:not(.navbarContainer) {
+    padding-top: 60px;
+    margin-bottom: -60px;
+    margin-right: auto;
+    margin-left: auto;
+    margin-top: 60px;
+}
+
+.list-group-flush li:first-child {
+    border-top: none;
+}
+
+// .profileMask {
+//     -webkit-mask-image: $profileMaskUrl;
+//     mask-image: $profileMaskUrl;
+//     -webkit-mask-repeat: no-repeat;
+//     mask-repeat: no-repeat;
+// }
+
+.text-pr {
+    color: $primary-text;
+}
+
+.text-se {
+    color: $secondary-text;
+}
+
+a.text-se {
+    text-decoration: none;
+
+    &:hover {
+        color: rgba($secondary-text, 0.75);
+    }
+}
+
+.row {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}

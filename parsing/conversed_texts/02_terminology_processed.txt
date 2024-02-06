@@ -1,0 +1,53 @@
+Altersklassen;年龄组;;;;MS
+Anthesteria;花节;;;;MS
+François Vase;弗朗索瓦瓶;;;;MS
+Jünglingsweihen;少年圣礼;;;;MS
+Kunstwollen;艺术驱动力;;;;SRP
+Polemarch;军事执政官;;;;MS
+Tchador;什叶派头巾;;;;YXH
+aition;源起;;;;MS
+amphora;双耳陶瓶;;;;MS
+anathemata;还愿;anathêmata;;;MS
+aretalogy;多重神迹颂诗;;;;MS
+chelys;龟甲里拉;;;;MS
+chremata;金钱;chrêmata;;;MS
+coral red;珊瑚红;;;;MS
+cup A;A型双柄杯;;;;MS
+demas;金制大口杯;δέπας;;;MS
+diakonos;仆人;diâkonos;;;MS
+dinos;酒钵;;;;MS
+doryphoros;持矛护卫;;;;MS
+erga;功绩;;;;MS
+eros;欲望;ἔρος;;;MS
+evocatio;呼告;;;;MS
+exomis;短褂;;;;MS
+eye cup;眼睛杯;coupe à yeux;;;MS
+gerousia;长老会;γερούσια;;;MS
+hatibus;社会文化习惯;;;;SRP
+hic et nunc;当下的时间与空间;;;;MS
+hybris;傲慢;ὕβρις;;;MS
+kantharos;坎达罗斯杯;canthare;;;MS
+klerouchos;殖民者;;;;MS
+kluta erga;丰功伟业;;;;MS
+komos;狂欢庆祝;;;;MS
+korai;少女;;;;SRP
+kouroi;裸体男青年;;;;SRP
+krater;混酒钵;cratère;;;MS
+lyric;抒情诗;lyrique;;;MS
+melic;歌唱诗;mélique;;;MS
+meltem;夏风;;;;MS
+metis;智巧;mêtis;;;MS
+nemes;法老头巾;;;;MS
+oinochoe;酒壶;œnochoé;;;MS
+opson;宴会主菜;ôpson;;;MS
+partheneia;少女歌;parthénées, partheneion;;;MS
+phiale;浅盆;;;;MS
+philia;情谊;;;;MS
+poesis;艺术创作;poêsis;;;MS
+rituels initiatiques;接纳仪式;;;;MS
+skolion;饮酒歌;;;;MS
+stamnos;贮酒罐;;;;MS
+taxis;律动;τάξις;;;MS
+time;荣耀;timê;;;MS
+Ægyptiaca;古埃及景观;;;;MS
+éthnopoétique;民族志诗学;;;;MS

@@ -1,7 +1,6 @@
 import os
 import re
 
-
 def transform_data(file_path, output_file_path):
     # Open the source file for reading
     with open(file_path, "r", encoding="utf-8") as file:
