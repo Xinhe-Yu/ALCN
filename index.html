@@ -14,7 +14,7 @@
 
 <body>
   <!-- Navbar -->
-  <nav class="navbar fixed-top navbar-expand-md navbar-light bg-primary">
+  <nav class="navbar fixed-top navbar-expand-md navbar-light shadow">
     <div class="container-fluid px-5 py-2">
       <img src="scr/chaudron-de-sorciere.svg" alt="icon" class="d-none d-lg-block" style="width: 80px;">
       <a class="navbar-brand h1 fs-2 ps-5" style="color:#303030">
@@ -127,7 +127,7 @@
             let additionalInfo = [item.chineseName, item.otherNames].filter(Boolean).join(', ');
 
             entryElement.innerHTML = `
-                    <div class="d-flex w-100 flex-row entry" href="javascript:void(0);" onclick="showDetails('${item.ID}', event)">
+                    <div class="d-flex flex-column flex-sm-row w-100 entry" href="javascript:void(0);" onclick="showDetails('${item.ID}', event)">
                         <p class="fw-bold" style="width:200px">${item.englishName}</p>
                         <p class="flex-grow-1">${additionalInfo}</p>
                         <span class="badge rounded-pill bg-primary">${item.creatersInitial}</span>

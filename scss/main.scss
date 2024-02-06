@@ -43,9 +43,7 @@ $font-sizes: (
 );
 
 
-// $success : #4E342E;
-//gradient
-// $gradient: linear-gradient(.25turn, $primary, 50%, $success);
+
 
 
 //list-group
@@ -62,6 +60,9 @@ $primary : #d4af37;
 $primary-text : #303030;
 $secondary : #e97451;
 $secondary-text: #8d8b7f;
+
+//gradient
+// $gradient: linear-gradient(.25turn, $primary, 50%, #000000);
 
 // Override Bootstrap variables
 $theme-colors: (
@@ -89,6 +90,11 @@ a,
         color: darken($primary-text, 15%);
     }
 }
+
+.navbar {
+    background-image: linear-gradient(.25turn, rgba(212, 175, 55, 0.95), 50%, rgba(180, 139, 87, 1));
+}
+
 
 span.rounded-pill {
     height: 21px;
@@ -235,4 +241,17 @@ div.entry {
         display: none;
     }
 
+    .entry {
+        display: flex;
+    }
+
+    .entry .flex-grow-1 {
+        display: block;
+        width: 100%;
+        flex-grow: 1;
+    }
+
+    .entry .rounded-pill {
+        display: none;
+    }
 }
