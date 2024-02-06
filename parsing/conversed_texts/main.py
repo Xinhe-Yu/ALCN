@@ -12,7 +12,7 @@ def read_and_process_file(file_path, folder_name):
     for line in lines:
         line = line.strip()  # Clean whitespace and newline characters
         if line:  # Skip empty lines
-            processed_line = f"{line};{folder_name}\n"  # Append the folder name at the end
+            processed_line = f"{line}{folder_name}\n"  # Append the folder name at the end
             processed_lines.append(processed_line)
     return processed_lines
 
@@ -89,7 +89,7 @@ def process_modern_researcher_file(file_path):
     transformed_lines.sort(key=lambda x: x.split(';')[0])
     # Réécrire le fichier avec les données transformées et triées
     sorted_lines = sort_and_check_duplicates(transformed_lines, file_path)
-    
+
     # Réécrire le fichier avec les données triées
     with open(file_path, 'w', encoding='utf-8') as file:
         file.writelines(sorted_lines)

@@ -1,41 +1,41 @@
-Ballet, Pascale;帕斯卡拉·巴莱;;;;MS
-Baxandall, Michael;迈克尔·巴克森德尔;;;;SRP
-Bažant, Jan;扬·巴赞特;;;;SRP
-Beazley, Sir John;约翰·比兹利爵士;;;;SRP
-Benveniste, Émile;埃米尔·邦弗尼斯特;;;;MS
-Boardman;博德曼;;;;SRP
-Bourdieu;布尔迪厄;;;;SRP
-Carter, Joseph;约瑟夫·卡特;;;;YXH
-Charbonneaux, Jean;让·沙诺;;;;MS
-Clark, T. J.;克拉克;;;;SRP
-Demetriou;地米特里奥;;;;MS
-Desault, Yvette;伊维特·德索;;;;SRP
-Empereur, Jean-Yves;伊夫·昂珀勒尔;;;;MS
-Fragaki, Hélène;埃莱娜·弗拉加基;;;;MS
-Gallo, Paolo;保罗·伽罗;;;;MS
-Gennep, Arnold Van;热内普;;;;MS
-Gerkan, Arnim von;阿尼姆·冯·格坎;;;;YXH
-Hairy, Isabelle;伊莎贝尔·艾里;;;;MS
-Hoepfner, Wolfram;沃尔弗拉姆·赫普夫纳;;;;YXH
-Humann, Carl;卡尔·胡曼;;;;YXH
-Klinkott, Manfred;曼弗雷德·克林科特;;;;YXH
-Kurz, Otto;奥托·库尔茨;;;;MS
-Kyrieleis, Helmut;赫尔穆特·基里莱斯;;;;MS
-Langdon, Susan;苏珊·兰登;;;;SRP
-Mervat Seif el Din;梅尔瓦特-塞夫-丁;;;;MS
-Mysliewicz, Karol;卡罗尔·米斯利维茨;;;;MS
-Neer, Richard;理查德·尼尔;;;;SRP
-Panofsky;帕诺夫斯基;;;;SRP
-Perrault, Charles;夏尔·佩罗;;;;YXH
-Pollitt, J. J.;波利特;;;;SRP
-Richter, Gisela;吉塞拉·里希特;;;;SRP
-Riegl;里格尔;;;;SRP
-Robert, Hubert;于贝尔·罗贝尔;;;;YXH
-Rudhardt, Jean;让·吕达尔;;;;MS
-Schreiber, Theodor;特奥多尔·施莱伯;;;;MS
-Sickert;西克特;;;;SRP
-Smith, Bert;伯特·史密斯;;;;SRP
-Stanwick, Paul;保罗·斯坦威科;;;;MS
-Struth, Thomas;托马斯·施特鲁特;;;;YXH
-Tezgör, Dominique Kassab;多米尼克·卡萨·戴兹格尔;;;;MS
-Vuillard;维亚尔;;印象派画家;;SRP
+Ballet, Pascale;帕斯卡拉·巴莱;;;MS
+Baxandall, Michael;迈克尔·巴克森德尔;;;SRP
+Bažant, Jan;扬·巴赞特;;;SRP
+Beazley, Sir John;约翰·比兹利爵士;;;SRP
+Benveniste, Émile;埃米尔·邦弗尼斯特;;;MS
+Boardman;博德曼;;;SRP
+Bourdieu;布尔迪厄;;;SRP
+Carter, Joseph;约瑟夫·卡特;;;YXH
+Charbonneaux, Jean;让·沙诺;;;MS
+Clark, T. J.;克拉克;;;SRP
+Demetriou;地米特里奥;;;MS
+Desault, Yvette;伊维特·德索;;;SRP
+Empereur, Jean-Yves;伊夫·昂珀勒尔;;;MS
+Fragaki, Hélène;埃莱娜·弗拉加基;;;MS
+Gallo, Paolo;保罗·伽罗;;;MS
+Gennep, Arnold Van;热内普;;;MS
+Gerkan, Arnim von;阿尼姆·冯·格坎;;;YXH
+Hairy, Isabelle;伊莎贝尔·艾里;;;MS
+Hoepfner, Wolfram;沃尔弗拉姆·赫普夫纳;;;YXH
+Humann, Carl;卡尔·胡曼;;;YXH
+Klinkott, Manfred;曼弗雷德·克林科特;;;YXH
+Kurz, Otto;奥托·库尔茨;;;MS
+Kyrieleis, Helmut;赫尔穆特·基里莱斯;;;MS
+Langdon, Susan;苏珊·兰登;;;SRP
+Mervat Seif el Din;梅尔瓦特-塞夫-丁;;;MS
+Mysliewicz, Karol;卡罗尔·米斯利维茨;;;MS
+Neer, Richard;理查德·尼尔;;;SRP
+Panofsky;帕诺夫斯基;;;SRP
+Perrault, Charles;夏尔·佩罗;;;YXH
+Pollitt, J. J.;波利特;;;SRP
+Richter, Gisela;吉塞拉·里希特;;;SRP
+Riegl;里格尔;;;SRP
+Robert, Hubert;于贝尔·罗贝尔;;;YXH
+Rudhardt, Jean;让·吕达尔;;;MS
+Schreiber, Theodor;特奥多尔·施莱伯;;;MS
+Sickert;西克特;;;SRP
+Smith, Bert;伯特·史密斯;;;SRP
+Stanwick, Paul;保罗·斯坦威科;;;MS
+Struth, Thomas;托马斯·施特鲁特;;;YXH
+Tezgör, Dominique Kassab;多米尼克·卡萨·戴兹格尔;;;MS
+Vuillard;维亚尔;;印象派画家;SRP

@@ -13,6 +13,10 @@ a:hover,
   color: #0a0a0a;
 }
 
+span.rounded-pill {
+  height: 21px;
+}
+
 .navbar-dark .navbar-nav .nav-link {
   color: #303030;
 }
@@ -16261,6 +16265,13 @@ textarea.form-control-lg {
   border-top: none;
 }
 
+.list-group-item p {
+  margin-bottom: 0;
+  /* Supprime la marge inférieure */
+  margin-top: 0;
+  /* Optionnel : supprime la marge supérieure si nécessaire */
+}
+
 .text-pr {
   color: #303030;
 }
@@ -16279,4 +16290,14 @@ a.text-se:hover {
 .row {
   margin-left: 0 !important;
   margin-right: 0 !important;
+}
+
+.detail-sidebar {
+  position: fixed;
+  top: 21vh;
+  /* Ajustez cette valeur si nécessaire, par exemple pour tenir compte d'une barre de navigation fixe */
+  height: 50vh;
+  /* 100% de la hauteur de la fenêtre de visualisation */
+  overflow-y: auto;
+  /* Permettre le défilement si le contenu dépasse la hauteur */
 }/*# sourceMappingURL=main.css.map */

@@ -30,7 +30,7 @@
 `EnglishName;ChineseName;OtherNames;Description`
 
 ### 人工处理步骤
-把parsing/conversed_texts目录下的文件按数据来源分类入各个文件夹（古典学期刊/个人译者），整理，增补数据：按照`EnglishName;ChineseName;OtherNames;Description`的结构，再分入三个文档：`01_ancientName.txt`, `02_terminology.txt`以及`03_modernResearcher`。
+把parsing/conversed_texts目录下的文件按数据来源分类入各个文件夹（古典学期刊/个人译者），整理，增补数据：按照`EnglishName;ChineseName;OtherNames;Description`的结构，再分入三个文档：`01_ancientName.txt`, `02_terminology.txt`以及`03_modernResearcher.txt`。
 
 ### 第三步 整理
 ```
@@ -39,4 +39,9 @@
 运行python脚本：parsing/conversed_texts/main.py
 生成文件地址：parsing/conversed_texts
 ```
-运行conversed_texts文件中的main.py，将子文件夹中的三类信息汇总到parsing/conversed_texts的三个txt文件中，并整理排序。
+运行conversed_texts文件中的main.py，将子文件夹中的三类信息汇总到parsing/conversed_texts的三个txt文件中，并整理排序，类似条目会被警告。
+
+### 人工处理步骤
+把parsing/conversed_texts生成的三个文档`01_ancientName.txt`, `02_terminology.txt`以及`03_modernResearcher.txt`人工审核，删去相似条目。
+
+### 第四步 生成JSON

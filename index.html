@@ -2,24 +2,128 @@
 <html lang="fr">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="icon"
-        href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAAmVBMVEVHcEzBaU8nKyvBaU/BaU8nKyvBaU8nKysnKyvBaU/BaU/BaU/BaU8nKyvBaU/BaU/BaU/BaU/BaU/BaU8nKysnKyvBaU8nKysnKysnKysnKysnKysnKysnKys6MzA1MS5IODMyLy5lRDknKytOOzTBaU8nKyuHUkIxLy2bWkZ0Sj1hQjm3ZU1qRjt+Tj+kXUhOOzQ6MzBXPjbnM8H3AAAAJXRSTlMAEGDf74BAEL+AMM+P779QcGCvn59AICDPjzDfcK+Ar9/fn1BA1nx4zgAAAiZJREFUeNrF19eO2zAQBdBLq1jNapb7lrSh27bk/z8utqU1lCw54jhY5LwNKFyTQ8AjwW4xC4KgiVqrIBjNxpBbNBP90SaAVKTN7v5b0EgbTeRtaow5a7gr4ricA/i++ZATLQCEp/UEg0KPzvIEwLdfumd3/AGg6tYVeAW9K4GYaH84vp09v7wShVA5dVI+Sfl0NUVOf6pU2l/mxNTTFj11Sj1zMDxyl8Eu6c6fcYF1t5rDLmxbAaDyySydA6qms6EWTbtMk+6ylFNQgYuMTBJc1ANBJZ2EuMjJpOz94lCPwu5RIz9xCppfj1aSRZq8bzcHw2+bHeZkl6n2uQyM6WX3NbH8uGp3zijImQ+WR65isEpypcAZL7WrRjA7eCP56BAPFDXREg2/oS1dbbmK29L9OYh6uIrrkm6DdIeIq5izzaRBS/bOqPW000RsdQKzQJ/tew+zFR/URzRUqU8OehAHMbcmCprAbKw7P6kzUEWw2PwVtB2oHmCx0jJrWKy1yFdYLbXE3af+sfFDRD5GKnLmK3BSwYZYITnyMCAjNyEGKE/wSvvvh/MUGILDJWAIbq6Ek7lPvBqOCkGDeDEx/ATupmRXQEClTKNFlK3hUwgl5qQcYoXl40iuMlzYHLfImIuXqen15fD8dnI8HPZPVOE2i8ed7vsywi3GhnG5XIMh+QaYzCDVMMNMRPrhIH4NCMAQvJlEC3m3Z8EqiiLd2UTRfTBiYn4DSpltGhBXhFYAAAAASUVORK5CYII="
-        class="">
-    <title>ALCN Database</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="icon"
+    href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAAmVBMVEVHcEzBaU8nKyvBaU/BaU8nKyvBaU8nKysnKyvBaU/BaU/BaU/BaU8nKyvBaU/BaU/BaU/BaU/BaU/BaU8nKysnKyvBaU8nKysnKysnKysnKysnKysnKysnKys6MzA1MS5IODMyLy5lRDknKytOOzTBaU8nKyuHUkIxLy2bWkZ0Sj1hQjm3ZU1qRjt+Tj+kXUhOOzQ6MzBXPjbnM8H3AAAAJXRSTlMAEGDf74BAEL+AMM+P779QcGCvn59AICDPjzDfcK+Ar9/fn1BA1nx4zgAAAiZJREFUeNrF19eO2zAQBdBLq1jNapb7lrSh27bk/z8utqU1lCw54jhY5LwNKFyTQ8AjwW4xC4KgiVqrIBjNxpBbNBP90SaAVKTN7v5b0EgbTeRtaow5a7gr4ricA/i++ZATLQCEp/UEg0KPzvIEwLdfumd3/AGg6tYVeAW9K4GYaH84vp09v7wShVA5dVI+Sfl0NUVOf6pU2l/mxNTTFj11Sj1zMDxyl8Eu6c6fcYF1t5rDLmxbAaDyySydA6qms6EWTbtMk+6ylFNQgYuMTBJc1ANBJZ2EuMjJpOz94lCPwu5RIz9xCppfj1aSRZq8bzcHw2+bHeZkl6n2uQyM6WX3NbH8uGp3zijImQ+WR65isEpypcAZL7WrRjA7eCP56BAPFDXREg2/oS1dbbmK29L9OYh6uIrrkm6DdIeIq5izzaRBS/bOqPW000RsdQKzQJ/tew+zFR/URzRUqU8OehAHMbcmCprAbKw7P6kzUEWw2PwVtB2oHmCx0jJrWKy1yFdYLbXE3af+sfFDRD5GKnLmK3BSwYZYITnyMCAjNyEGKE/wSvvvh/MUGILDJWAIbq6Ek7lPvBqOCkGDeDEx/ATupmRXQEClTKNFlK3hUwgl5qQcYoXl40iuMlzYHLfImIuXqen15fD8dnI8HPZPVOE2i8ed7vsywi3GhnG5XIMh+QaYzCDVMMNMRPrhIH4NCMAQvJlEC3m3Z8EqiiLd2UTRfTBiYn4DSpltGhBXhFYAAAAASUVORK5CYII="
+    class="">
+  <title>ALCN Database</title>
 </head>
 
+<body>
+  <!-- Navbar -->
+  <nav class="navbar fixed-top navbar-expand-md navbar-light bg-primary">
+    <div class="container-fluid px-5 py-2">
+      <a class="navbar-brand h1 fs-1" href="#" style="color:#303030">AncientLexiconCN 古代译名数据库</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+        aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    </div>
+  </nav>
+  <div class="py-8"></div>
 
-<div class="container mt-5">
-    <h1 class="text-primary-text">Welcome to the Art Antique Database</h1>
-    <p class="text-secondary-text">Explore the ancient world's masterpieces and learn about their history.</p>
 
-    <!-- Add more content here -->
-</div>
+  <!-- Main Content Area -->
+  <section class="p-5 box">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-6">
+          <!-- Data entries will be dynamically inserted here -->
+          <div id="dataDisplayArea">
+            <!-- Example static entry -->
+            <div class="list-group">
+              <a href="#" class="list-group-item list-group-item-action" aria-current="true">
+                <div class="d-flex w-100 justify-content-between">
+                  <p class="fw-bold">英文名</p>
+                  <p>中译名与其他名称</p>
+                  <span class="badge rounded-pill bg-primary">creater</span>
+                </div>
+              </a>
+              <!-- Additional entries -->
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <!-- Sidebar pour les détails -->
+          <div id="detailSidebar" class="detail-sidebar p-5 card bg-light">
+            <p class="" style="width: 18rem;">点击相应词条获取详细信息</p>
+            <!-- Les détails seront injectés ici -->
+          </div>
+        </div>
+      </div>
+    </div>
 
+  </section>
+
+
+
+  <footer>
+    <div class="container">
+      <div class="text-center p-1 bg-secondary text-white">
+        <p>Copyright &copy; 2024</p>
+      </div>
+    </div>
+  </footer>
+  <script src="path/to/bootstrap.bundle.min.js"></script>
+  <!-- Assurez-vous que le chemin vers Bootstrap JS est correct -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      fetch('database/data.json')
+        .then(response => response.json())
+        .then(data => {
+          const listGroup = document.querySelector('.list-group'); // Assurez-vous que cette classe correspond à votre conteneur d'entrées
+
+          data.forEach(item => {
+            const entryElement = document.createElement('a');
+            entryElement.href = "#";
+            entryElement.classList.add('list-group-item', 'list-group-item-action');
+            entryElement.setAttribute('aria-current', 'true');
+
+            // Construction du contenu pour le deuxième <p> de manière conditionnelle
+            let additionalInfo = [item.chineseName, item.otherNames].filter(Boolean).join(', ');
+
+            entryElement.innerHTML = `
+                    <div class="d-flex w-100 flex-row" onclick="showDetails('${item.ID}')">
+                        <p class="fw-bold" style="width:200px">${item.englishName}</p>
+                        <p class="flex-grow-1">${additionalInfo}</p>
+                        <span class="badge rounded-pill bg-primary">${item.creatersInitial}</span>
+                    </div>
+                `;
+            listGroup.appendChild(entryElement);
+          });
+        })
+        .catch(error => console.error('Error loading the data:', error));
+    });
+
+
+    function showDetails(id) {
+      fetch('database/data.json')
+        .then(response => response.json())
+        .then(data => {
+          const detail = data.find(item => item.ID === id);
+          if (detail) {
+            const detailSidebar = document.getElementById('detailSidebar');
+            detailSidebar.innerHTML = `
+                    <div class="card-body">
+                        <h3 class="card-title">${detail.englishName}</h3>
+                        <p>${detail.chineseName}</p>
+                        <p>${detail.otherNames}</p>
+                        <p>${detail.description}</p>
+                        <p>Created by: ${detail.creatersInitial}</p>
+                        <p>Entry Date: ${detail.entryDate}</p>
+                        <p>Last Modified: ${detail.lastModifiedDate} by ${detail.lastModifiedAuthor}</p>
+                    </div>
+                `;
+            detailSidebar.style.display = 'block';
+          }
+        })
+        .catch(error => console.error('Error loading the details:', error));
+    }
+
+  </script>
 </body>
 
 </html>
