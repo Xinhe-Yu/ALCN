@@ -16347,4 +16347,20 @@ div.entry {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+@media (max-width: 768px) {
+  .detailSidebar {
+    top: 12vh;
+    height: 25vh;
+    width: 80vw;
+  }
+  .titleCN {
+    display: none;
+  }
+}
+@media (max-width: 576px) {
+  .titleEN {
+    display: none;
+  }
 }/*# sourceMappingURL=main.css.map */

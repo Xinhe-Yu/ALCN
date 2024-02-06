@@ -16,9 +16,12 @@
   <!-- Navbar -->
   <nav class="navbar fixed-top navbar-expand-md navbar-light bg-primary">
     <div class="container-fluid px-5 py-2">
-      <img src="scr/chaudron-de-sorciere.svg" alt="icon" style="width: 80px;">
-      <a class="navbar-brand h1 fs-1 ps-5" style="color:#303030">AncientLexiconCN (Beta) 古代译名数据库</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+      <img src="scr/chaudron-de-sorciere.svg" alt="icon" class="d-none d-lg-block" style="width: 80px;">
+      <a class="navbar-brand h1 fs-2 ps-5" style="color:#303030">
+        <span class="d-block d-sm-none"> ALCN</span>
+        <span class="titleEN">AncientLexiconCN (Beta) </span>
+        <span class="titleCN">古代译名数据库</span></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navmenu"
         aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -34,7 +37,8 @@
         </ul>
       </div>
   </nav>
-  <div class="py-8"></div>
+  <!-- White area for small device -->
+  <div class="py-8 d-none d-md-block"></div>
 
 
   <!-- Main Content Area -->
@@ -44,6 +48,8 @@
         <div class="col-md-6">
           <!-- Data entries will be dynamically inserted here -->
           <div id="dataDisplayArea">
+            <!-- White area for pc device-->
+            <div class="py-10 d-block d-md-none"></div>
             <!-- Example static entry -->
             <div class="list-group">
               <a class="list-group-item list-group-item-action" aria-current="true">
@@ -59,7 +65,8 @@
         </div>
         <div class="col-md-3">
           <!-- Sidebar pour les détails -->
-          <div id="detailSidebar" class="detail-sidebar p-5 card bg-light">
+          <div id="detailSidebar" class="detail-sidebar p-5 card bg-light detailSidebar">
+            <!-- <p class="" style="width: 18rem;" 本数据库目前共有 条信息</p> -->
             <p class="" style="width: 18rem;">点击相应词条获取详细信息</p>
             <!-- Les détails seront injectés ici -->
           </div>
