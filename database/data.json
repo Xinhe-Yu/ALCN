@@ -68,14 +68,14 @@
         "ID": "01-Alcmaeonids",
         "englishName": "Alcmaeonids",
         "chineseName": "阿尔克马厄翁家族",
-        "otherNames": "",
+        "otherNames": "Alcméonide",
         "description": "",
         "creatersInitial": "MS",
         "entryDate": "2024-02-06",
         "catalogLabel": "Ancient Name",
         "specialLabel": "",
-        "lastModifiedDate": "2024-02-06",
-        "lastModifiedAuthor": "Script"
+        "lastModifiedDate": "2024-02-08",
+        "lastModifiedAuthor": "YXH"
     },
     {
         "ID": "01-Alcman",
@@ -689,10 +689,10 @@
         "lastModifiedAuthor": "Script"
     },
     {
-        "ID": "01-Galatians",
-        "englishName": "Galates",
+        "ID": "01-Galatian",
+        "englishName": "Galate",
         "chineseName": "加拉特人",
-        "otherNames": "Galates",
+        "otherNames": "Galate",
         "description": "",
         "creatersInitial": "YXH",
         "entryDate": "2024-02-06",
@@ -899,8 +899,8 @@
     {
         "ID": "01-Kaikos",
         "englishName": "Kaikos",
-        "chineseName": "开科斯河谷",
-        "otherNames": "Caicus, Κάϊκος, Bakırçay",
+        "chineseName": "开科斯河",
+        "otherNames": "Caicus, Κάϊκος, Caïque, Bakırçay",
         "description": "今土耳其语巴克尔恰伊河",
         "creatersInitial": "YXH",
         "entryDate": "2024-02-06",
@@ -1368,14 +1368,14 @@
         "ID": "01-Selinos",
         "englishName": "Selinos",
         "chineseName": "塞利努斯河",
-        "otherNames": "Selinus, Σελινοῦς, Bergama Çayı",
+        "otherNames": "Selinus, Σελινοῦς, Bergama Çayı, Sélinous",
         "description": "今贝尔加马河",
         "creatersInitial": "YXH",
         "entryDate": "2024-02-06",
         "catalogLabel": "Ancient Name",
         "specialLabel": "",
-        "lastModifiedDate": "2024-02-06",
-        "lastModifiedAuthor": "Script"
+        "lastModifiedDate": "2024-02-08",
+        "lastModifiedAuthor": "YXH"
     },
     {
         "ID": "01-Sostratos",
