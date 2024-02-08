@@ -54,9 +54,8 @@ function loadDataAndCount() {
 window.addEventListener('load', loadDataAndCount);
 
 
-
 function showDetails(id) {
-  fetch('database/data.json')
+  fetch('./database/data.json')
     .then(response => response.json())
     .then(data => {
       const detail = data.find(item => item.ID === id);
