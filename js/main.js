@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-  fetch('database/data.json')
+  fetch('./database/data.json')
     .then(response => response.json())
     .then(data => {
       const listGroup = document.querySelector('.list-group'); // Assurez-vous que cette classe correspond à votre conteneur d'entrées
@@ -37,7 +37,7 @@ function copyText(elementId) {
 
 // Fonction pour charger et compter les données
 function loadDataAndCount() {
-  fetch('/database/data.json')
+  fetch('./database/data.json')
     .then(response => response.json()) // Parse la réponse en JSON
     .then(data => {
       // Met à jour le span avec le nombre d'éléments
