@@ -67,6 +67,7 @@
           <!-- Sidebar pour les détails -->
           <div id="detailSidebar" class="detail-sidebar p-5 card bg-light detailSidebar">
             <!-- <p class="" style="width: 18rem;" 本数据库目前共有 条信息</p> -->
+            <p id="dataCount">加载中...</p>
             <p class="" style="width: 18rem;">点击相应词条获取详细信息</p>
             <!-- Les détails seront injectés ici -->
           </div>
@@ -81,7 +82,7 @@
   <footer>
     <div class="container">
       <div class="text-center p-1 bg-secondary text-white">
-        <p>Copyright &copy; 2024</p>
+        <p>Copyright &copy; ALCN 2024</p>
       </div>
     </div>
   </footer>
@@ -99,7 +100,9 @@
           <p>该数据库包括了古代人名地名、术语以及研究古代世界的现代学者的英文名/原名、中译名。</p>
           <p>为了方便查找，原名如是希腊语名，则以英文转写为索引；如果是某外语术语，则以该语言原本的形式表现。</p>
           <p><b>功能：</b></p>
-          <p>点击词条，可在右侧详细信息栏中一键<b>复制</b>中译名。</p>
+          <p><b>查看详细信息</b>：点击词条，查看详细信息；</p>
+          <p><b>复制</b>：在详细信息栏点击剪贴板按钮，复制中译名。</p>
+          <p><b>下载</b>：点击<button id="downloadBtn">此处</button>下载json格式数据。</p>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
@@ -109,71 +112,34 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-  <!-- Assurez-vous que le chemin vers Bootstrap JS est correct -->
+  <script src="/js/main.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      fetch('database/data.json')
-        .then(response => response.json())
-        .then(data => {
-          const listGroup = document.querySelector('.list-group'); // Assurez-vous que cette classe correspond à votre conteneur d'entrées
+    document.getElementById('downloadBtn').addEventListener('click', function () {
+      // Chemin vers votre fichier JSON sur le serveur
+      const jsonFilePath = '/database/data.json';
 
-          data.forEach(item => {
-            const entryElement = document.createElement('a');
-            entryElement.classList.add('list-group-item', 'list-group-item-action');
-            entryElement.setAttribute('aria-current', 'true');
-
-            // Construction du contenu pour le deuxième <p> de manière conditionnelle
-            let additionalInfo = [item.chineseName, item.otherNames].filter(Boolean).join(', ');
-
-            entryElement.innerHTML = `
-                    <div class="d-flex flex-column flex-sm-row w-100 entry" href="javascript:void(0);" onclick="showDetails('${item.ID}', event)">
-                        <p class="fw-bold" style="width:200px">${item.englishName}</p>
-                        <p class="flex-grow-1">${additionalInfo}</p>
-                        <span class="badge rounded-pill bg-primary">${item.creatersInitial}</span>
-                    </div>
-                `;
-            listGroup.appendChild(entryElement);
-          });
+      // Créer une requête pour obtenir le fichier JSON
+      fetch(jsonFilePath)
+        .then(response => response.blob()) // Convertit la réponse en Blob
+        .then(blob => {
+          // Créer un URL pour le Blob
+          const url = window.URL.createObjectURL(blob);
+          // Créer un lien temporaire pour le téléchargement
+          const a = document.createElement('a');
+          a.style.display = 'none';
+          a.href = url;
+          // Spécifier le nom de fichier pour le téléchargement
+          a.download = 'database_ALCN.json';
+          // Ajouter le lien au document et cliquer dessus
+          document.body.appendChild(a);
+          a.click();
+          // Nettoyer en supprimant le lien et libérer les ressources de l'URL
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);
         })
-        .catch(error => console.error('Error loading the data:', error));
+        .catch(console.error); // Gérer les erreurs éventuelles
     });
-
-    function copyText(elementId) {
-      const textToCopy = document.getElementById(elementId).innerText;
-      navigator.clipboard.writeText(textToCopy).then(() => {
-        document.getElementById("copyButton").classList.add("success")
-        setTimeout(() => { document.getElementById("copyButton").classList.remove("success"); }, 3000);;
-      }).catch(err => {
-        console.error('Failed to copy text: ', err);
-      });
-    }
-
-    function showDetails(id, event) {
-      fetch('database/data.json')
-        .then(response => response.json())
-        .then(data => {
-          const detail = data.find(item => item.ID === id);
-          if (detail) {
-            const detailSidebar = document.getElementById('detailSidebar');
-            detailSidebar.innerHTML = `
-                    <div class="card-body">
-                        <h3 class="card-title">${detail.englishName}</h3>
-                        <div class="copy-container">
-                        <p class="pt-3" id="textToCopy">${detail.chineseName}</p><button id="copyButton" type="button" class="btn btn-copy" onclick="copyText('textToCopy')"><span></span></button>
-                        </div>
-                        <p>${detail.otherNames}</p>
-                        <p>${detail.description}</p>
-                        <p>Created by: ${detail.creatersInitial}</p>
-                        <p>Entry Date: ${detail.entryDate}</p>
-                        <p>Last Modified: ${detail.lastModifiedDate} by ${detail.lastModifiedAuthor}</p>
-                    </é>
-                `;
-            detailSidebar.style.display = 'block';
-          }
-        })
-        .catch(error => console.error('Error loading the details:', error));
-    }
+  </script>
 
   </script>
 </body>

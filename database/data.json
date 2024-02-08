@@ -286,16 +286,16 @@
         "lastModifiedAuthor": "Script"
     },
     {
-        "ID": "01-Attale II",
-        "englishName": "Attale II",
-        "chineseName": "阿塔洛斯二世",
-        "otherNames": "",
+        "ID": "01-Attalus",
+        "englishName": "Attalus",
+        "chineseName": "阿塔洛斯",
+        "otherNames": "Attale, Attalos",
         "description": "",
         "creatersInitial": "YXH",
         "entryDate": "2024-02-06",
         "catalogLabel": "Ancient Name",
         "specialLabel": "",
-        "lastModifiedDate": "2024-02-06",
+        "lastModifiedDate": "2024-02-08",
         "lastModifiedAuthor": "Script"
     },
     {
@@ -445,7 +445,7 @@
         "ID": "01-Cos",
         "englishName": "Cos",
         "chineseName": "科斯岛",
-        "otherNames": "",
+        "otherNames": "Kos",
         "description": "",
         "creatersInitial": "YXH",
         "entryDate": "2024-02-06",
@@ -637,16 +637,16 @@
         "lastModifiedAuthor": "Script"
     },
     {
-        "ID": "01-Eumène II",
-        "englishName": "Eumène II",
-        "chineseName": "欧墨涅斯二世",
-        "otherNames": "",
+        "ID": "01-Eumenes",
+        "englishName": "Eumenes",
+        "chineseName": "欧墨涅斯",
+        "otherNames": "Eumène",
         "description": "",
         "creatersInitial": "YXH",
         "entryDate": "2024-02-06",
         "catalogLabel": "Ancient Name",
         "specialLabel": "",
-        "lastModifiedDate": "2024-02-06",
+        "lastModifiedDate": "2024-02-08",
         "lastModifiedAuthor": "Script"
     },
     {
@@ -689,17 +689,17 @@
         "lastModifiedAuthor": "Script"
     },
     {
-        "ID": "01-Galates",
+        "ID": "01-Galatians",
         "englishName": "Galates",
         "chineseName": "加拉特人",
-        "otherNames": "",
+        "otherNames": "Galates",
         "description": "",
         "creatersInitial": "YXH",
         "entryDate": "2024-02-06",
         "catalogLabel": "Ancient Name",
         "specialLabel": "",
-        "lastModifiedDate": "2024-02-06",
-        "lastModifiedAuthor": "Script"
+        "lastModifiedDate": "2024-02-08",
+        "lastModifiedAuthor": "YXH"
     },
     {
         "ID": "01-Gymnopaedia",
@@ -875,7 +875,7 @@
         "englishName": "Isaeus",
         "chineseName": "伊萨欧斯",
         "otherNames": "",
-        "description": "On the Estate of Dicaeogenes，论狄卡厄俄革涅斯的遗产",
+        "description": "作品：On the Estate of Dicaeogenes, 论狄卡厄俄革涅斯的遗产",
         "creatersInitial": "MS",
         "entryDate": "2024-02-06",
         "catalogLabel": "Ancient Name",
@@ -900,21 +900,21 @@
         "ID": "01-Kaikos",
         "englishName": "Kaikos",
         "chineseName": "开科斯河谷",
-        "otherNames": "Caicus，Κάϊκος，Bakırçay",
+        "otherNames": "Caicus, Κάϊκος, Bakırçay",
         "description": "今土耳其语巴克尔恰伊河",
         "creatersInitial": "YXH",
         "entryDate": "2024-02-06",
         "catalogLabel": "Ancient Name",
         "specialLabel": "",
-        "lastModifiedDate": "2024-02-06",
-        "lastModifiedAuthor": "Script"
+        "lastModifiedDate": "2024-02-08",
+        "lastModifiedAuthor": "YXH"
     },
     {
         "ID": "01-Kom El Deka",
         "englishName": "Kom El Deka",
         "chineseName": "考姆代卡区",
         "otherNames": "",
-        "description": "",
+        "description": "亚历山大城区划之一",
         "creatersInitial": "MS",
         "entryDate": "2024-02-06",
         "catalogLabel": "Ancient Name",
@@ -953,26 +953,26 @@
         "englishName": "L’Enlèvement des Sabines",
         "chineseName": "劫掠萨宾妇女",
         "otherNames": "",
-        "description": "",
+        "description": "尼古拉·普桑（Nicolas Poussin）画作",
         "creatersInitial": "YXH",
         "entryDate": "2024-02-06",
         "catalogLabel": "Ancient Name",
         "specialLabel": "",
-        "lastModifiedDate": "2024-02-06",
-        "lastModifiedAuthor": "Script"
+        "lastModifiedDate": "2024-02-08",
+        "lastModifiedAuthor": "YXH"
     },
     {
-        "ID": "01-Magnésie du Méandre",
-        "englishName": "Magnésie du Méandre",
+        "ID": "01-Magnesia on the Maeander",
+        "englishName": "Magnesia on the Maeander",
         "chineseName": "迈安德罗斯沿岸的马格涅西亚",
-        "otherNames": "",
+        "otherNames": "Magnésie du Méandre",
         "description": "",
         "creatersInitial": "YXH",
         "entryDate": "2024-02-06",
         "catalogLabel": "Ancient Name",
         "specialLabel": "",
-        "lastModifiedDate": "2024-02-06",
-        "lastModifiedAuthor": "Script"
+        "lastModifiedDate": "2024-02-08",
+        "lastModifiedAuthor": "YXH"
     },
     {
         "ID": "01-Minyans",
@@ -1160,7 +1160,7 @@
         "ID": "01-Phidias",
         "englishName": "Phidias",
         "chineseName": "菲迪亚斯",
-        "otherNames": "",
+        "otherNames": "Pheidias",
         "description": "",
         "creatersInitial": "YXH",
         "entryDate": "2024-02-06",
@@ -1174,7 +1174,7 @@
         "englishName": "Philostratos",
         "chineseName": "菲罗斯特拉托斯",
         "otherNames": "",
-        "description": "Life of Apollonios of Tyana，堤阿那的阿波罗尼俄斯传",
+        "description": "作品：Life of Apollonios of Tyana, 堤阿那的阿波罗尼俄斯传",
         "creatersInitial": "MS",
         "entryDate": "2024-02-06",
         "catalogLabel": "Ancient Name",
@@ -1368,8 +1368,8 @@
         "ID": "01-Selinos",
         "englishName": "Selinos",
         "chineseName": "塞利努斯河",
-        "otherNames": "Selinus,Σελινοῦς",
-        "description": "今贝尔加马河，土耳其语：Bergama Çayı",
+        "otherNames": "Selinus, Σελινοῦς, Bergama Çayı",
+        "description": "今贝尔加马河",
         "creatersInitial": "YXH",
         "entryDate": "2024-02-06",
         "catalogLabel": "Ancient Name",
@@ -1485,8 +1485,8 @@
         "ID": "01-Tralleis",
         "englishName": "Tralleis",
         "chineseName": "特拉勒斯",
-        "otherNames": "Trallis, Tralles, Τράλλεις",
-        "description": "今艾登，土耳其语：Aydın",
+        "otherNames": "Trallis, Tralles, Τράλλεις, Aydın",
+        "description": "今艾登",
         "creatersInitial": "YXH",
         "entryDate": "2024-02-06",
         "catalogLabel": "Ancient Name",
@@ -1510,7 +1510,7 @@
     {
         "ID": "01-Tryphaina",
         "englishName": "Tryphaina",
-        "chineseName": "奥帕特拉·特里菲娜",
+        "chineseName": "克里奥帕特拉·特里菲娜",
         "otherNames": "",
         "description": "",
         "creatersInitial": "MS",
@@ -1521,30 +1521,30 @@
         "lastModifiedAuthor": "Script"
     },
     {
-        "ID": "01-Tyndare",
-        "englishName": "Tyndare",
+        "ID": "01-Tyndareus",
+        "englishName": "",
         "chineseName": "廷达瑞俄斯",
-        "otherNames": "",
+        "otherNames": "Tyndare",
         "description": "",
         "creatersInitial": "MS",
         "entryDate": "2024-02-06",
         "catalogLabel": "Ancient Name",
         "specialLabel": "",
-        "lastModifiedDate": "2024-02-06",
-        "lastModifiedAuthor": "Script"
+        "lastModifiedDate": "2024-02-08",
+        "lastModifiedAuthor": "YXH"
     },
     {
         "ID": "01-Tyrannicides",
         "englishName": "Tyrannicides",
         "chineseName": "僭主刺杀者",
-        "otherNames": "",
+        "otherNames": "Tyrannoctones",
         "description": "",
         "creatersInitial": "MS",
         "entryDate": "2024-02-06",
         "catalogLabel": "Ancient Name",
         "specialLabel": "",
-        "lastModifiedDate": "2024-02-06",
-        "lastModifiedAuthor": "Script"
+        "lastModifiedDate": "2024-02-08",
+        "lastModifiedAuthor": "YXH"
     },
     {
         "ID": "01-Vulci",
@@ -1615,14 +1615,14 @@
         "ID": "02-Anthesteria",
         "englishName": "Anthesteria",
         "chineseName": "花节",
-        "otherNames": "",
+        "otherNames": "Anthestéries",
         "description": "",
         "creatersInitial": "MS",
         "entryDate": "2024-02-06",
         "catalogLabel": "Terminology",
         "specialLabel": "",
-        "lastModifiedDate": "2024-02-06",
-        "lastModifiedAuthor": "Script"
+        "lastModifiedDate": "2024-02-08",
+        "lastModifiedAuthor": "YXH"
     },
     {
         "ID": "02-François Vase",
@@ -1706,7 +1706,7 @@
         "ID": "02-amphora",
         "englishName": "amphora",
         "chineseName": "双耳陶瓶",
-        "otherNames": "",
+        "otherNames": "amphore",
         "description": "",
         "creatersInitial": "MS",
         "entryDate": "2024-02-06",
@@ -2288,7 +2288,7 @@
         "lastModifiedAuthor": "Script"
     },
     {
-        "ID": "03-Ballet, Pascale",
+        "ID": "03-Ballet",
         "englishName": "Ballet, Pascale",
         "chineseName": "帕斯卡拉·巴莱",
         "otherNames": "",
@@ -2301,7 +2301,7 @@
         "lastModifiedAuthor": "Script"
     },
     {
-        "ID": "03-Baxandall, Michael",
+        "ID": "03-Baxandall",
         "englishName": "Baxandall, Michael",
         "chineseName": "迈克尔·巴克森德尔",
         "otherNames": "",
@@ -2314,7 +2314,7 @@
         "lastModifiedAuthor": "Script"
     },
     {
-        "ID": "03-Bažant, Jan",
+        "ID": "03-Bažant",
         "englishName": "Bažant, Jan",
         "chineseName": "扬·巴赞特",
         "otherNames": "",
@@ -2327,7 +2327,7 @@
         "lastModifiedAuthor": "Script"
     },
     {
-        "ID": "03-Beazley, Sir John",
+        "ID": "03-Beazley",
         "englishName": "Beazley, Sir John",
         "chineseName": "约翰·比兹利爵士",
         "otherNames": "",
@@ -2340,7 +2340,7 @@
         "lastModifiedAuthor": "Script"
     },
     {
-        "ID": "03-Benveniste, Émile",
+        "ID": "03-Benveniste",
         "englishName": "Benveniste, Émile",
         "chineseName": "埃米尔·邦弗尼斯特",
         "otherNames": "",
@@ -2379,7 +2379,7 @@
         "lastModifiedAuthor": "Script"
     },
     {
-        "ID": "03-Carter, Joseph",
+        "ID": "03-Carter",
         "englishName": "Carter, Joseph",
         "chineseName": "约瑟夫·卡特",
         "otherNames": "",
@@ -2392,7 +2392,7 @@
         "lastModifiedAuthor": "Script"
     },
     {
-        "ID": "03-Charbonneaux, Jean",
+        "ID": "03-Charbonneaux",
         "englishName": "Charbonneaux, Jean",
         "chineseName": "让·沙诺",
         "otherNames": "",
@@ -2405,7 +2405,7 @@
         "lastModifiedAuthor": "Script"
     },
     {
-        "ID": "03-Clark, T. J.",
+        "ID": "03-Clark",
         "englishName": "Clark, T. J.",
         "chineseName": "克拉克",
         "otherNames": "",
@@ -2431,7 +2431,7 @@
         "lastModifiedAuthor": "Script"
     },
     {
-        "ID": "03-Desault, Yvette",
+        "ID": "03-Desault",
         "englishName": "Desault, Yvette",
         "chineseName": "伊维特·德索",
         "otherNames": "",
@@ -2444,7 +2444,7 @@
         "lastModifiedAuthor": "Script"
     },
     {
-        "ID": "03-Empereur, Jean-Yves",
+        "ID": "03-Empereur",
         "englishName": "Empereur, Jean-Yves",
         "chineseName": "伊夫·昂珀勒尔",
         "otherNames": "",
@@ -2457,7 +2457,7 @@
         "lastModifiedAuthor": "Script"
     },
     {
-        "ID": "03-Fragaki, Hélène",
+        "ID": "03-Fragaki",
         "englishName": "Fragaki, Hélène",
         "chineseName": "埃莱娜·弗拉加基",
         "otherNames": "",
@@ -2470,7 +2470,7 @@
         "lastModifiedAuthor": "Script"
     },
     {
-        "ID": "03-Gallo, Paolo",
+        "ID": "03-Gallo",
         "englishName": "Gallo, Paolo",
         "chineseName": "保罗·伽罗",
         "otherNames": "",
@@ -2483,7 +2483,7 @@
         "lastModifiedAuthor": "Script"
     },
     {
-        "ID": "03-Gennep, Arnold Van",
+        "ID": "03-Gennep",
         "englishName": "Gennep, Arnold Van",
         "chineseName": "热内普",
         "otherNames": "",
@@ -2496,7 +2496,7 @@
         "lastModifiedAuthor": "Script"
     },
     {
-        "ID": "03-Gerkan, Arnim von",
+        "ID": "03-Gerkan",
         "englishName": "Gerkan, Arnim von",
         "chineseName": "阿尼姆·冯·格坎",
         "otherNames": "",
@@ -2509,7 +2509,7 @@
         "lastModifiedAuthor": "Script"
     },
     {
-        "ID": "03-Hairy, Isabelle",
+        "ID": "03-Hairy",
         "englishName": "Hairy, Isabelle",
         "chineseName": "伊莎贝尔·艾里",
         "otherNames": "",
@@ -2522,7 +2522,7 @@
         "lastModifiedAuthor": "Script"
     },
     {
-        "ID": "03-Hoepfner, Wolfram",
+        "ID": "03-Hoepfner",
         "englishName": "Hoepfner, Wolfram",
         "chineseName": "沃尔弗拉姆·赫普夫纳",
         "otherNames": "",
@@ -2535,7 +2535,7 @@
         "lastModifiedAuthor": "Script"
     },
     {
-        "ID": "03-Humann, Carl",
+        "ID": "03-Humann",
         "englishName": "Humann, Carl",
         "chineseName": "卡尔·胡曼",
         "otherNames": "",
@@ -2548,7 +2548,7 @@
         "lastModifiedAuthor": "Script"
     },
     {
-        "ID": "03-Klinkott, Manfred",
+        "ID": "03-Klinkott",
         "englishName": "Klinkott, Manfred",
         "chineseName": "曼弗雷德·克林科特",
         "otherNames": "",
@@ -2561,7 +2561,7 @@
         "lastModifiedAuthor": "Script"
     },
     {
-        "ID": "03-Kurz, Otto",
+        "ID": "03-Kurz",
         "englishName": "Kurz, Otto",
         "chineseName": "奥托·库尔茨",
         "otherNames": "",
@@ -2574,7 +2574,7 @@
         "lastModifiedAuthor": "Script"
     },
     {
-        "ID": "03-Kyrieleis, Helmut",
+        "ID": "03-Kyrieleis",
         "englishName": "Kyrieleis, Helmut",
         "chineseName": "赫尔穆特·基里莱斯",
         "otherNames": "",
@@ -2587,7 +2587,7 @@
         "lastModifiedAuthor": "Script"
     },
     {
-        "ID": "03-Langdon, Susan",
+        "ID": "03-Langdon",
         "englishName": "Langdon, Susan",
         "chineseName": "苏珊·兰登",
         "otherNames": "",
@@ -2613,7 +2613,7 @@
         "lastModifiedAuthor": "Script"
     },
     {
-        "ID": "03-Mysliewicz, Karol",
+        "ID": "03-Mysliewicz",
         "englishName": "Mysliewicz, Karol",
         "chineseName": "卡罗尔·米斯利维茨",
         "otherNames": "",
@@ -2626,7 +2626,7 @@
         "lastModifiedAuthor": "Script"
     },
     {
-        "ID": "03-Neer, Richard",
+        "ID": "03-Neer",
         "englishName": "Neer, Richard",
         "chineseName": "理查德·尼尔",
         "otherNames": "",
@@ -2652,7 +2652,7 @@
         "lastModifiedAuthor": "Script"
     },
     {
-        "ID": "03-Perrault, Charles",
+        "ID": "03-Perrault",
         "englishName": "Perrault, Charles",
         "chineseName": "夏尔·佩罗",
         "otherNames": "",
@@ -2665,7 +2665,7 @@
         "lastModifiedAuthor": "Script"
     },
     {
-        "ID": "03-Pollitt, J. J.",
+        "ID": "03-Pollitt",
         "englishName": "Pollitt, J. J.",
         "chineseName": "波利特",
         "otherNames": "",
@@ -2678,7 +2678,7 @@
         "lastModifiedAuthor": "Script"
     },
     {
-        "ID": "03-Richter, Gisela",
+        "ID": "03-Richter",
         "englishName": "Richter, Gisela",
         "chineseName": "吉塞拉·里希特",
         "otherNames": "",
@@ -2704,7 +2704,7 @@
         "lastModifiedAuthor": "Script"
     },
     {
-        "ID": "03-Robert, Hubert",
+        "ID": "03-Robert",
         "englishName": "Robert, Hubert",
         "chineseName": "于贝尔·罗贝尔",
         "otherNames": "",
@@ -2717,7 +2717,7 @@
         "lastModifiedAuthor": "Script"
     },
     {
-        "ID": "03-Rudhardt, Jean",
+        "ID": "03-Rudhardt",
         "englishName": "Rudhardt, Jean",
         "chineseName": "让·吕达尔",
         "otherNames": "",
@@ -2730,7 +2730,7 @@
         "lastModifiedAuthor": "Script"
     },
     {
-        "ID": "03-Schreiber, Theodor",
+        "ID": "03-Schreiber",
         "englishName": "Schreiber, Theodor",
         "chineseName": "特奥多尔·施莱伯",
         "otherNames": "",
@@ -2756,7 +2756,7 @@
         "lastModifiedAuthor": "Script"
     },
     {
-        "ID": "03-Smith, Bert",
+        "ID": "03-Smith",
         "englishName": "Smith, Bert",
         "chineseName": "伯特·史密斯",
         "otherNames": "",
@@ -2769,7 +2769,7 @@
         "lastModifiedAuthor": "Script"
     },
     {
-        "ID": "03-Stanwick, Paul",
+        "ID": "03-Stanwick",
         "englishName": "Stanwick, Paul",
         "chineseName": "保罗·斯坦威科",
         "otherNames": "",
@@ -2782,7 +2782,7 @@
         "lastModifiedAuthor": "Script"
     },
     {
-        "ID": "03-Struth, Thomas",
+        "ID": "03-Struth",
         "englishName": "Struth, Thomas",
         "chineseName": "托马斯·施特鲁特",
         "otherNames": "",
@@ -2795,7 +2795,7 @@
         "lastModifiedAuthor": "Script"
     },
     {
-        "ID": "03-Tezgör, Dominique Kassab",
+        "ID": "03-Tezgör",
         "englishName": "Tezgör, Dominique Kassab",
         "chineseName": "多米尼克·卡萨·戴兹格尔",
         "otherNames": "",

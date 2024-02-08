@@ -42,10 +42,6 @@ $font-sizes: (
     8: $h8-font-size,
 );
 
-
-
-
-
 //list-group
 // $list-group-color: white;
 // $list-group-action-hover-color: #B0BEC5;
@@ -69,10 +65,10 @@ $theme-colors: (
     "primary": $primary,
     "secondary": $secondary,
     "success": $success,
-    "danger": $danger,
-    "warning": $warning,
-    "info": $info,
-    "light": $light,
+    // "danger": $danger,
+    // "warning": $warning,
+    // "info": $info,
+    // "light": $light,
     "dark": $dark,
 );
 
@@ -83,6 +79,7 @@ body {
 }
 
 a,
+
 .btn-primary {
     color: $primary-text;
 
