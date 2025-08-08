@@ -125,7 +125,7 @@ class Entry(Base):
     verification_notes = Column(Text)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now())
-    search_vector = Column(TSVECTOR)
+    # search_vector = Column(TSVECTOR)
 
     __table_args__ = (
         CheckConstraint(
@@ -136,7 +136,7 @@ class Entry(Base):
         Index('idx_entries_primary_name', 'primary_name'),
         Index('idx_entries_language_code', 'language_code'),
         Index('idx_entries_type', 'entry_type'),
-        Index('idx_entries_search_vector', 'search_vector', postgresql_using='gin'),
+        # Index('idx_entries_search_vector', 'search_vector', postgresql_using='gin'),
         Index('idx_entries_created_by', 'created_by'),
         Index('idx_entries_created_at', 'created_at'),
         Index(
