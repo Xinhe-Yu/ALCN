@@ -1,4 +1,5 @@
 # .gitignore
+
 # Environment variables
 .env
 .env.local
@@ -63,11 +64,9 @@ coverage.xml
 *.cover
 .hypothesis/
 
-# Alembic
-alembic/versions/*.py
-!alembic/versions/
-alembic.ini
-
+# Alembic - KEEP MIGRATION FILES, IGNORE CONFIG ONLY
+alembic.ini.local
+alembic/sql/
 # Logs
 logs/
 *.log
@@ -75,3 +74,4 @@ logs/
 # Database
 *.db
 *.sqlite
+data/
