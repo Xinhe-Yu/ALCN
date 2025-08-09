@@ -25,7 +25,7 @@ export default function RecentItem({ entry, type = 'entry' }: RecentItemProps) {
     <div key={entry.id} className="items-start p-2 bg-gray-50 rounded-md">
       <div className="flex justify-between">
         <div className="flex items-center space-x-2">
-          <span className="font-medium text-gray-900">{entry.primary_name}</span>
+          <span className="font-medium text-gray-900 ps-1">{entry.primary_name}</span>
           <Badge code={entry.language_code} />
           {entry.entry_type && <Badge code={entry.entry_type} type="type" />}
           {entry.original_script}

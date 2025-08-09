@@ -28,10 +28,10 @@ export default function ColumnSelector({ visibleColumns, onToggleColumn }: Colum
             onClick={() => setShowSelector(false)}
           />
 
-          <div className="absolute right-0 mt-1 w-64 bg-white border border-gray-300 rounded-md shadow-lg z-10">
+          <div className="absolute right-0 mt-1 w-64 bg-white border border-gray-300 rounded-md shadow-lg z-20">
             <div className="p-3">
               <h4 className="text-sm font-medium text-gray-900 mb-2">Show/Hide Columns</h4>
-              <div className="space-y-2 max-h-64">
+              <div className="space-y-2 max-h-64 overflow-y-auto">
                 {AVAILABLE_COLUMNS.map(column => (
                   <label key={column.key} className="flex items-center text-sm">
                     <input

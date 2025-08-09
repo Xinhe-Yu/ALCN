@@ -17,7 +17,7 @@ import AutoSearchBar from '../ui/auto-search-bar';
 import { AVAILABLE_COLUMNS, DEFAULT_VISIBLE_COLUMNS, PAGE_SIZE_OPTIONS, PageSize } from './data-table/column-config';
 import { useInlineEditing } from './data-table/use-inline-editing';
 import ColumnSelector from './data-table/column-selector';
-import TableCell from './data-table/table-cell';
+import EditableCell from './data-table/editable-cell';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface EntriesDataTableProps {
@@ -98,8 +98,95 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
     }
   }, [currentPage, pageSize, sortBy, sortDirection, debouncedSearchQuery, languageFilter, typeFilter]);
 
-  // Inline editing hook (after fetchEntries is defined)
-  const inlineEditing = useInlineEditing(fetchEntries);
+  // Optimistic update function for inline editing - PERFORMANCE OPTIMIZED
+  const handleOptimisticUpdate = (entryId: string, field: string, value: string) => {
+    console.log('Optimistic update:', { entryId, field, value });
+
+    setEntries(currentEntries => {
+      // Find the index of the entry to update
+      const entryIndex = currentEntries.findIndex(entry => entry.id === entryId);
+      if (entryIndex === -1) {
+        console.log('Entry not found:', entryId);
+        return currentEntries; // No change if entry not found
+      }
+
+      console.log('Found entry to update at index:', entryIndex);
+
+      // Create a shallow copy of the array
+      const updatedEntries = [...currentEntries];
+
+      // Create updated entry (only the one that changed)
+      const originalEntry = currentEntries[entryIndex];
+      const updatedEntry = { ...originalEntry };
+
+      // Update the specific field
+      switch (field) {
+        case 'primary_name':
+          console.log('Updating primary_name:', value);
+          updatedEntry.primary_name = value;
+          break;
+        case 'language_code':
+          console.log('Updating language_code:', value);
+          updatedEntry.language_code = value;
+          break;
+        case 'entry_type':
+          console.log('Updating entry_type:', value);
+          updatedEntry.entry_type = value || undefined;
+          break;
+        case 'original_script':
+          updatedEntry.original_script = value;
+          break;
+        case 'alternative_names':
+          updatedEntry.alternative_names = value ? value.split(', ') : [];
+          break;
+        case 'etymology':
+          updatedEntry.etymology = value;
+          break;
+        case 'definition':
+          updatedEntry.definition = value;
+          break;
+        case 'historical_context':
+          updatedEntry.historical_context = value;
+          break;
+        case 'verification_notes':
+          updatedEntry.verification_notes = value;
+          break;
+        case 'first_translation':
+          // Update the first translation if it exists
+          if (updatedEntry.translations && updatedEntry.translations[0]) {
+            updatedEntry.translations = [...updatedEntry.translations];
+            updatedEntry.translations[0] = { ...updatedEntry.translations[0], translated_name: value };
+          }
+          break;
+        case 'translation_language':
+          // Update the first translation language if it exists
+          if (updatedEntry.translations && updatedEntry.translations[0]) {
+            updatedEntry.translations = [...updatedEntry.translations];
+            updatedEntry.translations[0] = { ...updatedEntry.translations[0], language_code: value };
+          }
+          break;
+        case 'translation_notes':
+          // Update the first translation notes if it exists
+          if (updatedEntry.translations && updatedEntry.translations[0]) {
+            updatedEntry.translations = [...updatedEntry.translations];
+            updatedEntry.translations[0] = { ...updatedEntry.translations[0], notes: value };
+          }
+          break;
+        default:
+          console.log('Unknown field:', field);
+          return currentEntries; // No change for unknown fields
+      }
+
+      // Replace only the single updated entry
+      updatedEntries[entryIndex] = updatedEntry;
+
+      console.log('Updated single entry (not entire array):', updatedEntry);
+      return updatedEntries;
+    });
+  };
+
+  // Inline editing hook (with optimistic updates)
+  const inlineEditing = useInlineEditing(handleOptimisticUpdate);
 
   // Effect to fetch data when params change
   useEffect(() => {
@@ -225,8 +312,11 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
 
       {/* Header with search and filters */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div className="flex items-center gap-4">
-          <h3 className="text-lg font-medium text-gray-900">Entries Management</h3>
+        <div className="flex-shrink-0">
+          <h2 className="text-2xl font-bold text-gray-900">Entries Management</h2>
+          <p className="text-gray-600 mt-1">
+            Manage dictionary entries with CRUD operations and bulk updates
+          </p>
           <span className="text-sm text-gray-500">
             {totalEntries} total entries
           </span>
@@ -304,10 +394,10 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
       {/* Table with Sticky Header */}
       <div className="bg-white shadow sm:rounded-lg flex-1">
         <div className="h-full">
-          <table className="min-w-full">
-            <thead className="bg-gray-50 sticky top-0 z-100">
+          <table className="min-w-full table-fixed">
+            <thead className="bg-gray-50 sticky top-0 z-10">
               <tr>
-                <th className="p-1 text-left bg-gray-50 border-b border-gray-200">
+                <th className="w-12 p-1 text-left bg-gray-50 border-b border-gray-200">
                   <input
                     type="checkbox"
                     checked={isAllSelected}
@@ -315,20 +405,39 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
                     className="h-4 w-4 text-amber-600 focus:ring-amber-500 border-gray-300 rounded"
                   />
                 </th>
-                {getVisibleColumnConfigs().map(column => (
-                  <th
-                    key={column.key}
-                    className={`p-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-200 ${column.sortable ? 'cursor-pointer hover:bg-gray-100' : ''
-                      }`}
-                    onClick={() => column.sortable && handleSort(column.key)}
-                  >
-                    <div className="flex items-center">
-                      {column.label}
-                      {column.sortable && getSortIcon(column.key)}
-                    </div>
-                  </th>
-                ))}
-                <th className="p-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-200">
+                {getVisibleColumnConfigs().map(column => {
+                  // Define column widths based on content type
+                  const getColumnWidth = (key: string) => {
+                    switch (key) {
+                      case 'primary_name': return 'w-24';
+                      case 'language_code': return 'w-8';
+                      case 'entry_type': return 'w-32';
+                      case 'first_translation': return 'w-24';
+                      case 'translation_language': return 'w-24';
+                      case 'is_verified': return 'w-20';
+                      case 'created_at':
+                      case 'updated_at': return 'w-28';
+                      case 'etymology':
+                      case 'definition':
+                      case 'historical_context': return 'w-64';
+                      default: return 'w-36';
+                    }
+                  };
+
+                  return (
+                    <th
+                      key={column.key}
+                      className={`${getColumnWidth(column.key)} p-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-200 ${column.sortable ? 'cursor-pointer hover:bg-gray-100' : ''}`}
+                      onClick={() => column.sortable && handleSort(column.key)}
+                    >
+                      <div className="flex items-center min-w-0">
+                        <span className="truncate">{column.label}</span>
+                        {column.sortable && getSortIcon(column.key)}
+                      </div>
+                    </th>
+                  );
+                })}
+                <th className="w-24 p-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-200">
                   Actions
                 </th>
               </tr>
@@ -341,7 +450,7 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
 
                 return (
                   <tr key={entry.id} className={isSelected ? 'bg-amber-50' : 'hover:bg-gray-50'}>
-                    <td className="p-1">
+                    <td className="w-12 p-1">
                       <input
                         type="checkbox"
                         checked={isSelected}
@@ -349,25 +458,47 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
                         className="h-4 w-4 text-amber-600 focus:ring-amber-500 border-gray-300 rounded"
                       />
                     </td>
-                    {getVisibleColumnConfigs().map(column => (
-                      <td key={column.key} className="p-1 whitespace-nowrap">
-                        <TableCell
-                          entry={entry}
-                          firstTranslation={firstTranslation}
-                          column={column}
-                          editingCell={inlineEditing.editingCell}
-                          editValue={inlineEditing.editValue}
-                          onEditValueChange={inlineEditing.setEditValue}
-                          onStartEditing={inlineEditing.startEditing}
-                          onCancelEditing={inlineEditing.cancelEditing}
-                          onKeyPress={inlineEditing.handleKeyPress}
-                        />
-                      </td>
-                    ))}
-                    <td className="p-1 whitespace-nowrap text-sm font-medium">
-                      <div className="flex space-x-2">
-                        <button className="text-amber-600 hover:text-amber-900">Edit</button>
-                        <button className="text-red-600 hover:text-red-900">Delete</button>
+                    {getVisibleColumnConfigs().map(column => {
+                      const getColumnWidth = (key: string) => {
+                        switch (key) {
+                          case 'primary_name': return 'w-48';
+                          case 'language_code': return 'w-24';
+                          case 'entry_type': return 'w-32';
+                          case 'first_translation': return 'w-48';
+                          case 'translation_language': return 'w-24';
+                          case 'is_verified': return 'w-20';
+                          case 'created_at':
+                          case 'updated_at': return 'w-28';
+                          case 'etymology':
+                          case 'definition':
+                          case 'historical_context': return 'w-64';
+                          default: return 'w-36';
+                        }
+                      };
+
+                      return (
+                        <td key={column.key} className={`${getColumnWidth(column.key)} p-1 relative`}>
+                          <div className="min-w-0">
+                            <EditableCell
+                              entry={entry}
+                              firstTranslation={firstTranslation}
+                              column={column}
+                              editingCell={inlineEditing.editingCell}
+                              editValue={inlineEditing.editValue}
+                              onEditValueChange={inlineEditing.setEditValue}
+                              onStartEditing={inlineEditing.startEditing}
+                              onCancelEditing={inlineEditing.cancelEditing}
+                              onKeyPress={inlineEditing.handleKeyPress}
+                              onSaveEdit={inlineEditing.saveEditWithValue}
+                            />
+                          </div>
+                        </td>
+                      );
+                    })}
+                    <td className="w-24 p-1 text-sm font-medium">
+                      <div className="flex space-x-1">
+                        <button className="text-amber-600 hover:text-amber-900 text-xs">Edit</button>
+                        <button className="text-red-600 hover:text-red-900 text-xs">Del</button>
                       </div>
                     </td>
                   </tr>

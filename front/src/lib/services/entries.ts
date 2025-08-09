@@ -18,7 +18,7 @@ export const entriesService = {
   },
 
   async getEntries(params?: EntrySearchParams) {
-    const response = await api.get<PaginatedEntries>('/api/v1/entries', { params });
+    const response = await api.get<PaginatedEntries>('/api/v1/entries/', { params });
     return response.data;
   },
 

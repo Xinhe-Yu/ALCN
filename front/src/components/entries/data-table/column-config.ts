@@ -10,7 +10,7 @@ export type ColumnConfig = {
 export const AVAILABLE_COLUMNS: ColumnConfig[] = [
   { key: 'primary_name', label: 'Entry Name', sortable: true, source: 'entry' },
   { key: 'original_script', label: 'Original Script', source: 'entry' },
-  { key: 'language_code', label: 'Language', sortable: true, source: 'entry' },
+  { key: 'language_code', label: 'Lang', sortable: true, source: 'entry' },
   { key: 'entry_type', label: 'Type', sortable: true, source: 'entry' },
   { key: 'alternative_names', label: 'Alternative Names', source: 'entry' },
   { key: 'etymology', label: 'Etymology', source: 'entry' },
@@ -18,7 +18,7 @@ export const AVAILABLE_COLUMNS: ColumnConfig[] = [
   { key: 'historical_context', label: 'Historical Context', source: 'entry' },
   { key: 'is_verified', label: 'Verified', sortable: true, source: 'entry' },
   { key: 'verification_notes', label: 'Verification Notes', source: 'entry' },
-  { key: 'first_translation', label: 'First Translation', source: 'computed' },
+  { key: 'first_translation', label: 'Translation', source: 'computed' },
   { key: 'translation_language', label: 'Translation Language', source: 'translation' },
   { key: 'translation_notes', label: 'Translation Notes', source: 'translation' },
   { key: 'translation_votes', label: 'Votes', source: 'translation' },
@@ -28,23 +28,48 @@ export const AVAILABLE_COLUMNS: ColumnConfig[] = [
 
 export const DEFAULT_VISIBLE_COLUMNS = [
   'primary_name',
-  'language_code', 
+  'language_code',
   'entry_type',
   'first_translation',
   'updated_at'
 ];
 
 export const EDITABLE_FIELDS = [
-  'primary_name', 
-  'original_script', 
-  'language_code', 
-  'entry_type', 
-  'alternative_names', 
-  'etymology', 
-  'definition', 
-  'historical_context', 
-  'verification_notes'
+  'primary_name',
+  'original_script',
+  'language_code',
+  'entry_type',
+  'alternative_names',
+  'etymology',
+  'definition',
+  'historical_context',
+  'verification_notes',
+  'first_translation', // Allow editing the translation name
+  'translation_language', // Allow editing translation language
+  'translation_notes'
 ];
+
+// Entry type colors for visual distinction
+export const ENTRY_TYPE_COLORS: Record<string, string> = {
+  'term': 'bg-blue-100 text-blue-800 border-blue-200',
+  'personal_name': 'bg-green-100 text-green-800 border-green-200',
+  'place_name': 'bg-purple-100 text-purple-800 border-purple-200',
+  'artwork_title': 'bg-pink-100 text-pink-800 border-pink-200',
+  'concept': 'bg-yellow-100 text-yellow-800 border-yellow-200',
+  '': 'bg-gray-100 text-gray-600 border-gray-200' // empty/default
+};
+
+// Language colors for visual distinction
+export const LANGUAGE_COLORS: Record<string, string> = {
+  'ag': 'bg-emerald-100 text-emerald-800 border-emerald-200', // Ancient Greek
+  'lat': 'bg-amber-100 text-amber-800 border-amber-200',      // Latin
+  'en': 'bg-sky-100 text-sky-800 border-sky-200',         // English
+  'de': 'bg-red-100 text-red-800 border-red-200',           // German
+  'fr': 'bg-indigo-100 text-indigo-800 border-indigo-200',   // French
+  'tu': 'bg-rose-100 text-rose-800 border-rose-200',        // Turkish
+  'gr': 'bg-teal-100 text-teal-800 border-teal-200',        // Modern Greek
+  '': 'bg-gray-100 text-gray-600 border-gray-200'           // empty/default
+};
 
 export const PAGE_SIZE_OPTIONS = [20, 50, 100] as const;
 export type PageSize = typeof PAGE_SIZE_OPTIONS[number];

@@ -1,15 +1,21 @@
+import { LANGUAGE_COLORS, ENTRY_TYPE_COLORS } from '../entries/data-table/column-config';
+
 interface BadgeProps {
   code: string;
   type?: 'lang' | 'type';
 }
 
 export default function Badge({ code, type = 'lang' }: BadgeProps) {
-  const className = type === 'lang'
-    ? `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-600 text-gray-100`
-    : `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800`;
+  let colorClass = '';
+  
+  if (type === 'lang') {
+    colorClass = LANGUAGE_COLORS[code] || LANGUAGE_COLORS[''];
+  } else {
+    colorClass = ENTRY_TYPE_COLORS[code] || ENTRY_TYPE_COLORS[''];
+  }
 
   return (
-    <span className={className}>
+    <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium border ${colorClass}`}>
       {code}
     </span>
   );

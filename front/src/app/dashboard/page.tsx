@@ -11,7 +11,8 @@ import Sidebar from '@/components/ui/sidebar';
 import LoadingSpinner from '@/components/ui/loading-spinner';
 import ErrorMessage from '@/components/ui/error-message';
 import StatCard from '@/components/ui/stat-card';
-import EntriesManagement from '@/components/entries/entries-management';
+import EntriesDataTable from '@/components/entries/entries-data-table';
+
 export default function DashboardPage() {
   const { user, logout, loading: authLoading } = useAuth();
   const [metadata, setMetadata] = useState<EntryMetadata | null>(null);
@@ -99,7 +100,7 @@ export default function DashboardPage() {
           </div>
         );
       case 'entries':
-        return <EntriesManagement />;
+        return <EntriesDataTable />;
       default:
         return null;
     }
