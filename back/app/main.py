@@ -6,19 +6,32 @@ from app.api.endpoints import users, entries, translations, comments, auth, tran
 app = FastAPI(
     title="Ancient Lexicon CN API",
     description=(
-        "A comprehensive dictionary for Greco-Roman name/term translations.\n\n"
-        "## Features\n"
+        "A comprehensive dictionary for Greco-Roman name/term translations with community features.\n\n"
+        "## Core Features\n"
         "* **Authentication**: Email-based 6-digit code verification\n"
-        "* **Entries**: Create and manage dictionary entries with full-text search\n"
-        "* **Trigram Search**: Fuzzy search using PostgreSQL trigrams\n"
-        "* **Translations**: Multi-language translation support\n"
-        "* **Comments**: Nested comments on entries\n"
-        "* **User Management**: Role-based access control\n\n"
+        "* **Dictionary Entries**: Create and manage entries with full-text search\n"
+        "* **Advanced Search**: Trigram fuzzy search using PostgreSQL\n"
+        "* **Multi-language Translations**: Community-driven translation system\n"
+        "* **Translation Voting**: Urban Dictionary-style upvote/downvote system\n"
+        "* **Preferred Translations**: Mark and prioritize best translations\n"
+        "* **Discussion System**: Nested comments on entries\n"
+        "* **Activity Metadata**: Dashboard data and activity feeds\n"
+        "* **User Management**: Role-based access control (admin/verified_translator/contributor)\n\n"
+        "## Community Features\n"
+        "* **Vote on Translations**: Each user can upvote or downvote translations once\n"
+        "* **Preferred Translations**: Marked translations appear first in results\n"
+        "* **Comments & Discussions**: Engage with community about entries\n"
+        "* **Activity Tracking**: See recent entries, translations, and discussions\n\n"
+        "## API Capabilities\n"
+        "* **Full-text Search**: Search across entry names and content\n"
+        "* **Fuzzy Search**: Find entries with approximate matching\n"
+        "* **Metadata Endpoints**: Get activity data for dashboards\n"
+        "* **Bulk Operations**: Efficient queries with relationship loading\n\n"
         "## Authentication\n"
         "1. POST `/api/v1/auth/login` with email to get verification code\n"
         "2. POST `/api/v1/auth/verify` with email and code to get access token\n"
         "3. Use Bearer token in Authorization header for authenticated endpoints\n\n"
-        "In development mode, use code `123456` for any email."
+        "**Development Mode**: Use code `123456` for any email address."
     ),
     version="1.0.0",
     docs_url="/docs",
@@ -97,15 +110,10 @@ async def root():
             "users": "/api/v1/users",
             "entries": "/api/v1/entries",
             "translations": "/api/v1/translations",
-            "comments": "/api/v1/comments"
+            "comments": "/api/v1/comments",
+            "votes": "/api/v1/translations/{translation_id}/vote",
+            "metadata": "/api/v1/entries/metadata"
         },
-        "features": [
-            "Email-based authentication",
-            "Full-text search",
-            "Trigram fuzzy search",
-            "Multi-language support",
-            "User comments"
-        ],
         "dev_info": {
             "dev_login_code": "123456",
             "environment": settings.environment
