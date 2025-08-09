@@ -1,8 +1,8 @@
-from sqlalchemy.orm import Session, joinedload
-from sqlalchemy import text, desc, asc
-from app.models.models import Entry, Translation
+from sqlalchemy.orm import Session, joinedload, selectinload
+from sqlalchemy import text, desc, asc, func
+from app.models.models import Entry, Translation, Comment
 from app.schemas.entries import EntryCreate, EntryUpdate
-from typing import Optional, List
+from typing import Optional, List, Dict, Any
 import uuid
 
 
@@ -11,12 +11,21 @@ def get_entry(db: Session, entry_id: str) -> Optional[Entry]:
 
 
 def get_entry_with_translations(db: Session, entry_id: str) -> Optional[Entry]:
-    return db.query(Entry).options(
-        joinedload(Entry.translations).order_by(
+    # Fetch entry and explicitly order translations
+    entry = db.query(Entry).filter(Entry.id == entry_id).first()
+    if entry:
+        # Manually load and order translations to ensure proper sorting
+        ordered_translations = db.query(Translation).filter(
+            Translation.entry_id == entry_id
+        ).order_by(
             desc(Translation.is_preferred), 
             asc(Translation.created_at)
-        )
-    ).filter(Entry.id == entry_id).first()
+        ).all()
+        
+        # Replace the lazy-loaded translations with our ordered list
+        entry.translations = ordered_translations
+        
+    return entry
 
 
 def get_entries(
@@ -34,10 +43,7 @@ def get_entries(
     
     if include_translations:
         query = query.options(
-            joinedload(Entry.translations).order_by(
-                desc(Translation.is_preferred), 
-                asc(Translation.created_at)
-            )
+            joinedload(Entry.translations)
         )
 
     if search:
@@ -66,7 +72,19 @@ def get_entries(
     if entry_type:
         query = query.filter(Entry.entry_type == entry_type)
 
-    return query.offset(skip).limit(limit).all()
+    entries = query.offset(skip).limit(limit).all()
+    
+    # Post-process to ensure proper translation ordering if needed
+    if include_translations:
+        for entry in entries:
+            # Re-order translations to ensure proper sorting
+            if hasattr(entry, 'translations') and entry.translations:
+                entry.translations = sorted(
+                    entry.translations,
+                    key=lambda t: (-t.is_preferred, t.created_at)
+                )
+    
+    return entries
 
 
 def search_entries_trigram(
@@ -102,15 +120,15 @@ def search_entries_trigram(
     # Convert results to Entry objects
     entries = []
     for row in result:
-        if include_translations:
-            entry = db.query(Entry).options(
-                joinedload(Entry.translations).order_by(
-                    desc(Translation.is_preferred), 
-                    asc(Translation.created_at)
-                )
-            ).filter(Entry.id == row[0]).first()
-        else:
-            entry = db.query(Entry).filter(Entry.id == row[0]).first()
+        entry = db.query(Entry).filter(Entry.id == row[0]).first()
+        if entry and include_translations:
+            # Manually load and order translations
+            entry.translations = db.query(Translation).filter(
+                Translation.entry_id == entry.id
+            ).order_by(
+                desc(Translation.is_preferred), 
+                asc(Translation.created_at)
+            ).all()
         if entry:
             entries.append(entry)
 
@@ -132,10 +150,7 @@ def search_entries_by_any_language(
     
     if include_translations:
         query = query.options(
-            joinedload(Entry.translations).order_by(
-                desc(Translation.is_preferred), 
-                asc(Translation.created_at)
-            )
+            joinedload(Entry.translations)
         )
     
     query = query.filter(
@@ -145,7 +160,18 @@ def search_entries_by_any_language(
         )
     ).params(lang_code=language_code)
 
-    return query.offset(skip).limit(limit).all()
+    entries = query.offset(skip).limit(limit).all()
+    
+    # Post-process to ensure proper translation ordering if needed
+    if include_translations:
+        for entry in entries:
+            if hasattr(entry, 'translations') and entry.translations:
+                entry.translations = sorted(
+                    entry.translations,
+                    key=lambda t: (-t.is_preferred, t.created_at)
+                )
+    
+    return entries
 
 
 def create_entry(db: Session, entry: EntryCreate, user_id: str) -> Entry:
@@ -209,3 +235,74 @@ def verify_entry(
     db.commit()
     db.refresh(db_entry)
     return db_entry
+
+
+def _get_translations_with_newest_comments(db: Session, limit: int = 20) -> List[Translation]:
+    """
+    Helper function to get translations with their newest comments efficiently.
+    Returns Translation objects with a dynamic 'newest_comment' attribute.
+    """
+    # Get the most recent comments with their entry_ids
+    recent_comments_query = db.query(
+        Comment.entry_id,
+        func.max(Comment.created_at).label('max_created_at')
+    ).group_by(Comment.entry_id).subquery()
+    
+    # Get actual comment objects for the most recent comments
+    newest_comments = db.query(Comment).join(
+        recent_comments_query,
+        (Comment.entry_id == recent_comments_query.c.entry_id) &
+        (Comment.created_at == recent_comments_query.c.max_created_at)
+    ).all()
+    
+    # Create a mapping of entry_id -> newest_comment
+    entry_comment_map = {comment.entry_id: comment for comment in newest_comments}
+    
+    # Get translations for entries that have comments, ordered by comment recency
+    translations_with_comments = db.query(Translation).filter(
+        Translation.entry_id.in_(entry_comment_map.keys())
+    ).order_by(
+        desc(Translation.updated_at)
+    ).limit(limit).all()
+    
+    # Attach the newest comment to each translation
+    for translation in translations_with_comments:
+        translation.newest_comment = entry_comment_map.get(translation.entry_id)
+        
+    return translations_with_comments
+
+
+def get_entries_metadata(db: Session) -> Dict[str, Any]:
+    """
+    Get comprehensive metadata about entries including:
+    1. Total number of entries
+    2. 20 newest updated entries
+    3. 20 entries with newest updated translations
+    4. 20 translations with newest comments
+    """
+    
+    # 1. Total number of entries
+    total_entries = db.query(Entry).count()
+    
+    # 2. 20 newest updated entries
+    newest_updated_entries = db.query(Entry).order_by(
+        desc(Entry.updated_at)
+    ).limit(20).all()
+    
+    # 3. 20 entries with newest updated translations
+    # Find entries that have translations, ordered by the newest translation update
+    entries_with_newest_translations = db.query(Entry).join(Translation).options(
+        joinedload(Entry.translations)
+    ).order_by(
+        desc(Translation.updated_at)
+    ).distinct().limit(20).all()
+    
+    # 4. 20 translations with newest comments
+    enriched_translations = _get_translations_with_newest_comments(db, limit=20)
+    
+    return {
+        'total_entries': total_entries,
+        'newest_updated_entries': newest_updated_entries,
+        'entries_with_newest_translations': entries_with_newest_translations,
+        'translations_with_newest_comments': enriched_translations
+    }

@@ -55,6 +55,7 @@ class EntryResponse(EntryBase):
 
 
 from app.schemas.translations import TranslationResponse, TranslationWithUserVote
+from app.schemas.comments import CommentResponse
 
 class EntryWithTranslations(EntryResponse):
     translations: List[TranslationResponse] = []
@@ -66,6 +67,26 @@ class EntryWithTranslations(EntryResponse):
 class EntryWithTranslationsAndVotes(EntryResponse):
     """Entry with translations including user vote information"""
     translations: List[TranslationWithUserVote] = []
+
+    class Config:
+        from_attributes = True
+
+
+# Metadata schemas
+class TranslationWithComment(TranslationResponse):
+    """Translation with its newest comment"""
+    newest_comment: Optional[CommentResponse] = None
+
+    class Config:
+        from_attributes = True
+
+
+class EntryMetadata(BaseModel):
+    """Comprehensive metadata about entries and activity"""
+    total_entries: int
+    newest_updated_entries: List[EntryResponse]
+    entries_with_newest_translations: List[EntryWithTranslations]
+    translations_with_newest_comments: List[TranslationWithComment]
 
     class Config:
         from_attributes = True

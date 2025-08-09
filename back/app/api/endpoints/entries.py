@@ -4,7 +4,12 @@ from typing import List, Optional
 
 from app.core.database import get_db
 from app.crud import entries as crud_entries
-from app.schemas.entries import EntryCreate, EntryUpdate, EntryResponse, EntryWithTranslations
+from app.schemas.entries import (
+    EntryCreate, EntryUpdate, EntryResponse, EntryWithTranslations,
+    EntryMetadata, TranslationWithComment
+)
+from app.schemas.translations import TranslationResponse
+from app.schemas.comments import CommentResponse
 from app.schemas.auth import UserResponse
 from app.api.endpoints.auth import get_current_user, get_current_admin_user
 
@@ -45,7 +50,7 @@ async def list_entries(
         entry_type=entry_type,
         include_translations=include_translations
     )
-    
+
     if include_translations:
         return [EntryWithTranslations.model_validate(entry) for entry in entries]
     else:
@@ -78,7 +83,7 @@ async def trigram_search_entries(
         similarity_threshold=threshold,
         include_translations=include_translations
     )
-    
+
     if include_translations:
         return [EntryWithTranslations.model_validate(entry) for entry in entries]
     else:
@@ -102,16 +107,74 @@ async def search_entries_by_any_language(
         db, language_code=language_code, skip=skip, limit=limit,
         include_translations=include_translations
     )
-    
+
     if include_translations:
         return [EntryWithTranslations.model_validate(entry) for entry in entries]
     else:
         return [EntryResponse.model_validate(entry) for entry in entries]
 
 
+def _map_translation_with_comment(translation) -> TranslationWithComment:
+    """
+    Helper function to map Translation model with dynamic comment to TranslationWithComment schema.
+    """
+    # Convert translation to dict first
+    translation_data = {
+        'id': translation.id,
+        'entry_id': translation.entry_id,
+        'language_code': translation.language_code,
+        'translated_name': translation.translated_name,
+        'notes': translation.notes,
+        'source_id': translation.source_id,
+        'is_preferred': translation.is_preferred,
+        'upvotes': translation.upvotes,
+        'downvotes': translation.downvotes,
+        'created_by': translation.created_by,
+        'updated_by': translation.updated_by,
+        'created_at': translation.created_at,
+        'updated_at': translation.updated_at,
+        'newest_comment': CommentResponse.model_validate(translation.newest_comment) if hasattr(translation, 'newest_comment') and translation.newest_comment else None
+    }
+
+    return TranslationWithComment.model_validate(translation_data)
+
+
+@router.get("/metadata", response_model=EntryMetadata)
+async def get_entries_metadata(db: Session = Depends(get_db)):
+    """
+    Get comprehensive metadata about entries including:
+    - Total number of entries
+    - 20 newest updated entries
+    - 20 entries with newest updated translations
+    - 20 translations with newest comments
+
+    This endpoint provides overview data useful for dashboards and activity feeds.
+    """
+    metadata = crud_entries.get_entries_metadata(db)
+
+    # Convert the raw data to proper schema models
+    processed_metadata = EntryMetadata(
+        total_entries=metadata['total_entries'],
+        newest_updated_entries=[
+            EntryResponse.model_validate(entry)
+            for entry in metadata['newest_updated_entries']
+        ],
+        entries_with_newest_translations=[
+            EntryWithTranslations.model_validate(entry)
+            for entry in metadata['entries_with_newest_translations']
+        ],
+        translations_with_newest_comments=[
+            _map_translation_with_comment(translation)
+            for translation in metadata['translations_with_newest_comments']
+        ]
+    )
+
+    return processed_metadata
+
+
 @router.get("/{entry_id}", response_model=EntryWithTranslations)
 async def get_entry(
-    entry_id: str, 
+    entry_id: str,
     include_translations: bool = Query(True, description="Include translations in response"),
     db: Session = Depends(get_db)
 ):
