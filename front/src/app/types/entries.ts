@@ -1,12 +1,18 @@
 export interface Entry {
   id: string;
   primary_name: string;
+  original_script?: string;
   language_code: string;
-  original_name?: string;
+  entry_type?: string;
   alternative_names?: string[];
   other_language_codes: string[];
-  entry_type?: string;
-  description?: string;
+  etymology?: string;
+  definition?: string;
+  historical_context?: string;
+  created_by: string;
+  updated_by: string;
+  is_verified: boolean;
+  verification_notes?: string;
   created_at: string;
   updated_at: string;
 }
@@ -17,6 +23,8 @@ export interface Translation {
   language_code: string;
   translated_name: string;
   notes?: string;
+  created_by: string;
+  updated_by: string;
   is_preferred: boolean;
   upvotes: number;
   downvotes: number;

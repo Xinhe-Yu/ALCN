@@ -13,8 +13,8 @@ export default function EntryCard({ entry }: EntryCardProps) {
         <Badge code={entry.language_code} />
       </div>
 
-      {entry.description && (
-        <p className="text-gray-600 text-sm mb-4 line-clamp-3">{entry.description}</p>
+      {entry.definition && (
+        <p className="text-gray-600 text-sm mb-4 line-clamp-3">{entry.definition}</p>
       )}
 
       {entry.translations && entry.translations.length > 0 && (

@@ -1,11 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { 
-  HomeIcon, 
+import {
+  HomeIcon,
   TableCellsIcon,
   Bars3Icon,
-  XMarkIcon 
+  XMarkIcon
 } from '@heroicons/react/24/outline';
 
 interface SidebarProps {
@@ -56,9 +56,8 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
 
       {/* Sidebar */}
       <div
-        className={`fixed inset-y-0 left-0 z-30 w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${
-          isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
+        className={`fixed inset-y-0 left-0 z-30 w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}
       >
         <div className="flex flex-col h-full pt-20 lg:pt-6">
           {/* Sidebar header */}
@@ -76,16 +75,14 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
                 <button
                   key={tab.id}
                   onClick={() => handleTabClick(tab.id)}
-                  className={`w-full flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                    isActive
-                      ? 'bg-amber-50 text-amber-700 border-r-2 border-amber-500'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                  }`}
+                  className={`w-full flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${isActive
+                    ? 'bg-amber-50 text-amber-700 border-r-2 border-amber-500'
+                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                    }`}
                 >
                   <Icon
-                    className={`mr-3 h-5 w-5 flex-shrink-0 ${
-                      isActive ? 'text-amber-500' : 'text-gray-400'
-                    }`}
+                    className={`mr-3 h-5 w-5 flex-shrink-0 ${isActive ? 'text-amber-500' : 'text-gray-400'
+                      }`}
                   />
                   {tab.name}
                 </button>

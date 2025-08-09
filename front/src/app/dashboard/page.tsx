@@ -106,13 +106,13 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="h-screen bg-gray-50 flex flex-col">
       <Navbar user={user} onLogout={logout} />
 
-      <div className="flex h-screen">
+      <div className="flex flex-1">
         <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
 
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1">
           {renderTabContent()}
         </main>
       </div>

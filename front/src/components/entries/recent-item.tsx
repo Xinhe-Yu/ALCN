@@ -28,14 +28,14 @@ export default function RecentItem({ entry, type = 'entry' }: RecentItemProps) {
           <span className="font-medium text-gray-900">{entry.primary_name}</span>
           <Badge code={entry.language_code} />
           {entry.entry_type && <Badge code={entry.entry_type} type="type" />}
-          {entry.original_name}
+          {entry.original_script}
         </div>
         <div className="text-sm text-gray-500">
           {formatDate(entry.updated_at)}
         </div>
       </div>
       {type === 'entry' && (
-        <p className="text-gray-600 text-sm mt-1">{entry.description}</p>
+        <p className="text-gray-600 text-sm mt-1">{entry.definition}</p>
       )}
 
 
