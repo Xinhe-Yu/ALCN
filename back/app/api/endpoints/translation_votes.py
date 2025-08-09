@@ -27,7 +27,7 @@ async def vote_on_translation(
     db_vote = crud_votes.create_or_update_vote(
         db, translation_id=translation_id, user_id=current_user.id, vote=vote
     )
-    return VoteResponse.from_orm(db_vote)
+    return VoteResponse.model_validate(db_vote)
 
 
 @router.delete("/translations/{translation_id}/vote")
@@ -69,7 +69,7 @@ async def get_user_vote(
             detail="No vote found for this translation"
         )
     
-    return VoteResponse.from_orm(vote)
+    return VoteResponse.model_validate(vote)
 
 
 @router.post("/translations/{translation_id}/recalculate-votes")

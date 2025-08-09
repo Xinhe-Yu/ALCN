@@ -33,7 +33,7 @@ async def get_user(
             detail="User not found"
         )
 
-    return UserResponse.from_orm(user)
+    return UserResponse.model_validate(user)
 
 
 @router.put("/{user_id}", response_model=UserResponse)
@@ -67,7 +67,7 @@ async def update_user(
             detail="User not found"
         )
 
-    return UserResponse.from_orm(updated_user)
+    return UserResponse.model_validate(updated_user)
 
 
 @router.get("/", response_model=List[UserResponse])
@@ -75,10 +75,10 @@ async def list_users(
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(get_db),
-    current_user: AuthUserResponse = Depends(get_current_admin_user)
+    _: AuthUserResponse = Depends(get_current_admin_user)  # Used for auth check only
 ):
     """
     List all users. Admin only.
     """
     users = db.query(crud_users.User).offset(skip).limit(limit).all()
-    return [UserResponse.from_orm(user) for user in users]
+    return [UserResponse.model_validate(user) for user in users]

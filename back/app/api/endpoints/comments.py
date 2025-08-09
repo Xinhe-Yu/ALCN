@@ -29,7 +29,7 @@ async def get_entry_comments(entry_id: str, db: Session = Depends(get_db)):
     comments = db.query(Comment).filter(
         Comment.entry_id == entry_id
     ).order_by(Comment.created_at).all()
-    return [CommentResponse.from_orm(comment) for comment in comments]
+    return [CommentResponse.model_validate(comment) for comment in comments]
 
 
 @router.post("/", response_model=CommentResponse)
@@ -72,7 +72,7 @@ async def create_comment(
     db.commit()
     db.refresh(db_comment)
 
-    return CommentResponse.from_orm(db_comment)
+    return CommentResponse.model_validate(db_comment)
 
 
 @router.put("/{comment_id}", response_model=CommentResponse)
@@ -116,7 +116,7 @@ async def update_comment(
     db.commit()
     db.refresh(db_comment)
 
-    return CommentResponse.from_orm(db_comment)
+    return CommentResponse.model_validate(db_comment)
 
 
 @router.delete("/{comment_id}")

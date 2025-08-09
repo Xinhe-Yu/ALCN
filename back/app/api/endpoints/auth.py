@@ -114,7 +114,7 @@ async def get_current_user(
     if user is None:
         raise credentials_exception
 
-    return UserResponse.from_orm(user)
+    return UserResponse.model_validate(user)
 
 
 @router.get("/me", response_model=UserResponse)

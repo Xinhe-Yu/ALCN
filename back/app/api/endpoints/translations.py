@@ -31,7 +31,7 @@ async def get_entry_translations(entry_id: str, db: Session = Depends(get_db)):
         )
 
     translations = db.query(Translation).filter(Translation.entry_id == entry_id).all()
-    return [TranslationResponse.from_orm(translation) for translation in translations]
+    return [TranslationResponse.model_validate(translation) for translation in translations]
 
 
 @router.post("/", response_model=TranslationResponse)
@@ -78,7 +78,7 @@ async def create_translation(
             detail="Error creating translation"
         )
 
-    return TranslationResponse.from_orm(db_translation)
+    return TranslationResponse.model_validate(db_translation)
 
 
 @router.put("/{translation_id}", response_model=TranslationResponse)
@@ -129,7 +129,7 @@ async def update_translation(
             detail="Error updating translation"
         )
 
-    return TranslationResponse.from_orm(db_translation)
+    return TranslationResponse.model_validate(db_translation)
 
 
 @router.delete("/{translation_id}")

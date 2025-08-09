@@ -47,9 +47,9 @@ async def list_entries(
     )
     
     if include_translations:
-        return [EntryWithTranslations.from_orm(entry) for entry in entries]
+        return [EntryWithTranslations.model_validate(entry) for entry in entries]
     else:
-        return [EntryResponse.from_orm(entry) for entry in entries]
+        return [EntryResponse.model_validate(entry) for entry in entries]
 
 
 @router.get("/search/trigram", response_model=List[EntryWithTranslations])
@@ -80,9 +80,9 @@ async def trigram_search_entries(
     )
     
     if include_translations:
-        return [EntryWithTranslations.from_orm(entry) for entry in entries]
+        return [EntryWithTranslations.model_validate(entry) for entry in entries]
     else:
-        return [EntryResponse.from_orm(entry) for entry in entries]
+        return [EntryResponse.model_validate(entry) for entry in entries]
 
 
 @router.get("/search/by-language/{language_code}", response_model=List[EntryWithTranslations])
@@ -104,9 +104,9 @@ async def search_entries_by_any_language(
     )
     
     if include_translations:
-        return [EntryWithTranslations.from_orm(entry) for entry in entries]
+        return [EntryWithTranslations.model_validate(entry) for entry in entries]
     else:
-        return [EntryResponse.from_orm(entry) for entry in entries]
+        return [EntryResponse.model_validate(entry) for entry in entries]
 
 
 @router.get("/{entry_id}", response_model=EntryWithTranslations)
@@ -125,7 +125,7 @@ async def get_entry(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Entry not found"
             )
-        return EntryWithTranslations.from_orm(entry)
+        return EntryWithTranslations.model_validate(entry)
     else:
         entry = crud_entries.get_entry(db, entry_id=entry_id)
         if not entry:
@@ -133,7 +133,7 @@ async def get_entry(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Entry not found"
             )
-        return EntryResponse.from_orm(entry)
+        return EntryResponse.model_validate(entry)
 
 
 @router.post("/", response_model=EntryResponse)
@@ -148,7 +148,7 @@ async def create_entry(
     created_entry = crud_entries.create_entry(
         db, entry=entry, user_id=current_user.id
     )
-    return EntryResponse.from_orm(created_entry)
+    return EntryResponse.model_validate(created_entry)
 
 
 @router.put("/{entry_id}", response_model=EntryResponse)
@@ -179,7 +179,7 @@ async def update_entry(
     updated_entry = crud_entries.update_entry(
         db, entry_id=entry_id, entry_update=entry_update, user_id=current_user.id
     )
-    return EntryResponse.from_orm(updated_entry)
+    return EntryResponse.model_validate(updated_entry)
 
 
 @router.delete("/{entry_id}")
@@ -235,4 +235,4 @@ async def verify_entry(
             detail="Entry not found"
         )
 
-    return EntryResponse.from_orm(verified_entry)
+    return EntryResponse.model_validate(verified_entry)
