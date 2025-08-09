@@ -1,10 +1,9 @@
-import type { Entry } from '@/app/types';
-import { formatDate } from '@/lib/utils';
-import Badge from '../ui/badge';
+import type { EntryWithTranslations } from '@/app/types';
+import RecentItem from './recent-item';
 
 interface EntryListProps {
   title: string;
-  entries: Entry[];
+  entries: EntryWithTranslations[];
 }
 
 export default function EntryList({ title, entries }: EntryListProps) {
@@ -16,16 +15,10 @@ export default function EntryList({ title, entries }: EntryListProps) {
         </h3>
         <div className="space-y-2">
           {entries.map((entry) => (
-            <div key={entry.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
-              <div className="flex items-center space-x-2">
-                <span className="font-medium text-gray-900">{entry.primary_name}</span>
-                <Badge code={entry.language_code} />
-                {entry.entry_type && <Badge code={entry.entry_type} type="type" />}
-              </div>
-              <div className="text-sm text-gray-500">
-                {formatDate(entry.updated_at)}
-              </div>
-            </div>
+            <RecentItem
+              key={entry.id}
+              entry={entry}
+            />
           ))}
         </div>
       </div>

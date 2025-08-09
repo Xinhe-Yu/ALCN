@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { entriesService } from '@/lib/services';
-import type { EntryMetadata, EntryWithTranslations } from '@/app/types';
+import { Pagination, type EntryMetadata, type EntryWithTranslations } from '@/app/types';
 import { useAuth } from '@/lib/context/AuthContext';
 import { useDebounce } from '@/lib/hooks/useDebounce';
 import { MagnifyingGlassIcon, ClockIcon, ChatBubbleLeftIcon } from '@heroicons/react/24/outline';
@@ -25,6 +25,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [searchLoading, setSearchLoading] = useState(false);
   const [error, setError] = useState('');
+  const [pagination, setPagination] = useState<Pagination | null>(null);
 
   // Debounce search query with 300ms delay
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
@@ -57,11 +58,17 @@ export default function Home() {
 
       setSearchLoading(true);
       try {
-        const results = await entriesService.searchTrigram(debouncedSearchQuery.trim(), {
-          limit: 20,
-          threshold: 0.1
+        const results = await entriesService.getEntries({
+          fuzzy_search: debouncedSearchQuery.trim(),
         });
-        setSearchResults(results);
+        setSearchResults(results.items);
+        setPagination({
+          total: results.total,
+          skip: results.skip,
+          limit: results.limit,
+          page: results.page,
+          pages: results.pages,
+        });
       } catch (err) {
         console.error('Search failed:', err);
         setSearchResults([]);

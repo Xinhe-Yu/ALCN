@@ -1,7 +1,7 @@
 // CRUD operations and pagination interfaces
 
 // Language codes supported in the system
-export type LanguageCode = 'ag' | 'lat' | 'en' | 'de' | 'fr' | 'tu';
+export type LanguageCode = 'ag' | 'lat' | 'en' | 'de' | 'fr' | 'tu' | 'gr';
 
 // Language code display names
 export const LANGUAGE_OPTIONS: Record<LanguageCode, string> = {
@@ -11,18 +11,17 @@ export const LANGUAGE_OPTIONS: Record<LanguageCode, string> = {
   de: 'German',
   fr: 'French',
   tu: 'Turkish',
+  gr: 'Greek',
 };
 
 // Entry types
-export type EntryType = 'name' | 'place' | 'term' | 'concept' | 'title' | 'other';
-
+export type EntryType = 'term' | 'personal_name' | 'place_name' | 'artwork_title' | 'concept';
 export const ENTRY_TYPE_OPTIONS: Record<EntryType, string> = {
-  name: 'Personal Name',
-  place: 'Place Name',
+  personal_name: 'Personal Name',
+  place_name: 'Place Name',
   term: 'Term',
   concept: 'Concept',
-  title: 'Title',
-  other: 'Other',
+  artwork_title: 'Artwork Title',
 };
 
 // Pagination configuration
@@ -48,7 +47,7 @@ export interface EntryTableRow {
   primary_name: string;
   description?: string;
   language_code: LanguageCode;
-  entry_type?: EntryType;
+  entry_type: EntryType | null; // null represents "other"
   created_at: string;
   updated_at: string;
   // First translation data
@@ -68,7 +67,7 @@ export interface GetEntriesRequest {
   limit?: PageSize;
   search?: string;
   language_code?: LanguageCode;
-  entry_type?: EntryType;
+  entry_type?: EntryType | null; // null for any type
   sort_by?: string;
   sort_direction?: 'asc' | 'desc';
 }
@@ -82,7 +81,7 @@ export interface CreateEntryRequest {
   primary_name: string;
   description?: string;
   language_code: LanguageCode;
-  entry_type?: EntryType;
+  entry_type: EntryType | null; // null for "other"
 }
 
 export interface UpdateEntryRequest {
@@ -90,14 +89,15 @@ export interface UpdateEntryRequest {
   primary_name?: string;
   description?: string;
   language_code?: LanguageCode;
-  entry_type?: EntryType;
+  entry_type?: EntryType | null; // null for "other"
 }
 
 export interface BulkUpdateRequest {
   entry_ids: number[];
   updates: {
     language_code?: LanguageCode;
-    entry_type?: EntryType;
+    entry_type?: EntryType | null; // null for "other"
+    is_verified?: boolean;
   };
 }
 
@@ -116,7 +116,7 @@ export interface SelectionState {
 export interface FilterState {
   search: string;
   language_code?: LanguageCode;
-  entry_type?: EntryType;
+  entry_type?: EntryType | null; // null for "other"
 }
 
 // Table state

@@ -6,7 +6,7 @@ from app.core.database import get_db
 from app.crud import entries as crud_entries
 from app.schemas.entries import (
     EntryCreate, EntryUpdate, EntryResponse, EntryWithTranslations,
-    EntryMetadata, TranslationWithComment
+    EntryMetadata, PaginatedEntries, TranslationWithComment, BulkEntryUpdateRequest
 )
 from app.schemas.translations import TranslationResponse
 from app.schemas.comments import CommentResponse
@@ -16,7 +16,7 @@ from app.api.endpoints.auth import get_current_user, get_current_admin_user
 router = APIRouter()
 
 
-@router.get("/", response_model=List[EntryWithTranslations])
+@router.get("/", response_model=PaginatedEntries)
 async def list_entries(
     skip: int = 0,
     limit: int = 100,
@@ -32,6 +32,8 @@ async def list_entries(
     ),
     entry_type: Optional[str] = Query(None, description="Filter by entry type"),
     include_translations: bool = Query(True, description="Include translations in response"),
+    sorted_by: Optional[str] = Query(None, description="Sort by field"),
+    sort_direction: Optional[str] = Query("asc", description="Sort direction: 'asc' or 'desc'"),
     db: Session = Depends(get_db)
 ):
     """
@@ -39,7 +41,7 @@ async def list_entries(
     Supports both full-text search and fuzzy trigram search.
     Can filter by primary language_code or other_language_codes.
     """
-    entries = crud_entries.get_entries(
+    result = crud_entries.get_entries(
         db,
         skip=skip,
         limit=limit,
@@ -48,71 +50,17 @@ async def list_entries(
         language_code=language_code,
         other_language_code=other_language_code,
         entry_type=entry_type,
+        sorted_by=sorted_by,
+        sort_direction=sort_direction,
         include_translations=include_translations
     )
 
     if include_translations:
-        return [EntryWithTranslations.model_validate(entry) for entry in entries]
+        result["items"] = [EntryWithTranslations.model_validate(entry) for entry in result["items"]]
     else:
-        return [EntryResponse.model_validate(entry) for entry in entries]
+        result["items"] = [EntryResponse.model_validate(entry) for entry in result["items"]]
 
-
-@router.get("/search/trigram", response_model=List[EntryWithTranslations])
-async def trigram_search_entries(
-    q: str = Query(..., description="Search term for trigram similarity"),
-    skip: int = 0,
-    limit: int = 100,
-    threshold: float = Query(
-        0.3,
-        description="Similarity threshold (0.0-1.0)",
-        ge=0.0,
-        le=1.0
-    ),
-    include_translations: bool = Query(True, description="Include translations in response"),
-    db: Session = Depends(get_db)
-):
-    """
-    Search entries using trigram similarity on primary_name.
-    Returns results ordered by similarity score (highest first).
-    """
-    entries = crud_entries.search_entries_trigram(
-        db,
-        search_term=q,
-        skip=skip,
-        limit=limit,
-        similarity_threshold=threshold,
-        include_translations=include_translations
-    )
-
-    if include_translations:
-        return [EntryWithTranslations.model_validate(entry) for entry in entries]
-    else:
-        return [EntryResponse.model_validate(entry) for entry in entries]
-
-
-@router.get("/search/by-language/{language_code}", response_model=List[EntryWithTranslations])
-async def search_entries_by_any_language(
-    language_code: str,
-    skip: int = 0,
-    limit: int = 100,
-    include_translations: bool = Query(True, description="Include translations in response"),
-    db: Session = Depends(get_db)
-):
-    """
-    Search entries by language code in both primary language_code and
-    other_language_codes. Useful for finding all entries associated with
-    a specific language.
-    """
-    entries = crud_entries.search_entries_by_any_language(
-        db, language_code=language_code, skip=skip, limit=limit,
-        include_translations=include_translations
-    )
-
-    if include_translations:
-        return [EntryWithTranslations.model_validate(entry) for entry in entries]
-    else:
-        return [EntryResponse.model_validate(entry) for entry in entries]
-
+    return result
 
 def _map_translation_with_comment(translation) -> TranslationWithComment:
     """
@@ -156,7 +104,7 @@ async def get_entries_metadata(db: Session = Depends(get_db)):
     processed_metadata = EntryMetadata(
         total_entries=metadata['total_entries'],
         newest_updated_entries=[
-            EntryResponse.model_validate(entry)
+            EntryWithTranslations.model_validate(entry)
             for entry in metadata['newest_updated_entries']
         ],
         entries_with_newest_translations=[
@@ -212,6 +160,37 @@ async def create_entry(
         db, entry=entry, user_id=current_user.id
     )
     return EntryResponse.model_validate(created_entry)
+
+@router.put("/bulk", response_model=List[EntryResponse])
+async def bulk_update_entries(
+    payload: BulkEntryUpdateRequest,
+    db: Session = Depends(get_db),
+    current_user: UserResponse = Depends(get_current_user)
+):
+    """
+    Bulk update entries' language_code or entry_type.
+    Admin or verified translator only.
+    """
+    if not payload.entry_ids:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No entry IDs provided."
+        )
+
+    updated_entries = crud_entries.bulk_update_entries(
+        db=db,
+        entry_ids=payload.entry_ids,
+        updates=payload.updates,
+        verify_user_id=None if current_user.role in ["admin", "verified_translator"] else current_user.id
+    )
+
+    if not updated_entries:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No matching entries found."
+        )
+
+    return [EntryResponse.model_validate(entry) for entry in updated_entries]
 
 
 @router.put("/{entry_id}", response_model=EntryResponse)

@@ -40,7 +40,6 @@ class EntryUpdate(BaseModel):
     historical_context: Optional[str] = None
     verification_notes: Optional[str] = None
 
-
 class EntryResponse(EntryBase):
     id: UUID
     created_by: UUID
@@ -54,6 +53,15 @@ class EntryResponse(EntryBase):
         from_attributes = True
 
 
+class BulkEntryUpdateRequest(BaseModel):
+    entry_ids: List[UUID]
+    updates: EntryUpdate
+
+class EntryUpdates(BaseModel):
+    language_code: Optional[str] = None
+    entry_type: Optional[EntryType] = None
+    is_verified: Optional[bool] = None
+
 from app.schemas.translations import TranslationResponse, TranslationWithUserVote
 from app.schemas.comments import CommentResponse
 
@@ -63,6 +71,13 @@ class EntryWithTranslations(EntryResponse):
     class Config:
         from_attributes = True
 
+class PaginatedEntries(BaseModel):
+    total: int
+    skip: int
+    limit: int
+    page: int
+    pages: int
+    items: List[EntryWithTranslations]
 
 class EntryWithTranslationsAndVotes(EntryResponse):
     """Entry with translations including user vote information"""
@@ -84,7 +99,7 @@ class TranslationWithComment(TranslationResponse):
 class EntryMetadata(BaseModel):
     """Comprehensive metadata about entries and activity"""
     total_entries: int
-    newest_updated_entries: List[EntryResponse]
+    newest_updated_entries: List[EntryWithTranslations]
     entries_with_newest_translations: List[EntryWithTranslations]
     translations_with_newest_comments: List[TranslationWithComment]
 
