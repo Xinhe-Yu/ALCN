@@ -2,7 +2,7 @@ from pydantic import BaseModel, EmailStr
 from typing import Optional, Dict, Any
 from datetime import datetime
 from enum import Enum
-
+from uuid import UUID
 
 class UserRole(str, Enum):
     ADMIN = "admin"
@@ -27,7 +27,7 @@ class UserUpdate(BaseModel):
 
 
 class UserResponse(BaseModel):
-    id: str
+    id: UUID
     email: str
     role: str
     is_activated: bool

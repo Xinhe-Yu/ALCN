@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional, Dict, Any
 from datetime import datetime
-
+from uuid import UUID
 
 class CommentBase(BaseModel):
     content: str
@@ -17,9 +17,9 @@ class CommentUpdate(BaseModel):
 
 
 class CommentResponse(CommentBase):
-    id: str
-    entry_id: str
-    user_id: str
+    id: UUID
+    entry_id: UUID
+    user_id: UUID
     is_edited: bool
     edit_history: Optional[Dict[str, Any]] = None
     created_at: datetime

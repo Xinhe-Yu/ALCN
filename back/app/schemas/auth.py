@@ -1,5 +1,6 @@
 from pydantic import BaseModel, EmailStr
 from typing import Optional
+from uuid import UUID
 
 
 class LoginRequest(BaseModel):
@@ -21,7 +22,7 @@ class TokenData(BaseModel):
 
 
 class UserResponse(BaseModel):
-    id: str
+    id: UUID
     email: str
     role: str
     is_activated: bool
