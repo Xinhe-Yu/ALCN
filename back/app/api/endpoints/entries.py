@@ -4,14 +4,14 @@ from typing import List, Optional
 
 from app.core.database import get_db
 from app.crud import entries as crud_entries
-from app.schemas.entries import EntryCreate, EntryUpdate, EntryResponse
+from app.schemas.entries import EntryCreate, EntryUpdate, EntryResponse, EntryWithTranslations
 from app.schemas.auth import UserResponse
 from app.api.endpoints.auth import get_current_user, get_current_admin_user
 
 router = APIRouter()
 
 
-@router.get("/", response_model=List[EntryResponse])
+@router.get("/", response_model=List[EntryWithTranslations])
 async def list_entries(
     skip: int = 0,
     limit: int = 100,
@@ -26,6 +26,7 @@ async def list_entries(
         None, description="Filter by other language codes"
     ),
     entry_type: Optional[str] = Query(None, description="Filter by entry type"),
+    include_translations: bool = Query(True, description="Include translations in response"),
     db: Session = Depends(get_db)
 ):
     """
@@ -41,12 +42,17 @@ async def list_entries(
         fuzzy_search=fuzzy_search,
         language_code=language_code,
         other_language_code=other_language_code,
-        entry_type=entry_type
+        entry_type=entry_type,
+        include_translations=include_translations
     )
-    return [EntryResponse.from_orm(entry) for entry in entries]
+    
+    if include_translations:
+        return [EntryWithTranslations.from_orm(entry) for entry in entries]
+    else:
+        return [EntryResponse.from_orm(entry) for entry in entries]
 
 
-@router.get("/search/trigram", response_model=List[EntryResponse])
+@router.get("/search/trigram", response_model=List[EntryWithTranslations])
 async def trigram_search_entries(
     q: str = Query(..., description="Search term for trigram similarity"),
     skip: int = 0,
@@ -57,6 +63,7 @@ async def trigram_search_entries(
         ge=0.0,
         le=1.0
     ),
+    include_translations: bool = Query(True, description="Include translations in response"),
     db: Session = Depends(get_db)
 ):
     """
@@ -68,16 +75,22 @@ async def trigram_search_entries(
         search_term=q,
         skip=skip,
         limit=limit,
-        similarity_threshold=threshold
+        similarity_threshold=threshold,
+        include_translations=include_translations
     )
-    return [EntryResponse.from_orm(entry) for entry in entries]
+    
+    if include_translations:
+        return [EntryWithTranslations.from_orm(entry) for entry in entries]
+    else:
+        return [EntryResponse.from_orm(entry) for entry in entries]
 
 
-@router.get("/search/by-language/{language_code}", response_model=List[EntryResponse])
+@router.get("/search/by-language/{language_code}", response_model=List[EntryWithTranslations])
 async def search_entries_by_any_language(
     language_code: str,
     skip: int = 0,
     limit: int = 100,
+    include_translations: bool = Query(True, description="Include translations in response"),
     db: Session = Depends(get_db)
 ):
     """
@@ -86,24 +99,41 @@ async def search_entries_by_any_language(
     a specific language.
     """
     entries = crud_entries.search_entries_by_any_language(
-        db, language_code=language_code, skip=skip, limit=limit
+        db, language_code=language_code, skip=skip, limit=limit,
+        include_translations=include_translations
     )
-    return [EntryResponse.from_orm(entry) for entry in entries]
+    
+    if include_translations:
+        return [EntryWithTranslations.from_orm(entry) for entry in entries]
+    else:
+        return [EntryResponse.from_orm(entry) for entry in entries]
 
 
-@router.get("/{entry_id}", response_model=EntryResponse)
-async def get_entry(entry_id: str, db: Session = Depends(get_db)):
+@router.get("/{entry_id}", response_model=EntryWithTranslations)
+async def get_entry(
+    entry_id: str, 
+    include_translations: bool = Query(True, description="Include translations in response"),
+    db: Session = Depends(get_db)
+):
     """
     Get entry by ID.
     """
-    entry = crud_entries.get_entry(db, entry_id=entry_id)
-    if not entry:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Entry not found"
-        )
-
-    return EntryResponse.from_orm(entry)
+    if include_translations:
+        entry = crud_entries.get_entry_with_translations(db, entry_id=entry_id)
+        if not entry:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Entry not found"
+            )
+        return EntryWithTranslations.from_orm(entry)
+    else:
+        entry = crud_entries.get_entry(db, entry_id=entry_id)
+        if not entry:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Entry not found"
+            )
+        return EntryResponse.from_orm(entry)
 
 
 @router.post("/", response_model=EntryResponse)

@@ -65,6 +65,7 @@ class User(Base):
     )
     entry_history = relationship("EntryHistory", back_populates="changed_by_user")
     translated_sources = relationship("Source", back_populates="translator")
+    translation_votes = relationship("TranslationVote", back_populates="user")
 
 
 class VerificationCode(Base):
@@ -130,7 +131,7 @@ class Entry(Base):
     __table_args__ = (
         CheckConstraint(
             "entry_type IN ('term', 'personal_name', 'place_name', "
-            "'artwork_title', 'concept')",
+            "'artwork_title', 'concept', '')",
             name="entries_entry_type_check"
         ),
         Index('idx_entries_primary_name', 'primary_name'),
@@ -159,7 +160,11 @@ class Entry(Base):
     updater = relationship(
         "User", foreign_keys=[updated_by], back_populates="updated_entries"
     )
-    translations = relationship("Translation", back_populates="entry")
+    translations = relationship(
+        "Translation", 
+        back_populates="entry",
+        order_by="Translation.is_preferred.desc(), Translation.created_at.asc()"
+    )
     comments = relationship("Comment", back_populates="entry")
     source_relationships = relationship(
         "EntryRelationship", foreign_keys="EntryRelationship.source_entry_id",
@@ -184,6 +189,9 @@ class Translation(Base):
     translated_name = Column(String(500), nullable=False)
     notes = Column(Text)
     source_id = Column(UUID(as_uuid=True), ForeignKey("sources.id"))
+    is_preferred = Column(Boolean, default=False, server_default="false")
+    upvotes = Column(Integer, default=0, server_default="0")
+    downvotes = Column(Integer, default=0, server_default="0")
     created_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     updated_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -198,6 +206,7 @@ class Translation(Base):
         Index('idx_translations_language', 'language_code'),
         Index('idx_translations_source', 'source_id'),
         Index('idx_translations_name', 'translated_name'),
+        Index('idx_translations_preferred', 'is_preferred'),
     )
 
     # Relationships
@@ -209,6 +218,42 @@ class Translation(Base):
     updater = relationship(
         "User", foreign_keys=[updated_by], back_populates="updated_translations"
     )
+    votes = relationship("TranslationVote", back_populates="translation")
+
+
+class TranslationVote(Base):
+    __tablename__ = "translation_votes"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    translation_id = Column(
+        UUID(as_uuid=True), ForeignKey("translations.id", ondelete="CASCADE"),
+        nullable=False
+    )
+    user_id = Column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False
+    )
+    vote_type = Column(String(10), nullable=False)  # 'up' or 'down'
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    __table_args__ = (
+        CheckConstraint(
+            "vote_type IN ('up', 'down')",
+            name="translation_votes_vote_type_check"
+        ),
+        UniqueConstraint(
+            'translation_id', 'user_id',
+            name='translation_votes_translation_user_unique'
+        ),
+        Index('idx_translation_votes_translation_id', 'translation_id'),
+        Index('idx_translation_votes_user_id', 'user_id'),
+        Index('idx_translation_votes_vote_type', 'vote_type'),
+    )
+
+    # Relationships
+    translation = relationship("Translation", back_populates="votes")
+    user = relationship("User", back_populates="translation_votes")
 
 
 class Comment(Base):

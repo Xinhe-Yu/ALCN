@@ -1,6 +1,6 @@
-from sqlalchemy.orm import Session
-from sqlalchemy import text
-from app.models.models import Entry
+from sqlalchemy.orm import Session, joinedload
+from sqlalchemy import text, desc, asc
+from app.models.models import Entry, Translation
 from app.schemas.entries import EntryCreate, EntryUpdate
 from typing import Optional, List
 import uuid
@@ -8,6 +8,15 @@ import uuid
 
 def get_entry(db: Session, entry_id: str) -> Optional[Entry]:
     return db.query(Entry).filter(Entry.id == entry_id).first()
+
+
+def get_entry_with_translations(db: Session, entry_id: str) -> Optional[Entry]:
+    return db.query(Entry).options(
+        joinedload(Entry.translations).order_by(
+            desc(Translation.is_preferred), 
+            asc(Translation.created_at)
+        )
+    ).filter(Entry.id == entry_id).first()
 
 
 def get_entries(
@@ -18,9 +27,18 @@ def get_entries(
     language_code: Optional[str] = None,
     entry_type: Optional[str] = None,
     fuzzy_search: Optional[str] = None,
-    other_language_code: Optional[str] = None
+    other_language_code: Optional[str] = None,
+    include_translations: bool = False
 ) -> List[Entry]:
     query = db.query(Entry)
+    
+    if include_translations:
+        query = query.options(
+            joinedload(Entry.translations).order_by(
+                desc(Translation.is_preferred), 
+                asc(Translation.created_at)
+            )
+        )
 
     if search:
         # Use PostgreSQL full-text search
@@ -56,7 +74,8 @@ def search_entries_trigram(
     search_term: str,
     skip: int = 0,
     limit: int = 100,
-    similarity_threshold: float = 0.3
+    similarity_threshold: float = 0.3,
+    include_translations: bool = False
 ) -> List[Entry]:
     """
     Search entries using trigram similarity on primary_name.
@@ -83,7 +102,15 @@ def search_entries_trigram(
     # Convert results to Entry objects
     entries = []
     for row in result:
-        entry = db.query(Entry).filter(Entry.id == row[0]).first()
+        if include_translations:
+            entry = db.query(Entry).options(
+                joinedload(Entry.translations).order_by(
+                    desc(Translation.is_preferred), 
+                    asc(Translation.created_at)
+                )
+            ).filter(Entry.id == row[0]).first()
+        else:
+            entry = db.query(Entry).filter(Entry.id == row[0]).first()
         if entry:
             entries.append(entry)
 
@@ -94,13 +121,24 @@ def search_entries_by_any_language(
     db: Session,
     language_code: str,
     skip: int = 0,
-    limit: int = 100
+    limit: int = 100,
+    include_translations: bool = False
 ) -> List[Entry]:
     """
     Search entries where the language_code matches either the primary language_code
     or is present in the other_language_codes array.
     """
-    query = db.query(Entry).filter(
+    query = db.query(Entry)
+    
+    if include_translations:
+        query = query.options(
+            joinedload(Entry.translations).order_by(
+                desc(Translation.is_preferred), 
+                asc(Translation.created_at)
+            )
+        )
+    
+    query = query.filter(
         text(
             "language_code = :lang_code OR "
             "other_language_codes @> ARRAY[:lang_code]"
