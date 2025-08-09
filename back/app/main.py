@@ -1,12 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
-from app.api.endpoints import users, entries, translations, comments, auth
+from app.api.endpoints import users, entries, translations, comments, auth, translation_votes
 
 app = FastAPI(
-    title="Greco-Roman Dictionary API",
+    title="Ancient Lexicon CN API",
     description=(
-        "A comprehensive dictionary for Greco-Roman art history translations.\n\n"
+        "A comprehensive dictionary for Greco-Roman name/term translations.\n\n"
         "## Features\n"
         "* **Authentication**: Email-based 6-digit code verification\n"
         "* **Entries**: Create and manage dictionary entries with full-text search\n"
@@ -25,7 +25,7 @@ app = FastAPI(
     redoc_url="/redoc",
     contact={
         "name": "API Support",
-        "email": "support@grecoroman-dict.example.com",
+        "email": "xinhe.yu.dsa@gmail.com",
     },
     license_info={
         "name": "MIT License",
@@ -51,6 +51,10 @@ app = FastAPI(
         {
             "name": "comments",
             "description": "User comments and discussions on entries"
+        },
+        {
+            "name": "votes",
+            "description": "Translation voting system (upvote/downvote)"
         }
     ]
 )
@@ -74,12 +78,15 @@ app.include_router(
 app.include_router(
     comments.router, prefix="/api/v1/comments", tags=["comments"]
 )
+app.include_router(
+    translation_votes.router, prefix="/api/v1", tags=["votes"]
+)
 
 
 @app.get("/")
 async def root():
     return {
-        "message": "Welcome to the Greco-Roman Dictionary API",
+        "message": "Welcome to Ancient Lexicon CN API",
         "version": "1.0.0",
         "documentation": {
             "swagger": "/docs",
