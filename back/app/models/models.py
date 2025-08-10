@@ -35,6 +35,7 @@ class User(Base):
     userdata = Column(JSONB)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now())
+    username = Column(String(100), nullable=True)
 
     __table_args__ = (
         CheckConstraint(
@@ -126,7 +127,7 @@ class Entry(Base):
     verification_notes = Column(Text)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now())
-    # search_vector = Column(TSVECTOR)
+    search_vector = Column(TSVECTOR, nullable=False)
 
     __table_args__ = (
         CheckConstraint(
@@ -161,7 +162,7 @@ class Entry(Base):
         "User", foreign_keys=[updated_by], back_populates="updated_entries"
     )
     translations = relationship(
-        "Translation", 
+        "Translation",
         back_populates="entry",
         order_by="Translation.is_preferred.desc(), Translation.created_at.asc()"
     )

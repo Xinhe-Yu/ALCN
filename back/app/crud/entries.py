@@ -49,8 +49,8 @@ def get_entries(
 
     if search:
         query = query.filter(
-            Entry.search_vector.op("@@")(text("plainto_tsquery(:search)"))
-        ).params(search=search)
+            Entry.search_vector.op("@@")(func.plainto_tsquery(search))
+        )
 
     if fuzzy_search:
         sim_score = func.similarity(Entry.primary_name, fuzzy_search)
@@ -258,7 +258,7 @@ def get_entries_metadata(db: Session) -> Dict[str, Any]:
 
     # 1. Total number of entries
     total_entries = db.query(Entry).count()
-    
+
     # 2. Recently updated entries count (last 30 days)
     thirty_days_ago = datetime.now() - timedelta(days=30)
     recently_updated_count = db.query(Entry).filter(

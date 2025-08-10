@@ -48,7 +48,7 @@ export default function Home() {
     };
 
     fetchMetadata();
-  });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Perform search when debounced query changes
   useEffect(() => {

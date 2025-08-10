@@ -36,6 +36,7 @@
     }
   },
   "navigation": {
+    "welcome": "欢迎, ",
     "dashboard": "个人面板",
     "entries": "词条批量处理",
     "translations": "翻译"

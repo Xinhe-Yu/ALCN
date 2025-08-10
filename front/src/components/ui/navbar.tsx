@@ -36,7 +36,7 @@ export default function Navbar({ user, onLogout, onHomeClick }: NavbarProps) {
               // Authenticated user menu
               <div className="flex items-center space-x-4">
                 <span className="text-sm text-gray-500">
-                  Welcome, {user.email}
+                  {t('navigation.welcome')} {user.username || user.email}
                 </span>
 
                 {(user.role === 'admin' || user.role === 'verified_translator') && (

@@ -22,7 +22,7 @@ import { ChevronUpIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 
 const SORT_OPTIONS = {
   'updated_at': 'Recently Updated',
-  'created_at': 'Recently Created', 
+  'created_at': 'Recently Created',
   'primary_name': 'Name (A-Z)',
   'language_code': 'Language'
 };
@@ -30,7 +30,7 @@ const SORT_OPTIONS = {
 export default function ListPage() {
   const { user, logout } = useAuth();
   const t = useTranslations();
-  
+
   // Data state
   const [entries, setEntries] = useState<EntryWithTranslations[]>([]);
   const [loading, setLoading] = useState(true);
@@ -72,7 +72,7 @@ export default function ListPage() {
 
       // Add search params
       if (debouncedSearchQuery.trim()) {
-        params.fuzzy_search = debouncedSearchQuery.trim();
+        params.search = debouncedSearchQuery.trim();
       }
       if (languageFilter) {
         params.language_code = languageFilter;
@@ -114,7 +114,7 @@ export default function ListPage() {
     if (currentPage > 1) {
       setCurrentPage(1);
     }
-  }, [debouncedSearchQuery, languageFilter, typeFilter, sortBy, sortDirection]);
+  }, [debouncedSearchQuery, languageFilter, typeFilter, sortBy, sortDirection]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Handle sorting
   const handleSort = (column: string) => {
@@ -189,7 +189,7 @@ export default function ListPage() {
             <p className="text-xl text-gray-600 mb-4">
               Browse all {totalEntries} entries in our ancient lexicon database
             </p>
-            
+
             {/* Results info */}
             <div className="text-sm text-gray-500">
               {debouncedSearchQuery || languageFilter || typeFilter ? (
@@ -197,7 +197,7 @@ export default function ListPage() {
                   Showing {totalEntries} result{totalEntries !== 1 ? 's' : ''}
                   {debouncedSearchQuery && (
                     <span className="ml-2 px-2 py-1 bg-amber-100 text-amber-800 rounded text-xs">
-                      "{debouncedSearchQuery}"
+                      &quot;{debouncedSearchQuery}&quot;
                     </span>
                   )}
                 </>

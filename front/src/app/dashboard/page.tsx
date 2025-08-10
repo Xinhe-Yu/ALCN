@@ -45,7 +45,7 @@ export default function DashboardPage() {
     };
 
     fetchData();
-  }, [user, authLoading, router, t]);
+  });
 
 
   if (authLoading || loading) {

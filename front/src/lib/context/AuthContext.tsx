@@ -31,6 +31,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       try {
         const userData = await authService.getMe();
+        if (!userData.username) {
+          userData.username = userData.email.match(/^\w+/)?.[0] || ''; // Set username to email prefix if not provided
+        }
         setUser(userData);
       } catch {
         // Token might be expired or invalid

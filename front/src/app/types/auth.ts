@@ -17,6 +17,7 @@ export interface User {
   email: string;
   role: string;
   is_activated: boolean;
+  username?: string; // Optional username field
   created_at: string;
   updated_at: string;
 }
