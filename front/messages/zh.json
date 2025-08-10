@@ -85,8 +85,8 @@
     "en": "英",
     "fr": "法",
     "lat": "拉",
-    "ag": "希",
-    "gr": "现希",
+    "gr": "希",
+    "el": "现希",
     "de": "德",
     "it": "意",
     "es": "西",
@@ -105,5 +105,9 @@
     "noResults": "未找到相关结果",
     "tryDifferent": "请尝试不同的关键词或检查拼写",
     "foundResults": "找到 {count} 个结果"
+  },
+  "clipboard": {
+    "copied": "已复制！",
+    "copiedMessage": "已将 \"{text}\" 复制到剪贴板"
   }
 }

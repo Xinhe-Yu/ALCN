@@ -59,13 +59,13 @@ export const ENTRY_TYPE_COLORS: Record<string, string> = {
 
 // Language colors for visual distinction
 export const LANGUAGE_COLORS: Record<string, string> = {
-  'ag': 'bg-emerald-100 text-emerald-800 border-emerald-200', // Ancient Greek
+  'gr': 'bg-emerald-100 text-emerald-800 border-emerald-200', // Ancient Greek
   'lat': 'bg-amber-100 text-amber-800 border-amber-200',      // Latin
   'en': 'bg-sky-100 text-sky-800 border-sky-200',         // English
   'de': 'bg-red-100 text-red-800 border-red-200',           // German
   'fr': 'bg-indigo-100 text-indigo-800 border-indigo-200',   // French
   'tu': 'bg-rose-100 text-rose-800 border-rose-200',        // Turkish
-  'gr': 'bg-teal-100 text-teal-800 border-teal-200',        // Modern Greek
+  'el': 'bg-teal-100 text-teal-800 border-teal-200',        // Modern Greek
   'ar': 'bg-violet-100 text-violet-800 border-violet-200', // Arabic
   '': 'bg-gray-100 text-gray-600 border-gray-200'           // empty/default
 };

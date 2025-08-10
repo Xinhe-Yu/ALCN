@@ -1,17 +1,17 @@
 // CRUD operations and pagination interfaces
 
 // Language codes supported in the system
-export type LanguageCode = 'ag' | 'lat' | 'en' | 'de' | 'fr' | 'tu' | 'gr' | 'ar';
+export type LanguageCode = 'gr' | 'lat' | 'en' | 'de' | 'fr' | 'tu' | 'el' | 'ar';
 
 // Language code display names
 export const LANGUAGE_OPTIONS: Record<LanguageCode, string> = {
-  ag: 'Ancient Greek',
+  gr: 'Ancient Greek',
   lat: 'Latin',
   en: 'English',
   de: 'German',
   fr: 'French',
   tu: 'Turkish',
-  gr: 'Greek',
+  el: 'Greek',
   ar: 'Arabic',
 };
 

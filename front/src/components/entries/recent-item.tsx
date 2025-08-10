@@ -1,6 +1,11 @@
+'use client';
+
+import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { EntryWithTranslations, Translation } from "@/app/types/entries";
 import Badge from "../ui/badge";
 import { formatDate } from '@/lib/utils';
+import { useToast } from '@/lib/context/ToastContext';
 
 interface RecentItemProps {
   entry: EntryWithTranslations;
@@ -8,6 +13,25 @@ interface RecentItemProps {
 }
 
 export default function RecentItem({ entry, type = 'entry' }: RecentItemProps) {
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+  const { success, error } = useToast();
+  const t = useTranslations();
+
+  const copyToClipboard = async (text: string, translationId: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedId(translationId);
+      success(
+        t('clipboard.copied'),
+        t('clipboard.copiedMessage', { text: text }),
+        2000
+      );
+      setTimeout(() => setCopiedId(null), 1000); // Reset visual feedback after 1 second
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+      error('Copy Failed', 'Unable to copy to clipboard');
+    }
+  };
   let displayed_translations: Translation[] = [];
   const length = entry.translations.length;
 
@@ -28,7 +52,12 @@ export default function RecentItem({ entry, type = 'entry' }: RecentItemProps) {
           <span className="font-medium text-gray-900 ps-1">{entry.primary_name}</span>
           <Badge code={entry.language_code} />
           {entry.entry_type && <Badge code={entry.entry_type} type="type" />}
-          {entry.original_script}
+          {entry.original_script && <span className="text-zinc-800">{entry.original_script}</span>}
+          {entry.alternative_names && entry.alternative_names.length > 0 && (
+            <span className="text-gray-500 text-sm">
+              ({entry.alternative_names.join(', ')})
+            </span>
+          )}
         </div>
         <div className="text-sm text-gray-500">
           {formatDate(entry.updated_at)}
@@ -39,13 +68,23 @@ export default function RecentItem({ entry, type = 'entry' }: RecentItemProps) {
       )}
 
 
+
       <div className="flex flex-wrap gap-2">
         {displayed_translations.map((translation, index) => (
           <div key={translation.id} className="flex items-center gap-1">
-            <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-800">
-              {length > 1 && <span className="font-semibold">{index + 1}:</span>}
+            {length > 1 && <span className="font-semibold text-xs font-medium">{index + 1}:</span>}
+            <span 
+              onClick={() => copyToClipboard(translation.translated_name, translation.id)}
+              className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium cursor-pointer transition-colors duration-200 ${
+                copiedId === translation.id 
+                  ? 'bg-green-200 text-green-800' 
+                  : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+              }`}
+              title="Click to copy"
+            >
               <span>{translation.translated_name}</span>
             </span>
+            {translation.notes && <span className="text-xs font-medium text-gray-500">: {translation.notes}</span>}
             {(translation.upvotes > 0 || translation.downvotes > 0) && (
               <div className="flex items-center gap-1 text-xs text-gray-500">
                 {translation.upvotes > 0 && (
@@ -64,7 +103,7 @@ export default function RecentItem({ entry, type = 'entry' }: RecentItemProps) {
           </span>
         )}
       </div>
-    </div>
+    </div >
 
 
   )

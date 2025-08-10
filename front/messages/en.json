@@ -85,11 +85,13 @@
     "en": "en",
     "fr": "fr",
     "lat": "lat",
-    "ag": "ag",
     "gr": "gr",
+    "el": "el",
     "de": "de",
     "it": "it",
-    "es": "es"
+    "es": "es",
+    "tu": "tu",
+    "ar": "ar"
   },
   "entryTypes": {
     "term": "Term",
@@ -103,5 +105,9 @@
     "noResults": "No results found for",
     "tryDifferent": "Try different keywords or check your spelling",
     "foundResults": "Found {count} result{count, plural, one {} other {s}}"
+  },
+  "clipboard": {
+    "copied": "Copied!",
+    "copiedMessage": "\"{text}\" has been copied to clipboard"
   }
 }
