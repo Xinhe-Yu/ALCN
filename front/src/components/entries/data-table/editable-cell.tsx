@@ -32,6 +32,7 @@ const EditableCell = memo(function EditableCell({
 }: EditableCellProps) {
   const [showDropdown, setShowDropdown] = useState(false);
   const cellRef = useRef<HTMLDivElement>(null);
+  const [dropdownPosition, setDropdownPosition] = useState<'below' | 'above'>('below');
   const isEditing = editingCell?.entryId === entry.id && editingCell?.field === column.key;
 
   const getValue = () => {
@@ -90,6 +91,21 @@ const EditableCell = memo(function EditableCell({
     return undefined;
   };
 
+  // Calculate dropdown position to avoid clipping
+  const calculateDropdownPosition = () => {
+    if (!cellRef.current) return 'below';
+    
+    const rect = cellRef.current.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+    const dropdownHeight = 200; // Approximate dropdown height
+    
+    // If there's enough space below, show below; otherwise show above
+    if (rect.bottom + dropdownHeight > viewportHeight && rect.top > dropdownHeight) {
+      return 'above';
+    }
+    return 'below';
+  };
+
   // Handle dropdown selections
   const handleDropdownSelect = (value: string) => {
     console.log('Dropdown selected:', value);
@@ -137,13 +153,18 @@ const EditableCell = memo(function EditableCell({
       return (
         <div ref={cellRef} className="relative min-w-0">
           <button
-            onClick={() => setShowDropdown(!showDropdown)}
+            onClick={() => {
+              if (!showDropdown) {
+                setDropdownPosition(calculateDropdownPosition() as 'below' | 'above');
+              }
+              setShowDropdown(!showDropdown);
+            }}
             className="w-full text-left px-1 py-1 text-sm border border-amber-300 rounded focus:ring-1 focus:ring-amber-500 focus:border-amber-500 bg-white"
           >
             <Badge code={editValue || entry.language_code} />
           </button>
           {showDropdown && (
-            <div className="absolute top-full left-0 z-50 w-36 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto">
+            <div className={`absolute ${dropdownPosition === 'below' ? 'top-full' : 'bottom-full'} left-0 z-[9999] w-36 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto`}>
               {Object.entries(LANGUAGE_OPTIONS).map(([code, name]) => (
                 <button
                   key={code}
@@ -165,7 +186,10 @@ const EditableCell = memo(function EditableCell({
         onClick={() => {
           onStartEditing(entry.id, column.key, currentValue);
           // Show dropdown immediately when editing starts
-          setTimeout(() => setShowDropdown(true), 0);
+          setTimeout(() => {
+            setDropdownPosition(calculateDropdownPosition() as 'below' | 'above');
+            setShowDropdown(true);
+          }, 0);
         }}
         className="hover:bg-gray-100 p-1 rounded transition-colors cursor-pointer"
         title="Click to edit language"
@@ -183,7 +207,12 @@ const EditableCell = memo(function EditableCell({
       return (
         <div ref={cellRef} className="relative min-w-0">
           <button
-            onClick={() => setShowDropdown(!showDropdown)}
+            onClick={() => {
+              if (!showDropdown) {
+                setDropdownPosition(calculateDropdownPosition() as 'below' | 'above');
+              }
+              setShowDropdown(!showDropdown);
+            }}
             className="w-full text-left px-1 py-1 text-sm border border-amber-300 rounded focus:ring-1 focus:ring-amber-500 focus:border-amber-500 bg-white"
           >
             {editValue ? (
@@ -195,7 +224,7 @@ const EditableCell = memo(function EditableCell({
             )}
           </button>
           {showDropdown && (
-            <div className="absolute top-full left-0 z-50 w-40 bg-white border border-gray-300 rounded-md shadow-lg">
+            <div className={`absolute ${dropdownPosition === 'below' ? 'top-full' : 'bottom-full'} left-0 z-[9999] w-40 bg-white border border-gray-300 rounded-md shadow-lg`}>
               <button
                 onClick={() => handleDropdownSelect('')}
                 className="w-full text-left px-2 py-1.5 text-sm hover:bg-gray-100"
@@ -224,7 +253,10 @@ const EditableCell = memo(function EditableCell({
         onClick={() => {
           onStartEditing(entry.id, column.key, currentValue);
           // Show dropdown immediately when editing starts
-          setTimeout(() => setShowDropdown(true), 0);
+          setTimeout(() => {
+            setDropdownPosition(calculateDropdownPosition() as 'below' | 'above');
+            setShowDropdown(true);
+          }, 0);
         }}
         className="hover:bg-gray-100 p-1 rounded transition-colors cursor-pointer"
         title="Click to edit type"

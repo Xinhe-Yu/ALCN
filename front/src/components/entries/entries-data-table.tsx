@@ -294,22 +294,57 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
     setCurrentPage(1);
   };
 
+  // Handle delete entry
+  const handleDeleteEntry = async (entryId: string) => {
+    // Check if user is authenticated
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('You must be logged in to delete entries. Please login first.');
+      return;
+    }
+
+    if (!confirm('Are you sure you want to delete this entry? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      await entriesService.deleteEntry({ id: entryId });
+
+      // Remove the entry from the local state immediately
+      setEntries(currentEntries => currentEntries.filter(entry => entry.id !== entryId));
+
+      // Update total count
+      setTotalEntries(prev => prev - 1);
+
+      // Clear selection if deleted entry was selected
+      setSelectedIds(prev => {
+        const newSelected = new Set(prev);
+        newSelected.delete(entryId);
+        return newSelected;
+      });
+
+      console.log('Entry deleted successfully:', entryId);
+    } catch (error) {
+      console.error('Failed to delete entry:', error);
+    }
+  };
+
   // Define column widths based on content type - MOVED OUTSIDE RENDER FOR PERFORMANCE
   // Get column width in pixels for strict table layout
   const getColumnWidth = useCallback((key: string): { className: string, width: string } => {
     switch (key) {
-      case 'primary_name': return { className: '', width: '96px' };
-      case 'original_script': return { className: '', width: '96px' };
-      case 'language_code': return { className: '', width: '40px' };
-      case 'entry_type': return { className: '', width: '60px' };
+      case 'language_code':
+      case 'is_verified': return { className: '', width: '40px' };
+      case 'created_at':
+      case 'updated_at':
+      case 'entry_type': return { className: '', width: '64px' };
+      case 'primary_name':
+      case 'original_script':
       case 'alternative_names':
       case 'first_translation':
       case 'etymology':
       case 'definition': return { className: '', width: '96px' };
       case 'translation_notes': return { className: '', width: '224px' };
-      case 'is_verified': return { className: '', width: '64px' };
-      case 'created_at':
-      case 'updated_at': return { className: '', width: '112px' };
       case 'historical_context': return { className: '', width: '256px' };
       case 'verification_notes': return { className: '', width: '192px' };
       default: return { className: '', width: '144px' };
@@ -453,11 +488,11 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
 
       {/* Table with Sticky Header */}
       <div className="bg-white shadow sm:rounded-lg flex-1">
-        <div className="h-full">
+        <div className="h-full overflow-x-auto">
           <table className="w-full table-fixed" style={{ tableLayout: 'fixed', minWidth: '1200px' }}>
-            <thead className="bg-gray-50 sticky top-0 z-10">
+            <thead className="bg-gray-50 sticky top-0 z-[100]">
               <tr>
-                <th className="w-4 p-1 text-left bg-gray-50 border-b border-gray-200">
+                <th className="w-4 p-1 text-left bg-gray-50 border-b border-gray-200 relative z-[100]">
                   <input
                     type="checkbox"
                     checked={isAllSelected}
@@ -469,7 +504,7 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
                   return (
                     <th
                       key={column.key}
-                      className={`p-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-200 overflow-hidden ${column.sortable ? 'cursor-pointer hover:bg-gray-100' : ''}`}
+                      className={`p-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-200 overflow-hidden ${column.sortable ? 'cursor-pointer hover:bg-gray-100' : ''} relative z-[100]`}
                       style={{ width: getColumnWidth(column.key).width }}
                       onClick={() => column.sortable && handleSort(column.key)}
                     >
@@ -480,7 +515,7 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
                     </th>
                   );
                 })}
-                <th className="w-24 p-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-200">
+                <th className="w-4 p-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-200 relative z-[100]">
                   Actions
                 </th>
               </tr>
@@ -502,8 +537,12 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
                       />
                     </td>
                     {getVisibleColumnConfigs.map(column => {
+                      // Special handling for dropdown columns to allow overflow
+                      const hasDropdown = column.key === 'language_code' || column.key === 'entry_type';
+                      const cellClass = hasDropdown ? "p-1 relative" : "p-1 relative overflow-hidden";
+
                       return (
-                        <td key={column.key} className="p-1 relative overflow-hidden" style={{ width: getColumnWidth(column.key).width }}>
+                        <td key={column.key} className={cellClass} style={{ width: getColumnWidth(column.key).width }}>
                           <div className="min-w-0 w-full">
                             <EditableCell
                               entry={entry}
@@ -522,9 +561,14 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
                       );
                     })}
                     <td className="w-24 p-1 text-sm font-medium">
-                      <div className="flex space-x-1">
-                        <button className="text-amber-600 hover:text-amber-900 text-xs">Edit</button>
-                        <button className="text-red-600 hover:text-red-900 text-xs">Del</button>
+                      <div className="flex justify-center">
+                        <button
+                          onClick={() => handleDeleteEntry(entry.id)}
+                          className="text-red-600 hover:text-red-900 p-1 rounded hover:bg-red-50 transition-colors"
+                          title="Delete entry"
+                        >
+                          <TrashIcon className="h-4 w-4" />
+                        </button>
                       </div>
                     </td>
                   </tr>
