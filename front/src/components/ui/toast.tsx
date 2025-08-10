@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { CheckCircleIcon, ExclamationTriangleIcon, InformationCircleIcon, XCircleIcon } from '@heroicons/react/24/solid';
+import ConfirmationToast from './confirmation-toast';
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info';
 
@@ -111,17 +112,46 @@ const ToastItem = ({ toast, onDismiss }: ToastItemProps) => {
   );
 };
 
+interface ConfirmationToastData {
+  options: {
+    title: string;
+    message: string;
+    confirmText?: string;
+    cancelText?: string;
+    type?: 'warning' | 'danger';
+  };
+  resolve: (value: boolean) => void;
+}
+
 interface ToastContainerProps {
   toasts: Toast[];
   onDismiss: (id: string) => void;
+  confirmationToast?: ConfirmationToastData | null;
+  onConfirm?: () => void;
+  onCancel?: () => void;
 }
 
-export const ToastContainer = ({ toasts, onDismiss }: ToastContainerProps) => {
+export const ToastContainer = ({ 
+  toasts, 
+  onDismiss, 
+  confirmationToast, 
+  onConfirm, 
+  onCancel 
+}: ToastContainerProps) => {
   return (
     <div
       className="fixed w-96 bottom-4 right-4 z-[10000] flex flex-col space-y-2"
       style={{ zIndex: 10000 }}
     >
+      {/* Confirmation toast appears at the bottom */}
+      {confirmationToast && onConfirm && onCancel && (
+        <ConfirmationToast
+          {...confirmationToast.options}
+          onConfirm={onConfirm}
+          onCancel={onCancel}
+        />
+      )}
+      {/* Regular toasts stack above confirmation toasts */}
       {toasts.map((toast) => (
         <ToastItem key={toast.id} toast={toast} onDismiss={onDismiss} />
       ))}

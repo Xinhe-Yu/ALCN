@@ -87,10 +87,28 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
   const [bulkFieldType, setBulkFieldType] = useState<'language_code' | 'entry_type' | null>(null);
   const [isBulkUpdating, setIsBulkUpdating] = useState(false);
 
-  // Fetch data
+  // Track if this is the initial load using ref to avoid re-renders
+  const isInitialMountRef = useRef(true);
+
+  // Fetch data with smooth loading states
   const fetchEntries = useCallback(async () => {
+    console.log('🚀 fetchEntries called with params:', {
+      currentPage,
+      pageSize,
+      sortBy,
+      sortDirection,
+      debouncedSearchQuery,
+      languageFilter,
+      typeFilter,
+      isInitial: isInitialMountRef.current
+    });
+
     try {
-      setLoading(true);
+      // Only show full loading on initial load, not during search
+      if (isInitialMountRef.current) {
+        setLoading(true);
+        isInitialMountRef.current = false;
+      }
       setError(null);
 
       const params: EntrySearchParams = {
@@ -117,9 +135,9 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
       setTotalPages(result.pages);
       setTotalEntries(result.total);
 
-      // Clear selection when data changes
-      setSelectedIds(new Set());
-      setIsAllSelected(false);
+      // Only clear selection when actual search/filter criteria change
+      // (not on pagination or sorting changes)
+      // This provides better UX by preserving selections during searches
 
     } catch (err) {
       console.error('Error fetching entries:', err);
@@ -301,6 +319,13 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
       setSearchLoading(false);
     }
   }, [searchQuery, debouncedSearchQuery]);
+
+  // Handle filter changes: reset page and clear selections in one effect
+  // This prevents multiple API calls by batching state updates
+  useEffect(() => {
+    setSelectedIds(new Set());
+    setIsAllSelected(false);
+  }, [debouncedSearchQuery, languageFilter, typeFilter, currentPage]);
 
   // Handle sorting
   const handleSort = (column: string) => {
@@ -558,7 +583,18 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
           <h2 className="text-2xl font-bold text-gray-900">Entries Management</h2>
           <div className="flex items-center gap-4 text-sm text-gray-500">
             <span>
-              {totalEntries} total entries
+              {debouncedSearchQuery || languageFilter || typeFilter ? (
+                <>
+                  {totalEntries} result{totalEntries !== 1 ? 's' : ''}
+                  {debouncedSearchQuery && (
+                    <span className="ml-2 px-2 py-1 bg-amber-100 text-amber-800 rounded text-xs">
+                      &quot;{debouncedSearchQuery}&quot;
+                    </span>
+                  )}
+                </>
+              ) : (
+                `${totalEntries} total entries`
+              )}
             </span>
           </div>
         </div>
@@ -650,10 +686,6 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
                 </div>
               )}
 
-              <button className="inline-flex items-center px-3 py-2 border border-red-300 shadow-sm text-sm leading-4 font-medium rounded-md text-red-700 bg-white hover:bg-red-50">
-                <TrashIcon className="h-4 w-4 mr-1" />
-                Delete ({selectedIds.size})
-              </button>
             </div>
           )}
         </div>
@@ -703,7 +735,17 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
       </div>
 
       {/* Table with Sticky Header */}
-      <div className="bg-white shadow sm:rounded-lg flex-1">
+      <div className="bg-white shadow sm:rounded-lg flex-1 relative">
+        {/* Search loading overlay */}
+        {searchLoading && entries.length > 0 && (
+          <div className="absolute top-0 left-0 right-0 z-30 bg-amber-50 bg-opacity-90 flex items-center justify-center py-2">
+            <div className="flex items-center space-x-2 text-amber-700">
+              <div className="animate-spin h-4 w-4 border-2 border-amber-300 border-t-amber-600 rounded-full"></div>
+              <span className="text-sm font-medium">Searching...</span>
+            </div>
+          </div>
+        )}
+
         <div className="h-full">
           <table className="w-full table-fixed" style={{ tableLayout: 'fixed', minWidth: '1200px' }}>
             <thead className="bg-gray-50 sticky top-0 z-20">
@@ -737,13 +779,13 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
               </tr>
             </thead>
 
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className={`bg-white divide-y divide-gray-200 transition-opacity duration-200 ${searchLoading && entries.length > 0 ? 'opacity-75' : 'opacity-100'}`}>
               {entries.map((entry) => {
                 const isSelected = selectedIds.has(entry.id);
                 const firstTranslation = entry.translations?.[0];
 
                 return (
-                  <tr key={entry.id} className={isSelected ? 'bg-amber-50' : 'hover:bg-gray-50'}>
+                  <tr key={entry.id} className={`transition-colors duration-150 ${isSelected ? 'bg-amber-50' : 'hover:bg-gray-50'}`}>
                     <td className="w-4 p-1">
                       <input
                         type="checkbox"

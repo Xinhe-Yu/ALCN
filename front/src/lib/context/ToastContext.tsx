@@ -97,16 +97,13 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   return (
     <ToastContext.Provider value={value}>
       {children}
-      <ToastContainer toasts={toasts} onDismiss={removeToast} />
-      {confirmationToast && (
-        <div className="fixed top-4 right-4 z-[10000]" style={{ zIndex: 10000 }}>
-          <ConfirmationToast
-            {...confirmationToast.options}
-            onConfirm={handleConfirm}
-            onCancel={handleCancel}
-          />
-        </div>
-      )}
+      <ToastContainer 
+        toasts={toasts} 
+        onDismiss={removeToast}
+        confirmationToast={confirmationToast}
+        onConfirm={handleConfirm}
+        onCancel={handleCancel}
+      />
     </ToastContext.Provider>
   );
 }

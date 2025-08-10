@@ -45,7 +45,7 @@ export default function DashboardPage() {
     };
 
     fetchData();
-  }, [user, authLoading, router]);
+  }, [user, authLoading, router, t]);
 
 
   if (authLoading || loading) {
@@ -81,7 +81,7 @@ export default function DashboardPage() {
             </div>
 
             {metadata && (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <StatCard
                   title={t('landing.stats.totalEntries')}
                   value={metadata.total_entries}
@@ -91,11 +91,6 @@ export default function DashboardPage() {
                   title={t('landing.stats.recentlyUpdated')}
                   value={metadata.recently_updated_count}
                   icon={<ClockIcon className="h-6 w-6 text-blue-400" />}
-                />
-                <StatCard
-                  title={t('landing.stats.recentUpdates')}
-                  value={metadata.newest_updated_entries.length}
-                  icon={<ClockIcon className="h-6 w-6 text-green-400" />}
                 />
                 <StatCard
                   title={t('landing.stats.activeDiscussions')}

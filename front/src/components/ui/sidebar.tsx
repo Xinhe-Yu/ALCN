@@ -58,10 +58,10 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
 
       {/* Sidebar */}
       <div
-        className={`fixed inset-y-0 left-0 z-30 w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+        className={`fixed inset-y-0 left-0 z-30 min-w-42 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
           }`}
       >
-        <div className="flex flex-col h-full pt-20 lg:pt-6">
+        <div className="flex flex-col h-full w-full pt-20 lg:pt-6">
           {/* Sidebar header */}
           <div className="px-4 pb-4">
             <h2 className="text-lg font-semibold text-gray-900">{t('dashboard.title')}</h2>
