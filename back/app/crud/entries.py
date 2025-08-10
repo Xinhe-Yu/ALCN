@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import text, desc, asc, func
 from app.models.models import Entry, Translation, Comment
-from app.schemas.entries import EntryCreate, EntryUpdate, PaginatedEntries
+from app.schemas.entries import BulkEntryUpdates, EntryCreate, EntryUpdate, PaginatedEntries
 from typing import Optional, List, Dict, Any
 import uuid
 
@@ -131,7 +131,7 @@ def update_entry(
     if not db_entry:
         return None
 
-    update_data = entry_update.dict(exclude_unset=True)
+    update_data = entry_update.model_dump(exclude_unset=True)
     for field, value in update_data.items():
         setattr(db_entry, field, value)
 
@@ -148,7 +148,7 @@ def delete_entry(db: Session, entry_id: str) -> bool:
 
     # Explicitly delete translations first to avoid foreign key constraint issues
     db.query(Translation).filter(Translation.entry_id == entry_id).delete(synchronize_session=False)
-    
+
     # Delete the entry
     db.delete(db_entry)
     db.commit()
@@ -242,7 +242,7 @@ def get_entries_metadata(db: Session) -> Dict[str, Any]:
         'translations_with_newest_comments': enriched_translations
     }
 
-def bulk_update_entries(db: Session, entry_ids: List[int], updates: dict, verify_user_id: Optional[str]) -> List[Entry]:
+def bulk_update_entries(db: Session, entry_ids: List[int], updates: BulkEntryUpdates, verify_user_id: Optional[str]) -> List[Entry]:
     query = db.query(Entry).filter(Entry.id.in_(entry_ids))
     if verify_user_id is not None:
         query = query.filter(Entry.created_by == verify_user_id)

@@ -53,14 +53,15 @@ class EntryResponse(EntryBase):
         from_attributes = True
 
 
-class BulkEntryUpdateRequest(BaseModel):
-    entry_ids: List[UUID]
-    updates: EntryUpdate
-
-class EntryUpdates(BaseModel):
+class BulkEntryUpdates(BaseModel):
     language_code: Optional[str] = None
     entry_type: Optional[EntryType] = None
     is_verified: Optional[bool] = None
+
+
+class BulkEntryUpdateRequest(BaseModel):
+    entry_ids: List[UUID]
+    updates: BulkEntryUpdates
 
 from app.schemas.translations import TranslationResponse, TranslationWithUserVote
 from app.schemas.comments import CommentResponse

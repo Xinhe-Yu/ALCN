@@ -6,7 +6,7 @@ from app.core.config import settings
 def send_verification_email(to_email: str, code: str):
     msg = MIMEMultipart("alternative")
 
-    msg["Subject"] = "Login Verification Code"
+    msg["Subject"] = "Login Verification Code For Ancient Lexicon CN"
     msg["From"] = settings.email_from
     msg["To"] = to_email
 
