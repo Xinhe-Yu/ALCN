@@ -1,7 +1,7 @@
 // CRUD operations and pagination interfaces
 
 // Language codes supported in the system
-export type LanguageCode = 'gr' | 'lat' | 'en' | 'de' | 'fr' | 'tu' | 'el' | 'ar';
+export type LanguageCode = 'gr' | 'lat' | 'en' | 'de' | 'fr' | 'it' | 'es' | 'tu' | 'el' | 'ar' | 'ro';
 
 // Language code display names
 export const LANGUAGE_OPTIONS: Record<LanguageCode, string> = {
@@ -10,9 +10,12 @@ export const LANGUAGE_OPTIONS: Record<LanguageCode, string> = {
   en: 'English',
   de: 'German',
   fr: 'French',
+  it: 'Italian',
+  es: 'Spanish',
   tu: 'Turkish',
   el: 'Greek',
   ar: 'Arabic',
+  ro: 'Romanian',
 };
 
 // Entry types
