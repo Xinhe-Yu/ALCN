@@ -27,7 +27,7 @@ export default function TableCell({
   onKeyPress
 }: TableCellProps) {
   const isEditing = editingCell?.entryId === entry.id && editingCell?.field === column.key;
-  
+
   const getValue = () => {
     switch (column.key) {
       case 'primary_name':
@@ -52,8 +52,6 @@ export default function TableCell({
         return entry.verification_notes || '';
       case 'first_translation':
         return firstTranslation?.translated_name || 'No translation';
-      case 'translation_language':
-        return firstTranslation?.language_code || '';
       case 'translation_notes':
         return firstTranslation?.notes || '';
       case 'translation_votes':
@@ -132,7 +130,7 @@ export default function TableCell({
   // Default display with click-to-edit for editable fields
   if (isEditable) {
     return (
-      <div 
+      <div
         className="cursor-pointer hover:bg-gray-100 px-2 py-1 rounded text-sm"
         onClick={() => onStartEditing(entry.id, column.key, currentValue)}
         title={isEditable ? 'Click to edit' : ''}

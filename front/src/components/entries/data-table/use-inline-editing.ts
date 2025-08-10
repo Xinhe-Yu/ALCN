@@ -1,18 +1,19 @@
 import { useState } from 'react';
-import { entriesService } from '@/lib/services';
-import type { UpdateEntryRequest, EntryWithTranslations } from '@/app/types';
+import { entriesService, translationsService } from '@/lib/services';
+import type { UpdateEntryRequest, UpdateTranslationRequest, LanguageCode, EntryType } from '@/app/types';
 
 export interface EditingCell {
   entryId: string;
   field: string;
+  translationId?: string; // For translation fields
 }
 
 export function useInlineEditing(onUpdateEntry: (entryId: string, field: string, value: string) => void) {
   const [editingCell, setEditingCell] = useState<EditingCell | null>(null);
   const [editValue, setEditValue] = useState<string>('');
 
-  const startEditing = (entryId: string, field: string, currentValue: string) => {
-    setEditingCell({ entryId, field });
+  const startEditing = (entryId: string, field: string, currentValue: string, translationId?: string) => {
+    setEditingCell({ entryId, field, translationId });
     setEditValue(currentValue || '');
   };
 
@@ -21,81 +22,103 @@ export function useInlineEditing(onUpdateEntry: (entryId: string, field: string,
     setEditValue('');
   };
 
-  const saveEdit = async () => {
+  const saveEdit = async (valueOverride?: string) => {
     if (!editingCell) return;
 
+    const valueToSave = valueOverride ?? editValue;
+    const saveId = Math.random().toString(36).substr(2, 9); // Unique ID for this save operation
+
     try {
-      console.log('Saving edit:', editingCell, editValue);
-      
-      // For now, let's try to use the ID as-is since backend might accept string IDs
-      // If backend truly needs numeric IDs, we'll need to check the actual ID format
-      let entryId: any = editingCell.entryId;
-      
-      // Try converting to number if it looks like a number
-      const numericId = parseInt(editingCell.entryId, 10);
-      if (!isNaN(numericId) && numericId.toString() === editingCell.entryId) {
-        entryId = numericId;
-      }
+      console.log(`[${saveId}] Saving edit:`, editingCell, valueToSave);
 
-      // Prepare the update data based on field type
-      const updateData: any = {
-        id: entryId
-      };
-
-      // Map field names to the correct API field names
-      switch (editingCell.field) {
-        case 'primary_name':
-          updateData.primary_name = editValue;
-          break;
-        case 'language_code':
-          updateData.language_code = editValue as any; // LanguageCode type
-          break;
-        case 'entry_type':
-          updateData.entry_type = editValue || null; // Handle empty string as null
-          break;
-        case 'description':
-        case 'definition': // Map definition to description for now
-          updateData.description = editValue;
-          break;
-        // For now, we'll only handle entry fields, not translation fields
-        case 'first_translation':
-        case 'translation_language':
-        case 'translation_notes':
-          console.log('Translation editing not yet implemented for field:', editingCell.field);
-          setEditingCell(null);
-          setEditValue('');
-          return;
-        default:
-          console.log('Field not supported for editing:', editingCell.field);
-          setEditingCell(null);
-          setEditValue('');
-          return;
-      }
+      const entryId: string = editingCell.entryId;
 
       // Optimistically update the UI first
-      console.log('Calling optimistic update:', { entryId: editingCell.entryId, field: editingCell.field, value: editValue });
-      onUpdateEntry(editingCell.entryId, editingCell.field, editValue);
-      
+      console.log(`[${saveId}] Calling optimistic update:`, { entryId: editingCell.entryId, field: editingCell.field, value: valueToSave });
+      onUpdateEntry(editingCell.entryId, editingCell.field, valueToSave);
+
       // Clear editing state immediately
       setEditingCell(null);
       setEditValue('');
-      
-      // Call the update API in the background
-      try {
-        await entriesService.updateEntry(updateData);
-        console.log('Successfully saved edit to backend');
-      } catch (apiError) {
-        console.error('Backend save failed, but UI is already updated:', apiError);
-        // TODO: Show error notification and optionally revert the change
+
+      // Prepare the update data based on field type
+      const updateData: UpdateEntryRequest = { id: entryId };
+
+      // Handle entry fields
+      const entryFields = ["primary_name", "original_script", "language_code", "entry_type", "alternative_names", "etymology", "definition", "historical_context", "verification_notes"];
+
+      if (entryFields.includes(editingCell.field)) {
+        switch (editingCell.field) {
+          case 'primary_name':
+          case 'original_script':
+          case 'etymology':
+          case 'definition':
+          case 'historical_context':
+          case 'verification_notes':
+            updateData[editingCell.field] = valueToSave;
+            break;
+          case 'language_code':
+            updateData.language_code = valueToSave as LanguageCode;
+            break;
+          case 'entry_type':
+            updateData.entry_type = valueToSave ? (valueToSave as EntryType) : null;
+            break;
+          case 'alternative_names':
+            updateData.alternative_names = valueToSave ? valueToSave.split(', ').map(name => name.trim()) : [];
+            break;
+        }
+
+        // Call the update API in the background
+        try {
+          await entriesService.updateEntry(updateData);
+          console.log(`[${saveId}] Successfully saved edit to backend`);
+        } catch (apiError) {
+          console.error('Backend save failed, but UI is already updated:', apiError);
+          // TODO: Show error notification and optionally revert the change
+        }
+      } else if (editingCell.field.startsWith('translation_') || editingCell.field === 'first_translation') {
+        // Handle translation fields
+        if (!editingCell.translationId) {
+          console.log('Translation ID missing for field:', editingCell.field);
+          return;
+        }
+
+        const translationFields = ["first_translation", "translation_notes"];
+
+        if (translationFields.includes(editingCell.field)) {
+          const updateData: UpdateTranslationRequest = { id: editingCell.translationId };
+
+          switch (editingCell.field) {
+            case 'first_translation':
+              updateData.translated_name = valueToSave;
+              break;
+            case 'translation_notes':
+              updateData.notes = valueToSave;
+              break;
+          }
+
+          // Call the translation update API in the background
+          try {
+            await translationsService.updateTranslation(updateData);
+            console.log(`[${saveId}] Successfully saved translation to backend`);
+          } catch (apiError) {
+            console.error('Translation save failed, but UI is already updated:', apiError);
+            // TODO: Show error notification and optionally revert the change
+          }
+        } else {
+          console.log('Translation field not supported for editing:', editingCell.field);
+        }
+      } else {
+        console.log('Field not supported for editing:', editingCell.field);
       }
-      
+
     } catch (error) {
       console.error('Failed to save edit:', error);
-      
+
       // Clear editing state so user isn't stuck
       setEditingCell(null);
       setEditValue('');
-      
+
       // TODO: Show error notification to user
       // TODO: Optionally revert the optimistic update if backend fails
     }
@@ -103,59 +126,26 @@ export function useInlineEditing(onUpdateEntry: (entryId: string, field: string,
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
-      saveEdit();
+      e.preventDefault();
+      e.stopPropagation();
+      // Use setTimeout to make the save operation asynchronous and not block the keydown handler
+      setTimeout(() => {
+        saveEdit();
+      }, 0);
     } else if (e.key === 'Escape') {
+      e.preventDefault();
+      e.stopPropagation();
       cancelEditing();
     }
   };
 
-  // Save edit with specific value (for dropdowns)
+  // Wrapper for dropdown selections - uses the unified saveEdit function
   const saveEditWithValue = async (value: string) => {
     if (!editingCell) return;
-    
-    // Update the edit value first
+
+    // Update the edit value first, then save immediately with the value override
     setEditValue(value);
-    
-    // Then save with the new value
-    setTimeout(async () => {
-      console.log('Saving with specific value:', { entryId: editingCell.entryId, field: editingCell.field, value });
-      
-      try {
-        // Optimistically update the UI first
-        onUpdateEntry(editingCell.entryId, editingCell.field, value);
-        
-        // Clear editing state immediately
-        setEditingCell(null);
-        setEditValue('');
-        
-        // Prepare API call
-        let entryId: any = editingCell.entryId;
-        const numericId = parseInt(editingCell.entryId, 10);
-        if (!isNaN(numericId) && numericId.toString() === editingCell.entryId) {
-          entryId = numericId;
-        }
-
-        const updateData: any = { id: entryId };
-
-        switch (editingCell.field) {
-          case 'language_code':
-            updateData.language_code = value;
-            break;
-          case 'entry_type':
-            updateData.entry_type = value || null;
-            break;
-          default:
-            updateData[editingCell.field] = value;
-        }
-
-        // Call the update API in the background
-        await entriesService.updateEntry(updateData);
-        console.log('Successfully saved dropdown edit to backend');
-        
-      } catch (error) {
-        console.error('Failed to save dropdown edit:', error);
-      }
-    }, 0);
+    await saveEdit(value); // Use value override to avoid timing issues
   };
 
   return {

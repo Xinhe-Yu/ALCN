@@ -43,7 +43,7 @@ export interface SortConfig {
 
 // Entry with first translation for table display
 export interface EntryTableRow {
-  id: number;
+  id: string;
   primary_name: string;
   description?: string;
   language_code: LanguageCode;
@@ -52,7 +52,7 @@ export interface EntryTableRow {
   updated_at: string;
   // First translation data
   first_translation?: {
-    id: number;
+    id: string;
     translated_name: string;
     language_code: LanguageCode;
     upvotes: number;
@@ -85,15 +85,29 @@ export interface CreateEntryRequest {
 }
 
 export interface UpdateEntryRequest {
-  id: number;
+  id: string;
   primary_name?: string;
-  description?: string;
+  original_script?: string;
   language_code?: LanguageCode;
   entry_type?: EntryType | null; // null for "other"
+  alternative_names?: string[];
+  other_language_codes?: LanguageCode[];
+  etymology?: string;
+  definition?: string;
+  historical_context?: string;
+  verification_notes?: string;
 }
 
+export interface UpdateTranslationRequest {
+  id: string;
+  translated_name?: string;
+  notes?: string;
+}
+export type UpdateEntryField = keyof UpdateEntryRequest
+export type UpdateTranslationField = keyof UpdateTranslationRequest;
+
 export interface BulkUpdateRequest {
-  entry_ids: number[];
+  entry_ids: string[];
   updates: {
     language_code?: LanguageCode;
     entry_type?: EntryType | null; // null for "other"
@@ -102,12 +116,12 @@ export interface BulkUpdateRequest {
 }
 
 export interface DeleteEntryRequest {
-  id: number;
+  id: string;
 }
 
 // Selection state for table rows
 export interface SelectionState {
-  selectedIds: Set<number>;
+  selectedIds: Set<string>;
   isAllSelected: boolean;
   isIndeterminate: boolean;
 }

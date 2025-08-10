@@ -27,7 +27,7 @@ export default function SearchResultItem({ entry, isFirst = false, isLast = fals
       <div className={`bg-white border border-gray-300 p-2 ${borderRadiusClass} ${!isFirst ? 'border-t-0' : ''}`}>
         <div className="flex justify-between items-start">
           <div className="flex items-center gap-2 mt-1">
-            <h4 className="text-lg font-semibold text-gray-900 truncate">{entry.primary_name}</h4>
+            <h4 className="text-lg font-semibold text-gray-900">{entry.primary_name}</h4>
             <Badge code={entry.language_code} />
             {entry.entry_type && (
               <Badge code={entry.entry_type} type="type" />

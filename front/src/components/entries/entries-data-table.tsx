@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { entriesService } from '@/lib/services';
 import { useDebounce } from '@/lib/hooks/useDebounce';
 import type {
@@ -98,11 +98,45 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
     }
   }, [currentPage, pageSize, sortBy, sortDirection, debouncedSearchQuery, languageFilter, typeFilter]);
 
+  // Ref to track processed updates to prevent duplicate executions
+  const processedUpdatesRef = useRef(new Set<string>());
+
   // Optimistic update function for inline editing - PERFORMANCE OPTIMIZED
-  const handleOptimisticUpdate = (entryId: string, field: string, value: string) => {
-    console.log('Optimistic update:', { entryId, field, value });
+  const handleOptimisticUpdate = useCallback((entryId: string, field: string, value: string) => {
+    const timestamp = Date.now();
+    const updateKey = `${entryId}-${field}-${value}-${timestamp}`;
+    console.log('Optimistic update:', { entryId, field, value, updateKey });
+
+    // Check for duplicates BEFORE calling setEntries
+    const recentUpdates = Array.from(processedUpdatesRef.current).filter(key => {
+      const keyTimestamp = parseInt(key.split('-').pop() || '0');
+      return timestamp - keyTimestamp < 50; // Very short window - only 50ms
+    });
+
+    const duplicateKey = recentUpdates.find(key =>
+      key.startsWith(`${entryId}-${field}-${value}-`)
+    );
+
+    if (duplicateKey) {
+      console.log(`[${updateKey}] Skipping recent duplicate update (before setState)`);
+      return; // Exit early, don't call setEntries at all
+    }
+
+    // Mark this update as processed BEFORE setEntries
+    processedUpdatesRef.current.add(updateKey);
 
     setEntries(currentEntries => {
+      // Clean up old entries to prevent memory leaks (keep last 20)
+      if (processedUpdatesRef.current.size > 20) {
+        const entries = Array.from(processedUpdatesRef.current);
+        processedUpdatesRef.current.clear();
+        // Keep only recent entries (last 5 minutes)
+        entries.filter(key => {
+          const keyTimestamp = parseInt(key.split('-').pop() || '0');
+          return timestamp - keyTimestamp < 300000; // 5 minutes
+        }).forEach(key => processedUpdatesRef.current.add(key));
+      }
+
       // Find the index of the entry to update
       const entryIndex = currentEntries.findIndex(entry => entry.id === entryId);
       if (entryIndex === -1) {
@@ -110,7 +144,7 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
         return currentEntries; // No change if entry not found
       }
 
-      console.log('Found entry to update at index:', entryIndex);
+      console.log(`[${updateKey}] Found entry to update at index:`, entryIndex, 'in array of', currentEntries.length);
 
       // Create a shallow copy of the array
       const updatedEntries = [...currentEntries];
@@ -125,6 +159,10 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
           console.log('Updating primary_name:', value);
           updatedEntry.primary_name = value;
           break;
+        case 'original_script':
+          console.log('Updating original_script:', value);
+          updatedEntry.original_script = value;
+          break;
         case 'language_code':
           console.log('Updating language_code:', value);
           updatedEntry.language_code = value;
@@ -133,39 +171,36 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
           console.log('Updating entry_type:', value);
           updatedEntry.entry_type = value || undefined;
           break;
-        case 'original_script':
-          updatedEntry.original_script = value;
-          break;
         case 'alternative_names':
-          updatedEntry.alternative_names = value ? value.split(', ') : [];
+          console.log('Updating alternative_names:', value);
+          updatedEntry.alternative_names = value ? value.split(', ').map(name => name.trim()) : [];
           break;
         case 'etymology':
+          console.log('Updating etymology:', value);
           updatedEntry.etymology = value;
           break;
         case 'definition':
+          console.log('Updating definition:', value);
           updatedEntry.definition = value;
           break;
         case 'historical_context':
+          console.log('Updating historical_context:', value);
           updatedEntry.historical_context = value;
           break;
         case 'verification_notes':
+          console.log('Updating verification_notes:', value);
           updatedEntry.verification_notes = value;
           break;
         case 'first_translation':
+          console.log('Updating first_translation:', value);
           // Update the first translation if it exists
           if (updatedEntry.translations && updatedEntry.translations[0]) {
             updatedEntry.translations = [...updatedEntry.translations];
             updatedEntry.translations[0] = { ...updatedEntry.translations[0], translated_name: value };
           }
           break;
-        case 'translation_language':
-          // Update the first translation language if it exists
-          if (updatedEntry.translations && updatedEntry.translations[0]) {
-            updatedEntry.translations = [...updatedEntry.translations];
-            updatedEntry.translations[0] = { ...updatedEntry.translations[0], language_code: value };
-          }
-          break;
         case 'translation_notes':
+          console.log('Updating translation_notes:', value);
           // Update the first translation notes if it exists
           if (updatedEntry.translations && updatedEntry.translations[0]) {
             updatedEntry.translations = [...updatedEntry.translations];
@@ -180,10 +215,13 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
       // Replace only the single updated entry
       updatedEntries[entryIndex] = updatedEntry;
 
-      console.log('Updated single entry (not entire array):', updatedEntry);
+      console.log(`[${updateKey}] Updated single entry (not entire array):`, updatedEntry);
+      console.log(`[${updateKey}] Returning new entries array with ${updatedEntries.length} items`);
+      console.log(`[${updateKey}] Original entry:`, originalEntry);
+      console.log(`[${updateKey}] Updated entry reference changed:`, originalEntry !== updatedEntry);
       return updatedEntries;
     });
-  };
+  }, []); // Empty dependency array since we only use setEntries (stable) and the parameters
 
   // Inline editing hook (with optimistic updates)
   const inlineEditing = useInlineEditing(handleOptimisticUpdate);
@@ -256,6 +294,28 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
     setCurrentPage(1);
   };
 
+  // Define column widths based on content type - MOVED OUTSIDE RENDER FOR PERFORMANCE
+  // Get column width in pixels for strict table layout
+  const getColumnWidth = useCallback((key: string): { className: string, width: string } => {
+    switch (key) {
+      case 'primary_name': return { className: '', width: '96px' };
+      case 'original_script': return { className: '', width: '96px' };
+      case 'language_code': return { className: '', width: '40px' };
+      case 'entry_type': return { className: '', width: '60px' };
+      case 'alternative_names':
+      case 'first_translation':
+      case 'etymology':
+      case 'definition': return { className: '', width: '96px' };
+      case 'translation_notes': return { className: '', width: '224px' };
+      case 'is_verified': return { className: '', width: '64px' };
+      case 'created_at':
+      case 'updated_at': return { className: '', width: '112px' };
+      case 'historical_context': return { className: '', width: '256px' };
+      case 'verification_notes': return { className: '', width: '192px' };
+      default: return { className: '', width: '144px' };
+    }
+  }, []);
+
 
   // Column visibility handlers
   const toggleColumn = (columnKey: string) => {
@@ -268,17 +328,17 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
     setVisibleColumns(newVisible);
   };
 
-  const getVisibleColumnConfigs = () => {
+  const getVisibleColumnConfigs = useMemo(() => {
     return AVAILABLE_COLUMNS.filter(col => visibleColumns.has(col.key));
-  };
+  }, [visibleColumns]);
 
-  // Get sort icon
-  const getSortIcon = (column: string) => {
+  // Get sort icon - memoized for performance
+  const getSortIcon = useCallback((column: string) => {
     if (sortBy !== column) return null;
     return sortDirection === 'asc' ?
       <ChevronUpIcon className="h-4 w-4" /> :
       <ChevronDownIcon className="h-4 w-4" />;
-  };
+  }, [sortBy, sortDirection]);
 
   // Calculate pagination info
   const startEntry = (currentPage - 1) * pageSize + 1;
@@ -307,7 +367,7 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
   }
 
   return (
-    <div className="h-full flex flex-col space-y-4">
+    <div className="h-full flex flex-col space-y-4 p-6">
 
 
       {/* Header with search and filters */}
@@ -394,10 +454,10 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
       {/* Table with Sticky Header */}
       <div className="bg-white shadow sm:rounded-lg flex-1">
         <div className="h-full">
-          <table className="min-w-full table-fixed">
+          <table className="w-full table-fixed" style={{ tableLayout: 'fixed', minWidth: '1200px' }}>
             <thead className="bg-gray-50 sticky top-0 z-10">
               <tr>
-                <th className="w-12 p-1 text-left bg-gray-50 border-b border-gray-200">
+                <th className="w-4 p-1 text-left bg-gray-50 border-b border-gray-200">
                   <input
                     type="checkbox"
                     checked={isAllSelected}
@@ -405,29 +465,12 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
                     className="h-4 w-4 text-amber-600 focus:ring-amber-500 border-gray-300 rounded"
                   />
                 </th>
-                {getVisibleColumnConfigs().map(column => {
-                  // Define column widths based on content type
-                  const getColumnWidth = (key: string) => {
-                    switch (key) {
-                      case 'primary_name': return 'w-24';
-                      case 'language_code': return 'w-8';
-                      case 'entry_type': return 'w-32';
-                      case 'first_translation': return 'w-24';
-                      case 'translation_language': return 'w-24';
-                      case 'is_verified': return 'w-20';
-                      case 'created_at':
-                      case 'updated_at': return 'w-28';
-                      case 'etymology':
-                      case 'definition':
-                      case 'historical_context': return 'w-64';
-                      default: return 'w-36';
-                    }
-                  };
-
+                {getVisibleColumnConfigs.map(column => {
                   return (
                     <th
                       key={column.key}
-                      className={`${getColumnWidth(column.key)} p-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-200 ${column.sortable ? 'cursor-pointer hover:bg-gray-100' : ''}`}
+                      className={`p-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-200 overflow-hidden ${column.sortable ? 'cursor-pointer hover:bg-gray-100' : ''}`}
+                      style={{ width: getColumnWidth(column.key).width }}
                       onClick={() => column.sortable && handleSort(column.key)}
                     >
                       <div className="flex items-center min-w-0">
@@ -450,7 +493,7 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
 
                 return (
                   <tr key={entry.id} className={isSelected ? 'bg-amber-50' : 'hover:bg-gray-50'}>
-                    <td className="w-12 p-1">
+                    <td className="w-4 p-1">
                       <input
                         type="checkbox"
                         checked={isSelected}
@@ -458,27 +501,10 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
                         className="h-4 w-4 text-amber-600 focus:ring-amber-500 border-gray-300 rounded"
                       />
                     </td>
-                    {getVisibleColumnConfigs().map(column => {
-                      const getColumnWidth = (key: string) => {
-                        switch (key) {
-                          case 'primary_name': return 'w-48';
-                          case 'language_code': return 'w-24';
-                          case 'entry_type': return 'w-32';
-                          case 'first_translation': return 'w-48';
-                          case 'translation_language': return 'w-24';
-                          case 'is_verified': return 'w-20';
-                          case 'created_at':
-                          case 'updated_at': return 'w-28';
-                          case 'etymology':
-                          case 'definition':
-                          case 'historical_context': return 'w-64';
-                          default: return 'w-36';
-                        }
-                      };
-
+                    {getVisibleColumnConfigs.map(column => {
                       return (
-                        <td key={column.key} className={`${getColumnWidth(column.key)} p-1 relative`}>
-                          <div className="min-w-0">
+                        <td key={column.key} className="p-1 relative overflow-hidden" style={{ width: getColumnWidth(column.key).width }}>
+                          <div className="min-w-0 w-full">
                             <EditableCell
                               entry={entry}
                               firstTranslation={firstTranslation}

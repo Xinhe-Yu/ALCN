@@ -19,7 +19,6 @@ export const AVAILABLE_COLUMNS: ColumnConfig[] = [
   { key: 'is_verified', label: 'Verified', sortable: true, source: 'entry' },
   { key: 'verification_notes', label: 'Verification Notes', source: 'entry' },
   { key: 'first_translation', label: 'Translation', source: 'computed' },
-  { key: 'translation_language', label: 'Translation Language', source: 'translation' },
   { key: 'translation_notes', label: 'Translation Notes', source: 'translation' },
   { key: 'translation_votes', label: 'Votes', source: 'translation' },
   { key: 'created_at', label: 'Created', sortable: true, source: 'entry' },
@@ -45,7 +44,6 @@ export const EDITABLE_FIELDS = [
   'historical_context',
   'verification_notes',
   'first_translation', // Allow editing the translation name
-  'translation_language', // Allow editing translation language
   'translation_notes'
 ];
 
