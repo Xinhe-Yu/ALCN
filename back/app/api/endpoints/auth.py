@@ -10,6 +10,7 @@ from app.core.security import (
     verify_token,
     generate_verification_code
 )
+from app.services import email_service
 from app.crud import users as crud_users
 from app.schemas.auth import LoginRequest, VerifyCodeRequest, Token, UserResponse
 from app.schemas.users import UserCreate
@@ -36,7 +37,11 @@ async def login(request: LoginRequest, db: Session = Depends(get_db)):
         code = "123456"  # Dev mode always uses this code
     else:
         code = generate_verification_code()
-        # TODO: Send email with verification code
+
+    email_service.send_verification_email(
+        to_email=user.email,
+        code=code
+    )
 
     # Store verification code in database
     crud_users.create_verification_code(db, user_id=str(user.id), code=code)
