@@ -37,11 +37,11 @@ async def login(request: LoginRequest, db: Session = Depends(get_db)):
         code = "123456"  # Dev mode always uses this code
     else:
         code = generate_verification_code()
+        email_service.send_verification_email(
+            to_email=user.email,
+            code=code
+        )
 
-    email_service.send_verification_email(
-        to_email=user.email,
-        code=code
-    )
 
     # Store verification code in database
     crud_users.create_verification_code(db, user_id=str(user.id), code=code)

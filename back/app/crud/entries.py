@@ -146,6 +146,10 @@ def delete_entry(db: Session, entry_id: str) -> bool:
     if not db_entry:
         return False
 
+    # Explicitly delete translations first to avoid foreign key constraint issues
+    db.query(Translation).filter(Translation.entry_id == entry_id).delete(synchronize_session=False)
+    
+    # Delete the entry
     db.delete(db_entry)
     db.commit()
     return True
