@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, startTransition } from 'react';
+import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { entriesService } from '@/lib/services';
-import { Pagination, type EntryMetadata, type EntryWithTranslations } from '@/app/types';
+import type { EntryMetadata, EntryWithTranslations } from '@/app/types';
 import { useAuth } from '@/lib/context/AuthContext';
 import { useDebounce } from '@/lib/hooks/useDebounce';
-import { MagnifyingGlassIcon, ClockIcon, ChatBubbleLeftIcon } from '@heroicons/react/24/outline';
+import { MagnifyingGlassIcon, ClockIcon, ChatBubbleLeftIcon, AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
 
 import Navbar from '@/components/ui/navbar';
 import AutoSearchBar from '@/components/ui/auto-search-bar';
@@ -20,6 +21,7 @@ import CommentList from '@/components/comments/comment-list';
 
 export default function Home() {
   const { user, logout } = useAuth();
+  const router = useRouter();
   const t = useTranslations();
   const [metadata, setMetadata] = useState<EntryMetadata | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -27,7 +29,6 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [searchLoading, setSearchLoading] = useState(false);
   const [error, setError] = useState('');
-  const [pagination, setPagination] = useState<Pagination | null>(null);
 
   // Debounce search query with 300ms delay
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
@@ -47,7 +48,7 @@ export default function Home() {
     };
 
     fetchMetadata();
-  }, []);
+  });
 
   // Perform search when debounced query changes
   useEffect(() => {
@@ -64,13 +65,13 @@ export default function Home() {
           fuzzy_search: debouncedSearchQuery.trim(),
         });
         setSearchResults(results.items);
-        setPagination({
-          total: results.total,
-          skip: results.skip,
-          limit: results.limit,
-          page: results.page,
-          pages: results.pages,
-        });
+        // setPagination({
+        //   total: results.total,
+        //   skip: results.skip,
+        //   limit: results.limit,
+        //   page: results.page,
+        //   pages: results.pages,
+        // });
       } catch (err) {
         console.error('Search failed:', err);
         setSearchResults([]);
@@ -108,7 +109,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar user={user} onLogout={logout} />
+      <Navbar user={user} onLogout={logout} onHomeClick={() => setSearchQuery('')} />
 
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
@@ -140,11 +141,28 @@ export default function Home() {
           {/* Dashboard Data - Only show when not searching */}
           {metadata && !debouncedSearchQuery.trim() && (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 mt-8">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8 mt-8">
+                {/* Detailed Search Button */}
+                <div className="bg-amber-600 text-white font-medium rounded-lg hover:bg-amber-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 flex items-center">
+                  <button
+                    onClick={() => {
+                      startTransition(() => {
+                        router.replace('/list');
+                      });
+                    }}
+                    className="flex items-center space-x-2 cursor-pointer w-full h-full"
+                  >
+                    <div className="p-5">
+                      <MagnifyingGlassIcon className="h-5 w-5" />
+                    </div>
+                    <span>{t('landing.stats.detailedSearch')}</span>
+                  </button>
+
+                </div>
                 <StatCard
                   title={t('landing.stats.totalEntries')}
                   value={metadata.total_entries}
-                  icon={<MagnifyingGlassIcon className="h-6 w-6 text-gray-400" />}
+                  icon={<AdjustmentsHorizontalIcon className="h-6 w-6 text-gray-400" />}
                 />
                 <StatCard
                   title={t('landing.stats.recentlyUpdated')}
@@ -157,6 +175,8 @@ export default function Home() {
                   icon={<ChatBubbleLeftIcon className="h-6 w-6 text-amber-400" />}
                 />
               </div>
+
+
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <EntryList

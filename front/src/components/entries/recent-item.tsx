@@ -10,9 +10,10 @@ import { useToast } from '@/lib/context/ToastContext';
 interface RecentItemProps {
   entry: EntryWithTranslations;
   type?: 'entry' | 'translation' | 'comment';
+  showDate?: boolean;
 }
 
-export default function RecentItem({ entry, type = 'entry' }: RecentItemProps) {
+export default function RecentItem({ entry, type = 'entry', showDate = true }: RecentItemProps) {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const { success, error } = useToast();
   const t = useTranslations();
@@ -59,9 +60,11 @@ export default function RecentItem({ entry, type = 'entry' }: RecentItemProps) {
             </span>
           )}
         </div>
-        <div className="text-sm text-gray-500">
-          {formatDate(entry.updated_at)}
-        </div>
+        {showDate && (
+          <div className="text-sm text-gray-500">
+            {formatDate(entry.updated_at)}
+          </div>
+        )}
       </div>
       {type === 'entry' && (
         <p className="text-gray-600 text-sm mt-1">{entry.definition}</p>
@@ -69,33 +72,33 @@ export default function RecentItem({ entry, type = 'entry' }: RecentItemProps) {
 
 
 
-      <div className="flex flex-wrap gap-2">
+      <div className="text-sm text-gray-700">
         {displayed_translations.map((translation, index) => (
-          <div key={translation.id} className="flex items-center gap-1">
-            {length > 1 && <span className="font-semibold text-xs font-medium">{index + 1}:</span>}
+          <span key={translation.id} className="inline-block mr-2 mb-1">
+            {length > 1 && <span className="font-semibold text-xs mr-1">{index + 1}:</span>}
             <span 
               onClick={() => copyToClipboard(translation.translated_name, translation.id)}
-              className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium cursor-pointer transition-colors duration-200 ${
+              className={`px-2 py-1 rounded-md text-xs font-medium cursor-pointer transition-colors duration-200 ${
                 copiedId === translation.id 
                   ? 'bg-green-200 text-green-800' 
                   : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
               }`}
               title="Click to copy"
             >
-              <span>{translation.translated_name}</span>
+              {translation.translated_name}
             </span>
-            {translation.notes && <span className="text-xs font-medium text-gray-500">: {translation.notes}</span>}
+            {translation.notes && <span className="text-xs text-gray-500 ml-1">: {translation.notes}</span>}
             {(translation.upvotes > 0 || translation.downvotes > 0) && (
-              <div className="flex items-center gap-1 text-xs text-gray-500">
+              <span className="ml-1 text-xs text-gray-500">
                 {translation.upvotes > 0 && (
                   <span className="text-green-600">↑{translation.upvotes}</span>
                 )}
                 {translation.downvotes > 0 && (
-                  <span className="text-red-600">↓{translation.downvotes}</span>
+                  <span className="text-red-600 ml-1">↓{translation.downvotes}</span>
                 )}
-              </div>
+              </span>
             )}
-          </div>
+          </span>
         ))}
         {length > 5 && (
           <span className="text-xs text-gray-500 px-2 py-1">

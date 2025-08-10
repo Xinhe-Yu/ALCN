@@ -9,9 +9,10 @@ import { LanguageSwitcher } from './language-switcher';
 interface NavbarProps {
   user?: User | null;
   onLogout?: () => void;
+  onHomeClick?: () => void;
 }
 
-export default function Navbar({ user, onLogout }: NavbarProps) {
+export default function Navbar({ user, onLogout, onHomeClick }: NavbarProps) {
   const t = useTranslations();
 
   return (
@@ -21,6 +22,7 @@ export default function Navbar({ user, onLogout }: NavbarProps) {
           <div className="flex items-center">
             <Link
               href="/"
+              onClick={onHomeClick}
               className="text-xl font-semibold text-gray-900 hover:text-gray-700 transition-colors"
             >
               Ancient Lexicon CN

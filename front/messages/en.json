@@ -51,9 +51,9 @@
     "subtitle": "A comprehensive dictionary for Greco-Roman name/term translations",
     "searchPlaceholder": "Search ancient terms, names, or places...",
     "stats": {
+      "detailedSearch": "Detailed Search",
       "totalEntries": "Total Entries",
       "recentlyUpdated": "Recently Updated",
-      "recentUpdates": "Recent Updates",
       "activeDiscussions": "Active Discussions"
     },
     "sections": {

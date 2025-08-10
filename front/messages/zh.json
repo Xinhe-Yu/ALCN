@@ -49,11 +49,11 @@
   "landing": {
     "title": "古代译名数据库",
     "subtitle": "希腊罗马名称/术语翻译的综合词典",
-    "searchPlaceholder": "搜索古代术语、名称或地点...",
+    "searchPlaceholder": "快速搜索古代术语、名称或地点中译...",
     "stats": {
+      "detailedSearch": "详细搜索",
       "totalEntries": "词条总数",
       "recentlyUpdated": "近期更新",
-      "recentUpdates": "最近更新",
       "activeDiscussions": "活跃讨论"
     },
     "sections": {
