@@ -106,13 +106,15 @@ export interface UpdateTranslationRequest {
 export type UpdateEntryField = keyof UpdateEntryRequest
 export type UpdateTranslationField = keyof UpdateTranslationRequest;
 
+export interface BulkUpdates {
+  language_code?: string;
+  entry_type?: string | null; // null for "other"
+  is_verified?: boolean;
+}
+
 export interface BulkUpdateRequest {
   entry_ids: string[];
-  updates: {
-    language_code?: LanguageCode;
-    entry_type?: EntryType | null; // null for "other"
-    is_verified?: boolean;
-  };
+  updates: BulkUpdates;
 }
 
 export interface DeleteEntryRequest {

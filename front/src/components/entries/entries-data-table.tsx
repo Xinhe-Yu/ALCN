@@ -10,14 +10,19 @@ import type {
   LanguageCode,
   EntryType
 } from '@/app/types';
+import type {
+  BulkUpdates
+} from '@/app/types/crud';
 import { LANGUAGE_OPTIONS, ENTRY_TYPE_OPTIONS } from '@/app/types';
 import { PlusIcon, TrashIcon, PencilIcon, ChevronUpIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import LoadingSpinner from '../ui/loading-spinner';
 import AutoSearchBar from '../ui/auto-search-bar';
-import { AVAILABLE_COLUMNS, DEFAULT_VISIBLE_COLUMNS, PAGE_SIZE_OPTIONS, PageSize } from './data-table/column-config';
+import { AVAILABLE_COLUMNS, DEFAULT_VISIBLE_COLUMNS, PAGE_SIZE_OPTIONS, PageSize, ENTRY_TYPE_COLORS } from './data-table/column-config';
 import { useInlineEditing } from './data-table/use-inline-editing';
 import ColumnSelector from './data-table/column-selector';
 import EditableCell from './data-table/editable-cell';
+import Badge from '../ui/badge';
+import { useToast } from '@/lib/context/ToastContext';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface EntriesDataTableProps {
@@ -25,6 +30,7 @@ interface EntriesDataTableProps {
 }
 
 export default function EntriesDataTable({ }: EntriesDataTableProps) {
+  const toast = useToast();
   // Data state
   const [entries, setEntries] = useState<EntryWithTranslations[]>([]);
   const [loading, setLoading] = useState(true);
@@ -55,6 +61,11 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
 
   // Column visibility state
   const [visibleColumns, setVisibleColumns] = useState<Set<string>>(new Set(DEFAULT_VISIBLE_COLUMNS));
+
+  // Bulk modification state
+  const [showBulkOptions, setShowBulkOptions] = useState(false);
+  const [bulkFieldType, setBulkFieldType] = useState<'language_code' | 'entry_type' | null>(null);
+  const [isBulkUpdating, setIsBulkUpdating] = useState(false);
 
   // Fetch data
   const fetchEntries = useCallback(async () => {
@@ -100,6 +111,9 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
 
   // Ref to track processed updates to prevent duplicate executions
   const processedUpdatesRef = useRef(new Set<string>());
+
+  // Ref for bulk options dropdown
+  const bulkOptionsRef = useRef<HTMLDivElement>(null);
 
   // Optimistic update function for inline editing - PERFORMANCE OPTIMIZED
   const handleOptimisticUpdate = useCallback((entryId: string, field: string, value: string) => {
@@ -231,6 +245,21 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
     fetchEntries();
   }, [fetchEntries]);
 
+  // Close bulk options when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (bulkOptionsRef.current && !bulkOptionsRef.current.contains(event.target as Node)) {
+        setShowBulkOptions(false);
+        setBulkFieldType(null);
+      }
+    };
+
+    if (showBulkOptions || bulkFieldType) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [showBulkOptions, bulkFieldType]);
+
   // Set search loading state when user starts typing
   useEffect(() => {
     if (searchQuery.trim() && searchQuery !== debouncedSearchQuery) {
@@ -294,16 +323,81 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
     setCurrentPage(1);
   };
 
+  // Handle bulk update
+  const handleBulkUpdate = async (fieldType: 'language_code' | 'entry_type', value: string) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast.warning('Authentication Required', 'You must be logged in to perform bulk updates.');
+      return;
+    }
+
+    if (selectedIds.size === 0) {
+      toast.info('No Selection', 'Please select entries to update.');
+      return;
+    }
+
+    setIsBulkUpdating(true);
+    try {
+      const updates: BulkUpdates = {};
+      if (fieldType === 'language_code') {
+        updates.language_code = value;
+      } else if (fieldType === 'entry_type') {
+        updates.entry_type = value || null; // Empty string becomes null
+      }
+
+      const bulkUpdateData = {
+        entry_ids: Array.from(selectedIds),
+        updates
+      };
+
+      await entriesService.bulkUpdateEntries(bulkUpdateData);
+
+      // Update local state optimistically
+      setEntries(currentEntries =>
+        currentEntries.map(entry => {
+          if (selectedIds.has(entry.id)) {
+            return {
+              ...entry,
+              ...(fieldType === 'language_code' && { language_code: value }),
+              ...(fieldType === 'entry_type' && { entry_type: value || undefined })
+            };
+          }
+          return entry;
+        })
+      );
+
+      // Clear selection and close bulk options
+      setSelectedIds(new Set());
+      setIsAllSelected(false);
+      setShowBulkOptions(false);
+      setBulkFieldType(null);
+
+      toast.success('Bulk Update Successful', `Successfully updated ${selectedIds.size} entries.`);
+    } catch (error) {
+      console.error('Bulk update failed:', error);
+    } finally {
+      setIsBulkUpdating(false);
+    }
+  };
+
   // Handle delete entry
   const handleDeleteEntry = async (entryId: string) => {
     // Check if user is authenticated
     const token = localStorage.getItem('token');
     if (!token) {
-      alert('You must be logged in to delete entries. Please login first.');
+      toast.warning('Authentication Required', 'You must be logged in to delete entries. Please login first.');
       return;
     }
 
-    if (!confirm('Are you sure you want to delete this entry? This action cannot be undone.')) {
+    const confirmed = await toast.confirm({
+      title: 'Delete Entry',
+      message: 'Are you sure you want to delete this entry? This action cannot be undone.',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      type: 'danger'
+    });
+
+    if (!confirmed) {
       return;
     }
 
@@ -323,6 +417,7 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
         return newSelected;
       });
 
+      toast.success('Entry Deleted', 'Entry was successfully deleted.');
       console.log('Entry deleted successfully:', entryId);
     } catch (error) {
       console.error('Failed to delete entry:', error);
@@ -429,16 +524,86 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
           />
 
           {selectedIds.size > 0 && (
-            <>
-              <button className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+            <div ref={bulkOptionsRef} className="flex items-center gap-2 relative">
+              <button
+                onClick={() => setShowBulkOptions(!showBulkOptions)}
+                disabled={isBulkUpdating}
+                className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+              >
                 <PencilIcon className="h-4 w-4 mr-1" />
-                Edit ({selectedIds.size})
+                {isBulkUpdating ? 'Updating...' : `Bulk Edit (${selectedIds.size})`}
               </button>
+
+              {showBulkOptions && (
+                <div className="absolute top-full left-0 z-[9999] mt-1 bg-white border border-gray-300 rounded-md shadow-lg">
+                  <div className="py-1">
+                    <button
+                      onClick={() => setBulkFieldType('language_code')}
+                      className="w-full text-left px-3 py-2 text-sm hover:bg-gray-100"
+                    >
+                      Change Language
+                    </button>
+                    <button
+                      onClick={() => setBulkFieldType('entry_type')}
+                      className="w-full text-left px-3 py-2 text-sm hover:bg-gray-100"
+                    >
+                      Change Type
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Language Code Dropdown */}
+              {bulkFieldType === 'language_code' && (
+                <div className="absolute top-full left-0 z-[9999] mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto">
+                  <div className="py-1">
+                    {Object.entries(LANGUAGE_OPTIONS).map(([code, name]) => (
+                      <button
+                        key={code}
+                        onClick={() => handleBulkUpdate('language_code', code)}
+                        disabled={isBulkUpdating}
+                        className="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 disabled:opacity-50 flex items-center space-x-2"
+                      >
+                        <Badge code={code} />
+                        <span className="text-xs">{name}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Entry Type Dropdown */}
+              {bulkFieldType === 'entry_type' && (
+                <div className="absolute top-full left-0 z-[9999] mt-1 bg-white border border-gray-300 rounded-md shadow-lg">
+                  <div className="py-1">
+                    <button
+                      onClick={() => handleBulkUpdate('entry_type', '')}
+                      disabled={isBulkUpdating}
+                      className="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 disabled:opacity-50"
+                    >
+                      <span className="text-gray-400">No type</span>
+                    </button>
+                    {Object.entries(ENTRY_TYPE_OPTIONS).map(([code, name]) => (
+                      <button
+                        key={code}
+                        onClick={() => handleBulkUpdate('entry_type', code)}
+                        disabled={isBulkUpdating}
+                        className="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 disabled:opacity-50"
+                      >
+                        <span className={`px-2 py-1 rounded-md text-xs font-medium border ${ENTRY_TYPE_COLORS[code] || ENTRY_TYPE_COLORS['']}`}>
+                          {name}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <button className="inline-flex items-center px-3 py-2 border border-red-300 shadow-sm text-sm leading-4 font-medium rounded-md text-red-700 bg-white hover:bg-red-50">
                 <TrashIcon className="h-4 w-4 mr-1" />
                 Delete ({selectedIds.size})
               </button>
-            </>
+            </div>
           )}
         </div>
       </div>
@@ -490,9 +655,9 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
       <div className="bg-white shadow sm:rounded-lg flex-1">
         <div className="h-full overflow-x-auto">
           <table className="w-full table-fixed" style={{ tableLayout: 'fixed', minWidth: '1200px' }}>
-            <thead className="bg-gray-50 sticky top-0 z-[100]">
+            <thead className="bg-gray-50 sticky top-0 z-20">
               <tr>
-                <th className="w-4 p-1 text-left bg-gray-50 border-b border-gray-200 relative z-[100]">
+                <th className="w-4 p-1 text-left bg-gray-50 border-b border-gray-200 relative z-20">
                   <input
                     type="checkbox"
                     checked={isAllSelected}
@@ -504,7 +669,7 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
                   return (
                     <th
                       key={column.key}
-                      className={`p-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-200 overflow-hidden ${column.sortable ? 'cursor-pointer hover:bg-gray-100' : ''} relative z-[100]`}
+                      className={`p-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-200 overflow-hidden ${column.sortable ? 'cursor-pointer hover:bg-gray-100' : ''} relative z-20`}
                       style={{ width: getColumnWidth(column.key).width }}
                       onClick={() => column.sortable && handleSort(column.key)}
                     >
@@ -515,7 +680,7 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
                     </th>
                   );
                 })}
-                <th className="w-4 p-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-200 relative z-[100]">
+                <th className="w-4 p-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-200 relative z-20">
                   Actions
                 </th>
               </tr>

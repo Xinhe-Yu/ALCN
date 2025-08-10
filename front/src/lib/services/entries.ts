@@ -43,7 +43,7 @@ export const entriesService = {
   },
 
   async bulkUpdateEntries(data: BulkUpdateRequest) {
-    const response = await api.patch<EntryTableRow[]>('/api/v1/entries/bulk', data);
+    const response = await api.put<EntryTableRow[]>('/api/v1/entries/bulk', data);
     return response.data;
   },
 
