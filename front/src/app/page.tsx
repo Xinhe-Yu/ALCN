@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { entriesService } from '@/lib/services';
 import { Pagination, type EntryMetadata, type EntryWithTranslations } from '@/app/types';
 import { useAuth } from '@/lib/context/AuthContext';
@@ -19,6 +20,7 @@ import CommentList from '@/components/comments/comment-list';
 
 export default function Home() {
   const { user, logout } = useAuth();
+  const t = useTranslations();
   const [metadata, setMetadata] = useState<EntryMetadata | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<EntryWithTranslations[]>([]);
@@ -37,7 +39,7 @@ export default function Home() {
         const metadataResponse = await entriesService.getMetadata();
         setMetadata(metadataResponse);
       } catch (err) {
-        setError('Failed to load data');
+        setError(t('landing.errors.failedToLoad'));
         console.error('Failed to fetch metadata:', err);
       } finally {
         setLoading(false);
@@ -113,10 +115,10 @@ export default function Home() {
           {/* Hero Section with Search */}
           <div className="text-center mb-2">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Ancient Lexicon CN
+              {t('landing.title')}
             </h2>
             <p className="text-xl text-gray-600 mb-8">
-              A comprehensive dictionary for Greco-Roman name/term translations
+              {t('landing.subtitle')}
             </p>
 
             <div className="max-w-2xl mx-auto">
@@ -124,7 +126,7 @@ export default function Home() {
                 value={searchQuery}
                 onChange={setSearchQuery}
                 loading={searchLoading}
-                placeholder="Search ancient terms, names, or places..."
+                placeholder={t('landing.searchPlaceholder')}
               />
             </div>
           </div>
@@ -140,17 +142,17 @@ export default function Home() {
             <>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 mt-8">
                 <StatCard
-                  title="Total Entries"
+                  title={t('landing.stats.totalEntries')}
                   value={metadata.total_entries}
                   icon={<MagnifyingGlassIcon className="h-6 w-6 text-gray-400" />}
                 />
                 <StatCard
-                  title="Recent Updates"
+                  title={t('landing.stats.recentUpdates')}
                   value={metadata.newest_updated_entries.length}
                   icon={<ClockIcon className="h-6 w-6 text-gray-400" />}
                 />
                 <StatCard
-                  title="Active Discussions"
+                  title={t('landing.stats.activeDiscussions')}
                   value={metadata.translations_with_newest_comments.length}
                   icon={<ChatBubbleLeftIcon className="h-6 w-6 text-gray-400" />}
                 />
@@ -158,17 +160,17 @@ export default function Home() {
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <EntryList
-                  title="Recently Updated Entries"
+                  title={t('landing.sections.recentlyUpdated')}
                   entries={metadata.newest_updated_entries}
                 />
                 <TranslationList
-                  title="Recent Translations"
+                  title={t('landing.sections.recentTranslations')}
                   entries={metadata.entries_with_newest_translations}
                 />
               </div>
 
               <CommentList
-                title="Recent Discussions"
+                title={t('landing.sections.recentDiscussions')}
                 translations={metadata.translations_with_newest_comments}
               />
             </>

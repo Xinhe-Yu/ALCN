@@ -1,0 +1,107 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "search": "Search",
+    "close": "Close"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "email": "Email",
+    "password": "Password",
+    "loginButton": "Sign In",
+    "loginError": "Login failed",
+    "title": "Ancient Lexicon CN",
+    "emailStep": {
+      "description": "Enter your email to get started",
+      "emailAddress": "Email address",
+      "sendCode": "Send Verification Code",
+      "sending": "Sending...",
+      "failedToSend": "Failed to send verification code"
+    },
+    "codeStep": {
+      "description": "Enter the 6-digit code sent to your email",
+      "verificationCode": "Verification Code",
+      "devMode": "Development Mode: Use code",
+      "back": "Back",
+      "verify": "Verify",
+      "verifying": "Verifying...",
+      "invalidCode": "Invalid verification code"
+    }
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "entries": "Entries",
+    "translations": "Translations"
+  },
+  "entries": {
+    "title": "Entries",
+    "addNew": "Add New Entry",
+    "searchPlaceholder": "Search entries...",
+    "noResults": "No results found"
+  },
+  "landing": {
+    "title": "Ancient Lexicon CN",
+    "subtitle": "A comprehensive dictionary for Greco-Roman name/term translations",
+    "searchPlaceholder": "Search ancient terms, names, or places...",
+    "stats": {
+      "totalEntries": "Total Entries",
+      "recentUpdates": "Recent Updates",
+      "activeDiscussions": "Active Discussions"
+    },
+    "sections": {
+      "recentlyUpdated": "Recently Updated Entries",
+      "recentTranslations": "Recent Translations",
+      "recentDiscussions": "Recent Discussions"
+    },
+    "errors": {
+      "failedToLoad": "Failed to load data",
+      "searchFailed": "Search failed"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "version": "Ancient Lexicon CN v1.0",
+    "general": {
+      "title": "General Dashboard",
+      "subtitle": "Your personalized view of dictionary entries and activity"
+    },
+    "sidebar": {
+      "general": "General",
+      "entries": "Entries"
+    },
+    "errors": {
+      "failedToLoad": "Failed to load dashboard data",
+      "backToLogin": "Back to Login"
+    }
+  },
+  "languageCodes": {
+    "en": "en",
+    "fr": "fr",
+    "lat": "lat",
+    "ag": "ag",
+    "gr": "gr",
+    "de": "de",
+    "it": "it",
+    "es": "es"
+  },
+  "entryTypes": {
+    "term": "Term",
+    "personal_name": "Person Name",
+    "place_name": "Place Name",
+    "artWork_title": "Art Work",
+    "concept": "Concept"
+  },
+  "searchResults": {
+    "searching": "Searching for",
+    "noResults": "No results found for",
+    "tryDifferent": "Try different keywords or check your spelling",
+    "foundResults": "Found {count} result{count, plural, one {} other {s}}"
+  }
+}

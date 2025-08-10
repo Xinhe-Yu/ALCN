@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import {
   HomeIcon,
   TableCellsIcon,
@@ -13,13 +14,14 @@ interface SidebarProps {
   onTabChange: (tab: string) => void;
 }
 
-const tabs = [
-  { id: 'general', name: 'General', icon: HomeIcon },
-  { id: 'entries', name: 'Entries', icon: TableCellsIcon },
-];
-
 export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const t = useTranslations();
+
+  const tabs = [
+    { id: 'general', name: t('dashboard.sidebar.general'), icon: HomeIcon },
+    { id: 'entries', name: t('dashboard.sidebar.entries'), icon: TableCellsIcon },
+  ];
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -62,7 +64,7 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
         <div className="flex flex-col h-full pt-20 lg:pt-6">
           {/* Sidebar header */}
           <div className="px-4 pb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Dashboard</h2>
+            <h2 className="text-lg font-semibold text-gray-900">{t('dashboard.title')}</h2>
           </div>
 
           {/* Navigation */}
@@ -93,7 +95,7 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
           {/* Sidebar footer */}
           <div className="px-4 py-4 border-t border-gray-200">
             <p className="text-xs text-gray-500">
-              Ancient Lexicon CN v1.0
+              {t('dashboard.version')}
             </p>
           </div>
         </div>

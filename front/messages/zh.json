@@ -1,0 +1,109 @@
+{
+  "common": {
+    "loading": "加载中...",
+    "error": "错误",
+    "success": "成功",
+    "save": "保存",
+    "cancel": "取消",
+    "delete": "删除",
+    "edit": "编辑",
+    "search": "搜索",
+    "close": "关闭"
+  },
+  "auth": {
+    "login": "登录",
+    "logout": "退出登录",
+    "email": "邮箱",
+    "password": "密码",
+    "loginButton": "登录",
+    "loginError": "登录失败",
+    "title": "古代译名数据库",
+    "emailStep": {
+      "description": "输入您的邮箱地址以登录",
+      "emailAddress": "邮箱地址",
+      "sendCode": "发送验证码",
+      "sending": "发送中...",
+      "failedToSend": "发送验证码失败"
+    },
+    "codeStep": {
+      "description": "输入发送到您邮箱的6位验证码",
+      "verificationCode": "验证码",
+      "devMode": "开发模式：使用验证码",
+      "back": "返回",
+      "verify": "验证",
+      "verifying": "验证中...",
+      "invalidCode": "无效的验证码"
+    }
+  },
+  "navigation": {
+    "dashboard": "个人面板",
+    "entries": "词条批量处理",
+    "translations": "翻译"
+  },
+  "entries": {
+    "title": "词条",
+    "addNew": "添加新词条",
+    "searchPlaceholder": "搜索词条...",
+    "noResults": "未找到结果"
+  },
+  "landing": {
+    "title": "古代译名数据库",
+    "subtitle": "希腊罗马名称/术语翻译的综合词典",
+    "searchPlaceholder": "搜索古代术语、名称或地点...",
+    "stats": {
+      "totalEntries": "词条总数",
+      "recentUpdates": "最近更新",
+      "activeDiscussions": "活跃讨论"
+    },
+    "sections": {
+      "recentlyUpdated": "最近更新的词条",
+      "recentTranslations": "最新翻译",
+      "recentDiscussions": "最近讨论"
+    },
+    "errors": {
+      "failedToLoad": "数据加载失败",
+      "searchFailed": "搜索失败"
+    }
+  },
+  "dashboard": {
+    "title": "个人面板",
+    "version": "古代译名数据库 v1.0",
+    "general": {
+      "title": "通用面板",
+      "subtitle": "您的个性化词典条目和活动视图"
+    },
+    "sidebar": {
+      "general": "概览",
+      "entries": "词条"
+    },
+    "errors": {
+      "failedToLoad": "仪表板数据加载失败",
+      "backToLogin": "返回登录"
+    }
+  },
+  "languageCodes": {
+    "en": "英",
+    "fr": "法",
+    "lat": "拉",
+    "ag": "希",
+    "gr": "现希",
+    "de": "德",
+    "it": "意",
+    "es": "西",
+    "tu": "土",
+    "ar": "阿"
+  },
+  "entryTypes": {
+    "term": "术语",
+    "personal_name": "人名",
+    "place_name": "地名",
+    "artWork_title": "作品名",
+    "concept": "概念"
+  },
+  "searchResults": {
+    "searching": "正在搜索",
+    "noResults": "未找到相关结果",
+    "tryDifferent": "请尝试不同的关键词或检查拼写",
+    "foundResults": "找到 {count} 个结果"
+  }
+}

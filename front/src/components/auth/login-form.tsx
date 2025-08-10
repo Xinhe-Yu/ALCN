@@ -1,4 +1,7 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { authService } from '@/lib/services';
 import { useAuth } from '@/lib/context/AuthContext';
 import { getErrorMessage } from '@/app/types';
@@ -10,6 +13,7 @@ interface LoginFormProps {
 
 export default function LoginForm({ onSuccess }: LoginFormProps) {
   const { login } = useAuth();
+  const t = useTranslations();
   const [step, setStep] = useState<'email' | 'code'>('email');
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
@@ -39,7 +43,7 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
       }
       setStep('code');
     } catch (err) {
-      setError(getErrorMessage(err) || 'Failed to send verification code');
+      setError(getErrorMessage(err) || t('auth.emailStep.failedToSend'));
     } finally {
       setLoading(false);
     }
@@ -56,7 +60,7 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
       await login(email, code);
       onSuccess?.();
     } catch (err) {
-      setError(getErrorMessage(err) || 'Invalid verification code');
+      setError(getErrorMessage(err) || t('auth.codeStep.invalidCode'));
     } finally {
       setLoading(false);
     }
@@ -78,10 +82,10 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
     <div className="max-w-md w-full space-y-8">
       <div>
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Ancient Lexicon CN
+          {t('auth.title')}
         </h2>
         <p className="mt-2 text-center text-sm text-gray-600">
-          {step === 'email' ? 'Enter your email to get started' : 'Enter the 6-digit code sent to your email'}
+          {step === 'email' ? t('auth.emailStep.description') : t('auth.codeStep.description')}
         </p>
       </div>
 
@@ -89,7 +93,7 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
         <form className="mt-8 space-y-6" onSubmit={handleEmailSubmit}>
           <div>
             <label htmlFor="email" className="sr-only">
-              Email address
+              {t('auth.emailStep.emailAddress')}
             </label>
             <input
               id="email"
@@ -98,7 +102,7 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
               autoComplete="email"
               required
               className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-amber-500 focus:border-amber-500 focus:z-10 sm:text-sm"
-              placeholder="Email address"
+              placeholder={t('auth.emailStep.emailAddress')}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={loading}
@@ -117,7 +121,7 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
               disabled={loading || !email}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Sending...' : 'Send Verification Code'}
+              {loading ? t('auth.emailStep.sending') : t('auth.emailStep.sendCode')}
             </button>
           </div>
         </form>
@@ -125,7 +129,7 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
         <form className="mt-8 space-y-6" onSubmit={handleCodeSubmit}>
           <div>
             <label htmlFor="code" className="sr-only">
-              Verification Code
+              {t('auth.codeStep.verificationCode')}
             </label>
             <input
               id="code"
@@ -143,7 +147,7 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
 
           {devCode && (
             <div className="bg-amber-100 border border-amber-400 text-amber-700 px-4 py-3 rounded text-sm">
-              <strong>Development Mode:</strong> Use code <strong>{devCode}</strong>
+              <strong>{t('auth.codeStep.devMode')}:</strong> <strong>{devCode}</strong>
             </div>
           )}
 
@@ -159,14 +163,14 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
               onClick={handleBack}
               className="flex-1 py-2 px-4 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500"
             >
-              Back
+              {t('auth.codeStep.back')}
             </button>
             <button
               type="submit"
               disabled={loading || code.length !== 6}
               className="flex-1 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Verifying...' : 'Verify'}
+              {loading ? t('auth.codeStep.verifying') : t('auth.codeStep.verify')}
             </button>
           </div>
         </form>

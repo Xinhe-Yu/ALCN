@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { entriesService } from '@/lib/services';
 import type { EntryMetadata } from '@/app/types';
 import { useAuth } from '@/lib/context/AuthContext';
@@ -15,6 +16,7 @@ import EntriesDataTable from '@/components/entries/entries-data-table';
 
 export default function DashboardPage() {
   const { user, logout, loading: authLoading } = useAuth();
+  const t = useTranslations();
   const [metadata, setMetadata] = useState<EntryMetadata | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -36,7 +38,7 @@ export default function DashboardPage() {
         const metadataResponse = await entriesService.getMetadata();
         setMetadata(metadataResponse);
       } catch {
-        setError('Failed to load dashboard data');
+        setError(t('dashboard.errors.failedToLoad'));
       } finally {
         setLoading(false);
       }
@@ -60,7 +62,7 @@ export default function DashboardPage() {
         <ErrorMessage
           message={error}
           action={{
-            label: "Back to Login",
+            label: t('dashboard.errors.backToLogin'),
             onClick: logout
           }}
         />
@@ -74,24 +76,24 @@ export default function DashboardPage() {
         return (
           <div className="p-6">
             <div className="mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">General Dashboard</h2>
-              <p className="text-gray-600">Your personalized view of dictionary entries and activity</p>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('dashboard.general.title')}</h2>
+              <p className="text-gray-600">{t('dashboard.general.subtitle')}</p>
             </div>
 
             {metadata && (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <StatCard
-                  title="Total Entries"
+                  title={t('landing.stats.totalEntries')}
                   value={metadata.total_entries}
                   icon={<MagnifyingGlassIcon className="h-6 w-6 text-gray-400" />}
                 />
                 <StatCard
-                  title="Recent Updates"
+                  title={t('landing.stats.recentUpdates')}
                   value={metadata.newest_updated_entries.length}
                   icon={<ClockIcon className="h-6 w-6 text-gray-400" />}
                 />
                 <StatCard
-                  title="Active Discussions"
+                  title={t('landing.stats.activeDiscussions')}
                   value={metadata.translations_with_newest_comments.length}
                   icon={<ChatBubbleLeftIcon className="h-6 w-6 text-gray-400" />}
                 />

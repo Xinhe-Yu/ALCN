@@ -1,3 +1,6 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
 import type { EntryWithTranslations } from '@/app/types';
 import SearchResultItem from './search-result-item';
 import LoadingSpinner from '../ui/loading-spinner';
@@ -9,9 +12,10 @@ interface SearchResultsProps {
 }
 
 export default function SearchResults({ results, loading, query }: SearchResultsProps) {
+  const t = useTranslations();
   if (loading) {
     return (
-      <LoadingSpinner size="md" message={`Searching for "${query}"...`} />
+      <LoadingSpinner size="md" message={`${t('searchResults.searching')} "${query}"...`} />
     );
   }
 
@@ -22,8 +26,8 @@ export default function SearchResults({ results, loading, query }: SearchResults
   if (results.length === 0) {
     return (
       <div className="text-center mb-12">
-        <p className="text-gray-500">No results found for &ldquo;{query}&rdquo;</p>
-        <p className="text-sm text-gray-400 mt-1">Try different keywords or check your spelling</p>
+        <p className="text-gray-500">{t('searchResults.noResults')} &ldquo;{query}&rdquo;</p>
+        <p className="text-sm text-gray-400 mt-1">{t('searchResults.tryDifferent')}</p>
       </div>
     );
   }
@@ -31,7 +35,7 @@ export default function SearchResults({ results, loading, query }: SearchResults
   return (
     <div className="mb-12">
       <p className="text-xs text-gray-500 mb-1 text-start w-full max-w-3xl mx-auto">
-        Found {results.length} result{results.length !== 1 ? 's' : ''}
+        {t('searchResults.foundResults', { count: results.length })}
       </p>
       <div>
         {results.map((entry, index) => (
