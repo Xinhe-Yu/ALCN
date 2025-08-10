@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { authService } from '@/lib/services';
 import { isAuthenticated, removeToken, setToken } from '@/lib/auth';
 import type { User } from '@/app/types';
+import { saveLastEmail, clearLastEmail } from '@/lib/utils/preferences';
 
 interface AuthContextType {
   user: User | null;
@@ -47,10 +48,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const tokenResponse = await authService.verify(email, code);
       setToken(tokenResponse.access_token);
-      
+
       // Get user data after successful login
       const userData = await authService.getMe();
       setUser(userData);
+
+      // Save email to localStorage for future logins
+      saveLastEmail(email);
     } catch (error) {
       throw error; // Re-throw to let the component handle the error
     }
@@ -59,6 +63,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = () => {
     removeToken();
     setUser(null);
+    clearLastEmail();
     router.push('/');
   };
 

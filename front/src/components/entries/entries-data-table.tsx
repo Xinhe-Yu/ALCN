@@ -23,6 +23,14 @@ import ColumnSelector from './data-table/column-selector';
 import EditableCell from './data-table/editable-cell';
 import Badge from '../ui/badge';
 import { useToast } from '@/lib/context/ToastContext';
+import {
+  saveVisibleColumns,
+  getVisibleColumns,
+  savePageSize,
+  getPageSize,
+  saveSortingPreferences,
+  getSortingPreferences
+} from '@/lib/utils/preferences';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface EntriesDataTableProps {
@@ -38,7 +46,10 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState<PageSize>(50);
+  const [pageSize, setPageSize] = useState<PageSize>(() => {
+    // Initialize from localStorage or default to 50
+    return getPageSize() || 50;
+  });
   const [totalPages, setTotalPages] = useState(0);
   const [totalEntries, setTotalEntries] = useState(0);
 
@@ -52,15 +63,24 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
   // Sorting state
-  const [sortBy, setSortBy] = useState<string>('updated_at');
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+  const [sortBy, setSortBy] = useState<string>(() => {
+    // Initialize from localStorage or default to 'updated_at'
+    return getSortingPreferences()?.sortBy || 'updated_at';
+  });
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>(() => {
+    // Initialize from localStorage or default to 'desc'
+    return getSortingPreferences()?.sortDirection || 'desc';
+  });
 
   // Selection state
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [isAllSelected, setIsAllSelected] = useState(false);
 
   // Column visibility state
-  const [visibleColumns, setVisibleColumns] = useState<Set<string>>(new Set(DEFAULT_VISIBLE_COLUMNS));
+  const [visibleColumns, setVisibleColumns] = useState<Set<string>>(() => {
+    // Initialize from localStorage or default visible columns
+    return getVisibleColumns() || new Set(DEFAULT_VISIBLE_COLUMNS);
+  });
 
   // Bulk modification state
   const [showBulkOptions, setShowBulkOptions] = useState(false);
@@ -259,6 +279,19 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }
   }, [showBulkOptions, bulkFieldType]);
+
+  // Save preferences to localStorage when they change
+  useEffect(() => {
+    saveVisibleColumns(visibleColumns);
+  }, [visibleColumns]);
+
+  useEffect(() => {
+    savePageSize(pageSize);
+  }, [pageSize]);
+
+  useEffect(() => {
+    saveSortingPreferences(sortBy, sortDirection);
+  }, [sortBy, sortDirection]);
 
   // Set search loading state when user starts typing
   useEffect(() => {
@@ -507,9 +540,11 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
           <p className="text-gray-600 mt-1">
             Manage dictionary entries with CRUD operations and bulk updates
           </p>
-          <span className="text-sm text-gray-500">
-            {totalEntries} total entries
-          </span>
+          <div className="flex items-center gap-4 text-sm text-gray-500">
+            <span>
+              {totalEntries} total entries
+            </span>
+          </div>
         </div>
 
         <div className="flex items-center gap-2">
@@ -653,7 +688,7 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
 
       {/* Table with Sticky Header */}
       <div className="bg-white shadow sm:rounded-lg flex-1">
-        <div className="h-full overflow-x-auto">
+        <div className="h-full">
           <table className="w-full table-fixed" style={{ tableLayout: 'fixed', minWidth: '1200px' }}>
             <thead className="bg-gray-50 sticky top-0 z-20">
               <tr>

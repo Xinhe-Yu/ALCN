@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { authService } from '@/lib/services';
 import { useAuth } from '@/lib/context/AuthContext';
 import { getErrorMessage } from '@/app/types';
+import { getLastEmail } from '@/lib/utils/preferences';
 
 interface LoginFormProps {
   onSuccess?: () => void;
@@ -15,6 +16,14 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [devCode, setDevCode] = useState<string | null>(null);
+
+  // Load last used email from localStorage
+  useEffect(() => {
+    const lastEmail = getLastEmail();
+    if (lastEmail) {
+      setEmail(lastEmail);
+    }
+  }, []);
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
