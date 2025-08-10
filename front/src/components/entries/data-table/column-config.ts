@@ -66,6 +66,7 @@ export const LANGUAGE_COLORS: Record<string, string> = {
   'fr': 'bg-indigo-100 text-indigo-800 border-indigo-200',   // French
   'tu': 'bg-rose-100 text-rose-800 border-rose-200',        // Turkish
   'gr': 'bg-teal-100 text-teal-800 border-teal-200',        // Modern Greek
+  'ar': 'bg-violet-100 text-violet-800 border-violet-200', // Arabic
   '': 'bg-gray-100 text-gray-600 border-gray-200'           // empty/default
 };
 

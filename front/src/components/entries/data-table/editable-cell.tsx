@@ -94,11 +94,11 @@ const EditableCell = memo(function EditableCell({
   // Calculate dropdown position to avoid clipping
   const calculateDropdownPosition = () => {
     if (!cellRef.current) return 'below';
-    
+
     const rect = cellRef.current.getBoundingClientRect();
     const viewportHeight = window.innerHeight;
     const dropdownHeight = 200; // Approximate dropdown height
-    
+
     // If there's enough space below, show below; otherwise show above
     if (rect.bottom + dropdownHeight > viewportHeight && rect.top > dropdownHeight) {
       return 'above';
@@ -108,15 +108,9 @@ const EditableCell = memo(function EditableCell({
 
   // Handle dropdown selections
   const handleDropdownSelect = (value: string) => {
-    console.log('Dropdown selected:', value);
-
     // Update the edit value
     onEditValueChange(value);
     setShowDropdown(false);
-
-    // Directly save with the new value
-    console.log('About to save dropdown selection:', value);
-    console.log('onSaveEdit available:', typeof onSaveEdit);
 
     if (typeof onSaveEdit === 'function') {
       console.log('Calling onSaveEdit with:', value);
