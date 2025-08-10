@@ -343,6 +343,25 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
     setCurrentPage(page);
   };
 
+  // Handle direct page input
+  const [pageInputValue, setPageInputValue] = useState('');
+
+  const handlePageInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Only allow numbers
+    if (value === '' || /^\d+$/.test(value)) {
+      setPageInputValue(value);
+    }
+  };
+
+  const handleFirstPage = () => {
+    handlePageChange(1);
+  };
+
+  const handleLastPage = () => {
+    handlePageChange(totalPages);
+  };
+
   const handlePageSizeChange = (size: PageSize) => {
     setPageSize(size);
     setCurrentPage(1); // Reset to first page
@@ -804,6 +823,16 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
         </div>
 
         <div className="flex items-center space-x-2">
+          {/* First page button */}
+          <button
+            onClick={handleFirstPage}
+            disabled={currentPage <= 1}
+            className="px-3 py-1 border border-gray-300 rounded-md text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+          >
+            First
+          </button>
+
+          {/* Previous page button */}
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage <= 1}
@@ -831,6 +860,7 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
             );
           })}
 
+          {/* Next page button */}
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage >= totalPages}
@@ -838,6 +868,40 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
           >
             Next
           </button>
+
+          {/* Last page button */}
+          <button
+            onClick={handleLastPage}
+            disabled={currentPage >= totalPages}
+            className="px-3 py-1 border border-gray-300 rounded-md text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+          >
+            Last
+          </button>
+
+          {/* Direct page input */}
+          {totalPages > 1 && (
+            <div className="flex items-center space-x-1 ml-2 border border-gray-300 rounded-md px-3 py-1 bg-white text-sm">
+              <input
+                type="text"
+                value={pageInputValue}
+                onChange={handlePageInputChange}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const pageNum = parseInt(pageInputValue);
+                    if (pageNum >= 1 && pageNum <= totalPages) {
+                      handlePageChange(pageNum);
+                      setPageInputValue('');
+                    }
+                  }
+                }}
+                placeholder={currentPage.toString()}
+                className="w-8 text-sm text-center border-0 outline-none bg-transparent"
+              />
+              <span className="text-gray-400">/</span>
+              <span className="text-gray-600">{totalPages}</span>
+            </div>
+          )}
         </div>
       </div>
     </div>
