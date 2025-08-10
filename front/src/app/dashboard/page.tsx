@@ -81,21 +81,26 @@ export default function DashboardPage() {
             </div>
 
             {metadata && (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <StatCard
                   title={t('landing.stats.totalEntries')}
                   value={metadata.total_entries}
                   icon={<MagnifyingGlassIcon className="h-6 w-6 text-gray-400" />}
                 />
                 <StatCard
+                  title={t('landing.stats.recentlyUpdated')}
+                  value={metadata.recently_updated_count}
+                  icon={<ClockIcon className="h-6 w-6 text-blue-400" />}
+                />
+                <StatCard
                   title={t('landing.stats.recentUpdates')}
                   value={metadata.newest_updated_entries.length}
-                  icon={<ClockIcon className="h-6 w-6 text-gray-400" />}
+                  icon={<ClockIcon className="h-6 w-6 text-green-400" />}
                 />
                 <StatCard
                   title={t('landing.stats.activeDiscussions')}
-                  value={metadata.translations_with_newest_comments.length}
-                  icon={<ChatBubbleLeftIcon className="h-6 w-6 text-gray-400" />}
+                  value={metadata.entries_with_newest_comments.length}
+                  icon={<ChatBubbleLeftIcon className="h-6 w-6 text-amber-400" />}
                 />
               </div>
             )}

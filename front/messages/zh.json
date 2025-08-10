@@ -52,6 +52,7 @@
     "searchPlaceholder": "搜索古代术语、名称或地点...",
     "stats": {
       "totalEntries": "词条总数",
+      "recentlyUpdated": "近期更新",
       "recentUpdates": "最近更新",
       "activeDiscussions": "活跃讨论"
     },

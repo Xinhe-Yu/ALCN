@@ -147,14 +147,14 @@ export default function Home() {
                   icon={<MagnifyingGlassIcon className="h-6 w-6 text-gray-400" />}
                 />
                 <StatCard
-                  title={t('landing.stats.recentUpdates')}
-                  value={metadata.newest_updated_entries.length}
-                  icon={<ClockIcon className="h-6 w-6 text-gray-400" />}
+                  title={t('landing.stats.recentlyUpdated')}
+                  value={metadata.recently_updated_count}
+                  icon={<ClockIcon className="h-6 w-6 text-blue-400" />}
                 />
                 <StatCard
                   title={t('landing.stats.activeDiscussions')}
-                  value={metadata.translations_with_newest_comments.length}
-                  icon={<ChatBubbleLeftIcon className="h-6 w-6 text-gray-400" />}
+                  value={metadata.entries_with_newest_comments.length}
+                  icon={<ChatBubbleLeftIcon className="h-6 w-6 text-amber-400" />}
                 />
               </div>
 
@@ -171,7 +171,7 @@ export default function Home() {
 
               <CommentList
                 title={t('landing.sections.recentDiscussions')}
-                translations={metadata.translations_with_newest_comments}
+                entries={metadata.entries_with_newest_comments}
               />
             </>
           )}

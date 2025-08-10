@@ -3,6 +3,7 @@ from sqlalchemy import text, desc, asc, func
 from app.models.models import Entry, Translation, Comment
 from app.schemas.entries import BulkEntryUpdates, EntryCreate, EntryUpdate, PaginatedEntries
 from typing import Optional, List, Dict, Any
+from datetime import datetime, timedelta
 import uuid
 
 
@@ -208,26 +209,70 @@ def _get_translations_with_newest_comments(db: Session, limit: int = 20) -> List
     return translations_with_comments
 
 
+def _get_entries_with_newest_comments(db: Session, limit: int = 20) -> List[Entry]:
+    """
+    Helper function to get entries with their newest comments efficiently.
+    Returns Entry objects with a dynamic 'newest_comment' attribute.
+    """
+    # Get the most recent comments with their entry_ids
+    recent_comments_query = db.query(
+        Comment.entry_id,
+        func.max(Comment.created_at).label('max_created_at')
+    ).group_by(Comment.entry_id).subquery()
+
+    # Get actual comment objects for the most recent comments
+    newest_comments = db.query(Comment).join(
+        recent_comments_query,
+        (Comment.entry_id == recent_comments_query.c.entry_id) &
+        (Comment.created_at == recent_comments_query.c.max_created_at)
+    ).all()
+
+    # Create a mapping of entry_id -> newest_comment
+    entry_comment_map = {comment.entry_id: comment for comment in newest_comments}
+
+    # Get entries that have comments, ordered by comment recency
+    entries_with_comments = db.query(Entry).filter(
+        Entry.id.in_(entry_comment_map.keys())
+    ).options(
+        joinedload(Entry.translations)
+    ).order_by(
+        desc(Entry.updated_at)
+    ).limit(limit).all()
+
+    # Attach the newest comment to each entry
+    for entry in entries_with_comments:
+        entry.newest_comment = entry_comment_map.get(entry.id)
+
+    return entries_with_comments
+
+
 def get_entries_metadata(db: Session) -> Dict[str, Any]:
     """
     Get comprehensive metadata about entries including:
     1. Total number of entries
-    2. 20 newest updated entries
-    3. 20 entries with newest updated translations
-    4. 20 translations with newest comments
+    2. Recently updated entries count (last 30 days)
+    3. 20 newest updated entries
+    4. 20 entries with newest updated translations
+    5. 20 entries with newest comments
     """
 
     # 1. Total number of entries
     total_entries = db.query(Entry).count()
+    
+    # 2. Recently updated entries count (last 30 days)
+    thirty_days_ago = datetime.now() - timedelta(days=30)
+    recently_updated_count = db.query(Entry).filter(
+        Entry.updated_at >= thirty_days_ago
+    ).count()
 
-    # 2. 20 newest updated entries
+    # 3. 20 newest updated entries
     newest_updated_entries = db.query(Entry).join(Translation).options(
         joinedload(Entry.translations)
     ).order_by(
         desc(Entry.updated_at)
     ).limit(20).all()
 
-    # 3. 20 entries with newest updated translations
+    # 4. 20 entries with newest updated translations
     # Find entries that have translations, ordered by the newest translation update
     entries_with_newest_translations = db.query(Entry).join(Translation).options(
         joinedload(Entry.translations)
@@ -235,14 +280,15 @@ def get_entries_metadata(db: Session) -> Dict[str, Any]:
         desc(Translation.updated_at)
     ).distinct().limit(20).all()
 
-    # 4. 20 translations with newest comments
-    enriched_translations = _get_translations_with_newest_comments(db, limit=20)
+    # 5. 20 entries with newest comments
+    entries_with_comments = _get_entries_with_newest_comments(db, limit=20)
 
     return {
         'total_entries': total_entries,
+        'recently_updated_count': recently_updated_count,
         'newest_updated_entries': newest_updated_entries,
         'entries_with_newest_translations': entries_with_newest_translations,
-        'translations_with_newest_comments': enriched_translations
+        'entries_with_newest_comments': entries_with_comments
     }
 
 def bulk_update_entries(db: Session, entry_ids: List[int], updates: BulkEntryUpdates, verify_user_id: Optional[str]) -> List[Entry]:

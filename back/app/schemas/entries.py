@@ -97,12 +97,21 @@ class TranslationWithComment(TranslationResponse):
         from_attributes = True
 
 
+class EntryWithComment(EntryResponse):
+    """Entry with its newest comment"""
+    newest_comment: Optional[CommentResponse] = None
+
+    class Config:
+        from_attributes = True
+
+
 class EntryMetadata(BaseModel):
     """Comprehensive metadata about entries and activity"""
     total_entries: int
+    recently_updated_count: int
     newest_updated_entries: List[EntryWithTranslations]
     entries_with_newest_translations: List[EntryWithTranslations]
-    translations_with_newest_comments: List[TranslationWithComment]
+    entries_with_newest_comments: List[EntryWithComment]
 
     class Config:
         from_attributes = True

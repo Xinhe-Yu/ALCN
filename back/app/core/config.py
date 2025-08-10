@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     # Security
     secret_key: str
     algorithm: str = "HS256"  # Could also use RS256, ES256 for asymmetric
-    access_token_expire_minutes: int = 30
+    access_token_expire_minutes: int
 
     # Email
     email_host: str

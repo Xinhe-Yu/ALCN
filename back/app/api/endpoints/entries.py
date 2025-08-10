@@ -6,7 +6,7 @@ from app.core.database import get_db
 from app.crud import entries as crud_entries
 from app.schemas.entries import (
     EntryCreate, EntryUpdate, EntryResponse, EntryWithTranslations,
-    EntryMetadata, PaginatedEntries, TranslationWithComment, BulkEntryUpdateRequest
+    EntryMetadata, PaginatedEntries, TranslationWithComment, EntryWithComment, BulkEntryUpdateRequest
 )
 from app.schemas.translations import TranslationResponse
 from app.schemas.comments import CommentResponse
@@ -87,6 +87,33 @@ def _map_translation_with_comment(translation) -> TranslationWithComment:
     return TranslationWithComment.model_validate(translation_data)
 
 
+def _map_entry_with_comment(entry) -> EntryWithComment:
+    """
+    Helper function to map Entry model with dynamic comment to EntryWithComment schema.
+    """
+    # Convert entry to dict first
+    entry_data = {
+        'id': entry.id,
+        'primary_name': entry.primary_name,
+        'original_script': entry.original_script,
+        'language_code': entry.language_code,
+        'entry_type': entry.entry_type,
+        'alternative_names': entry.alternative_names,
+        'other_language_codes': entry.other_language_codes,
+        'etymology': entry.etymology,
+        'definition': entry.definition,
+        'historical_context': entry.historical_context,
+        'created_by': entry.created_by,
+        'updated_by': entry.updated_by,
+        'is_verified': entry.is_verified,
+        'verification_notes': entry.verification_notes,
+        'created_at': entry.created_at,
+        'updated_at': entry.updated_at,
+        'newest_comment': CommentResponse.model_validate(entry.newest_comment) if hasattr(entry, 'newest_comment') and entry.newest_comment else None
+    }
+    return EntryWithComment.model_validate(entry_data)
+
+
 @router.get("/metadata", response_model=EntryMetadata)
 async def get_entries_metadata(db: Session = Depends(get_db)):
     """
@@ -103,6 +130,7 @@ async def get_entries_metadata(db: Session = Depends(get_db)):
     # Convert the raw data to proper schema models
     processed_metadata = EntryMetadata(
         total_entries=metadata['total_entries'],
+        recently_updated_count=metadata['recently_updated_count'],
         newest_updated_entries=[
             EntryWithTranslations.model_validate(entry)
             for entry in metadata['newest_updated_entries']
@@ -111,9 +139,9 @@ async def get_entries_metadata(db: Session = Depends(get_db)):
             EntryWithTranslations.model_validate(entry)
             for entry in metadata['entries_with_newest_translations']
         ],
-        translations_with_newest_comments=[
-            _map_translation_with_comment(translation)
-            for translation in metadata['translations_with_newest_comments']
+        entries_with_newest_comments=[
+            _map_entry_with_comment(entry)
+            for entry in metadata['entries_with_newest_comments']
         ]
     )
 

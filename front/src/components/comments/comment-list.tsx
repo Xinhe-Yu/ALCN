@@ -1,12 +1,13 @@
-import type { TranslationWithComment } from '@/app/types';
+import type { EntryWithComment } from '@/app/types';
+import Badge from '../ui/badge';
 
 interface CommentListProps {
   title: string;
-  translations: TranslationWithComment[];
+  entries: EntryWithComment[];
 }
 
-export default function CommentList({ title, translations }: CommentListProps) {
-  if (translations.length === 0) {
+export default function CommentList({ title, entries }: CommentListProps) {
+  if (entries.length === 0) {
     return null;
   }
 
@@ -17,19 +18,21 @@ export default function CommentList({ title, translations }: CommentListProps) {
           {title}
         </h3>
         <div className="space-y-3">
-          {translations.map((translation) => (
-            <div key={translation.id} className="border-l-4 border-amber-400 pl-4">
+          {entries.map((entry) => (
+            <div key={entry.id} className="border-l-4 border-amber-400 pl-4">
               <div className="flex justify-between items-start">
                 <div>
-                  <p className="font-medium text-gray-900">{translation.translated_name}</p>
-                  <p className="text-sm text-gray-500 mb-2">{translation.language_code}</p>
-                  {translation.newest_comment && (
-                    <p className="text-sm text-gray-600">{translation.newest_comment.content}</p>
+                  <div className="flex items-center space-x-2 mb-1">
+                    <p className="font-medium text-gray-900">{entry.primary_name}</p>
+                    <Badge code={entry.language_code} />
+                    {entry.entry_type && <Badge code={entry.entry_type} type="type" />}
+                  </div>
+                  {entry.definition && (
+                    <p className="text-sm text-gray-500 mb-2">{entry.definition}</p>
                   )}
-                </div>
-                <div className="flex items-center space-x-2 text-sm text-gray-500">
-                  <span className="text-green-600">↑{translation.upvotes}</span>
-                  <span className="text-red-600">↓{translation.downvotes}</span>
+                  {entry.newest_comment && (
+                    <p className="text-sm text-gray-600">{entry.newest_comment.content}</p>
+                  )}
                 </div>
               </div>
             </div>
