@@ -67,7 +67,10 @@ def get_entries(
         "primary_name": Entry.primary_name,
         "original_script": Entry.original_script,
         "language_code": Entry.language_code,
-        "is_verified": Entry.is_verified
+        "entry_type": Entry.entry_type,
+        "is_verified": Entry.is_verified,
+        "created_at": Entry.created_at,
+        "updated_at": Entry.updated_at
     }
 
     if not fuzzy_search and sorted_by in allowed_sort_columns:

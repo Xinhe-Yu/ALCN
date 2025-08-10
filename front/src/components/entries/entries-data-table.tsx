@@ -360,7 +360,7 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
   const handleBulkUpdate = async (fieldType: 'language_code' | 'entry_type', value: string) => {
     const token = localStorage.getItem('token');
     if (!token) {
-      toast.warning('Authentication Required', 'You must be logged in to perform bulk updates.');
+      toast.warning('Authentication Required', 'You must be logged in to perform mass updates.');
       return;
     }
 
@@ -405,9 +405,9 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
       setShowBulkOptions(false);
       setBulkFieldType(null);
 
-      toast.success('Bulk Update Successful', `Successfully updated ${selectedIds.size} entries.`);
+      toast.success('Mass Update Successful', `Successfully updated ${selectedIds.size} entries.`);
     } catch (error) {
-      console.error('Bulk update failed:', error);
+      console.error('Mass update failed:', error);
     } finally {
       setIsBulkUpdating(false);
     }
@@ -537,9 +537,6 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="flex-shrink-0">
           <h2 className="text-2xl font-bold text-gray-900">Entries Management</h2>
-          <p className="text-gray-600 mt-1">
-            Manage dictionary entries with CRUD operations and bulk updates
-          </p>
           <div className="flex items-center gap-4 text-sm text-gray-500">
             <span>
               {totalEntries} total entries
@@ -566,7 +563,7 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
                 className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
               >
                 <PencilIcon className="h-4 w-4 mr-1" />
-                {isBulkUpdating ? 'Updating...' : `Bulk Edit (${selectedIds.size})`}
+                {isBulkUpdating ? 'Updating...' : `Mass Edit (${selectedIds.size})`}
               </button>
 
               {showBulkOptions && (
