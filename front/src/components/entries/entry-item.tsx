@@ -34,16 +34,24 @@ interface EntryItemProps {
   entry: EntryWithTranslations | EntryWithTranslationsAndVotes;
   type?: 'entry' | 'translation' | 'comment';
   showDate?: boolean;
+  isModal?: boolean; // New prop to indicate modal context
+  defaultExpanded?: boolean; // New prop to set initial expanded state
   onEntryUpdate?: (updatedEntry: EntryWithTranslations | EntryWithTranslationsAndVotes) => void;
 }
 
-export default function EntryItem({ entry, type = 'entry', showDate = true, onEntryUpdate }: EntryItemProps) {
+export default function EntryItem({
+  entry,
+  type = 'entry',
+  showDate = true,
+  isModal = false,
+  defaultExpanded = false,
+  onEntryUpdate
+}: EntryItemProps) {
   const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const [isAddingTranslation, setIsAddingTranslation] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
   const [loadingComments, setLoadingComments] = useState(false);
-  const [loadingDetailedEntry, setLoadingDetailedEntry] = useState(false);
   const [commentText, setCommentText] = useState('');
   const [isPostingComment, setIsPostingComment] = useState(false);
   const [editingEntryId, setEditingEntryId] = useState<string | null>(null);
@@ -56,38 +64,24 @@ export default function EntryItem({ entry, type = 'entry', showDate = true, onEn
   const [currentEntry, setCurrentEntry] = useState<EntryWithTranslations | EntryWithTranslationsAndVotes>(entry);
   const [userVotes, setUserVotes] = useState<Record<string, VoteType | null>>({});
   const [votingStates, setVotingStates] = useState<Record<string, boolean>>({});
-  const [hasInitializedVotes, setHasInitializedVotes] = useState(false);
 
   const { success, error } = useToast();
   const { user } = useAuth();
   const t = useTranslations();
 
-  // Initialize user votes from translation data if available
-  useEffect(() => {
-    // Only initialize votes if we haven't done so yet, or if this is a new entry
-    const shouldInitialize = !hasInitializedVotes || currentEntry.id !== entry.id;
 
-    if (shouldInitialize) {
-      const initialVotes: Record<string, VoteType | null> = {};
-      currentEntry.translations.forEach((translation) => {
-        // Check if this translation has user vote data (from individual entry endpoint)
-        if ('user_vote' in translation) {
-          const translationWithVote = translation as TranslationWithUserVote;
-          if (translationWithVote.user_vote) {
-            initialVotes[translation.id] = translationWithVote.user_vote;
-          } else {
-            // Explicitly set to null if user_vote exists but is null/undefined
-            initialVotes[translation.id] = null;
-          }
-        }
-        // For translations without user_vote (from list endpoint), don't set anything
-        // The voting state will be managed by the voting actions
-      });
-      setUserVotes(initialVotes);
-      setHasInitializedVotes(true);
-      console.log('Initialized votes:', initialVotes);
+  // Auto-expand when in modal mode or defaultExpanded is true
+  useEffect(() => {
+    if (isModal || defaultExpanded) {
+      if (!isExpanded) {
+        setIsExpanded(true);
+      }
+
+      if (isModal) {
+        loadExpandedData();
+      }
     }
-  }, [currentEntry, hasInitializedVotes, entry.id]);
+  }, [isModal, defaultExpanded, isExpanded]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const copyToClipboard = async (text: string, translationId: string) => {
     try {
@@ -108,53 +102,59 @@ export default function EntryItem({ entry, type = 'entry', showDate = true, onEn
   const toggleExpanded = async () => {
     if (!isExpanded) {
       // When expanding for the first time, load both detailed entry and comments
-      const promises = [];
-
-      // Load detailed entry with user votes if we don't have them
-      if (currentEntry.translations.length > 0 && !('user_vote' in currentEntry.translations[0])) {
-        promises.push(loadDetailedEntry());
-      }
-
-      // Load comments if we don't have them
-      if (comments.length === 0) {
-        promises.push(loadComments());
-      }
-
-      // Wait for both to complete
-      await Promise.all(promises);
+      await loadExpandedData();
     }
     setIsExpanded(!isExpanded);
   };
 
-  const loadDetailedEntry = async () => {
-    // Only load detailed entry if we don't already have vote information
-    if (currentEntry.translations.length > 0 && 'user_vote' in currentEntry.translations[0]) {
-      return; // Already have detailed data
-    }
 
-    setLoadingDetailedEntry(true);
-    try {
-      const detailedEntry = await entriesService.getEntry(currentEntry.id);
-      setCurrentEntry(detailedEntry);
-      if (onEntryUpdate) {
-        onEntryUpdate(detailedEntry);
-      }
-    } catch (err) {
-      console.error('Failed to load detailed entry:', err);
-      error(t('entry.error'), t('entry.failedToLoadDetails'));
-    } finally {
-      setLoadingDetailedEntry(false);
-    }
-  };
-
-  const loadComments = async () => {
+  const loadExpandedData = async () => {
     setLoadingComments(true);
     try {
-      const response = await commentsService.getEntryComments(currentEntry.id);
-      setComments(response);
+      const promises = [];
+
+      // Always fetch comments if we don't have them
+      if (comments.length === 0) {
+        promises.push(commentsService.getEntryComments(currentEntry.id));
+      } else {
+        promises.push(Promise.resolve(comments));
+      }
+
+      // Fetch detailed entry with votes if we don't have vote data
+      if (currentEntry.translations.length > 0 && !('user_vote' in currentEntry.translations[0])) {
+        promises.push(entriesService.getEntry(currentEntry.id));
+      } else {
+        promises.push(Promise.resolve(currentEntry));
+      }
+
+      const [commentsResponse, detailedEntry] = await Promise.all(promises);
+      
+      // Update comments if they were fetched
+      if (comments.length === 0 && Array.isArray(commentsResponse)) {
+        setComments(commentsResponse);
+      }
+
+      // Update entry and initialize votes if detailed entry was fetched
+      if (currentEntry.translations.length > 0 && !('user_vote' in currentEntry.translations[0]) && 'translations' in detailedEntry) {
+        const entryWithVotes = detailedEntry as EntryWithTranslationsAndVotes;
+        setCurrentEntry(entryWithVotes);
+        if (onEntryUpdate) {
+          onEntryUpdate(entryWithVotes);
+        }
+
+        // Initialize user votes from the detailed entry data
+        const initialVotes: Record<string, VoteType | null> = {};
+        entryWithVotes.translations.forEach((translation) => {
+          if ('user_vote' in translation) {
+            const translationWithVote = translation as TranslationWithUserVote;
+            initialVotes[translation.id] = translationWithVote.user_vote || null;
+          }
+        });
+        setUserVotes(initialVotes);
+      }
     } catch (err) {
-      console.error('Failed to load comments:', err);
-      error(t('entry.error'), t('entry.failedToLoadComments'));
+      console.error('Failed to load expanded data:', err);
+      error(t('entry.error'), t('entry.failedToLoadData'));
     } finally {
       setLoadingComments(false);
     }
@@ -432,7 +432,7 @@ export default function EntryItem({ entry, type = 'entry', showDate = true, onEn
   }
 
   return (
-    <div key={currentEntry.id} className="bg-white border border-gray-300 hover:rounded-lg transition-all duration-150 hover:shadow-sm">
+    <div key={currentEntry.id} className={`${isModal ? 'bg-transparent border-0 shadow-none' : 'bg-white border border-gray-300 hover:rounded-lg transition-all duration-150 hover:shadow-sm'}`}>
       {/* Header - Always visible */}
       <div className="px-2 py-1.5">
         <div className="flex justify-between items-start">
@@ -509,20 +509,22 @@ export default function EntryItem({ entry, type = 'entry', showDate = true, onEn
                 {formatDate(currentEntry.updated_at)}
               </time>
             )}
-            <button
-              onClick={toggleExpanded}
-              disabled={loadingDetailedEntry || loadingComments}
-              className="p-1 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition-all duration-200 cursor-pointer group disabled:opacity-50 disabled:cursor-default"
-              title={isExpanded ? t('entry.collapse') : t('entry.expand')}
-            >
-              {(loadingDetailedEntry || loadingComments) ? (
-                <div className="animate-spin h-4 w-4 border border-gray-500 border-t-transparent rounded-full"></div>
-              ) : (
-                <div className={`transform transition-transform duration-300 ease-in-out ${isExpanded ? 'rotate-180' : 'rotate-0'}`}>
-                  <ChevronDownIcon className="h-4 w-4 group-hover:scale-110 transition-transform duration-200" />
-                </div>
-              )}
-            </button>
+            {!isModal && (
+              <button
+                onClick={toggleExpanded}
+                disabled={loadingComments}
+                className="p-1 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition-all duration-200 cursor-pointer group disabled:opacity-50 disabled:cursor-default"
+                title={isExpanded ? t('entry.collapse') : t('entry.expand')}
+              >
+                {loadingComments ? (
+                  <div className="animate-spin h-4 w-4 border border-gray-500 border-t-transparent rounded-full"></div>
+                ) : (
+                  <div className={`transform transition-transform duration-300 ease-in-out ${isExpanded ? 'rotate-180' : 'rotate-0'}`}>
+                    <ChevronDownIcon className="h-4 w-4 group-hover:scale-110 transition-transform duration-200" />
+                  </div>
+                )}
+              </button>
+            )}
           </div>
         </div>
       </div>

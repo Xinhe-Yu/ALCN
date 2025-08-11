@@ -44,7 +44,7 @@
   "entries": {
     "title": "Entries",
     "addNew": "Add New Entry",
-    "searchPlaceholder": "Search entries...",
+    "searchPlaceholder": "Search...",
     "noResults": "No results found"
   },
   "entry": {
@@ -90,7 +90,8 @@
   "landing": {
     "title": "Ancient Lexicon CN",
     "subtitle": "A comprehensive dictionary for Greco-Roman name/term translations",
-    "searchPlaceholder": "Search ancient terms, names, or places...",
+    "quickSearchPlaceholder": "Search entries...",
+    "regularSearchPlaceholder": "Search entries...",
     "stats": {
       "detailedSearch": "Detailed Search",
       "totalEntries": "Total Entries",
@@ -151,5 +152,24 @@
   "clipboard": {
     "copied": "Copied!",
     "copiedMessage": "\"{text}\" has been copied to clipboard"
+  },
+  "list": {
+    "allLanguages": "All Languages",
+    "allTypes": "All Types",
+    "clearFilters": "Clear Filters",
+    "subtitle": "With {count} result{count, plural, one {} other {s}}",
+    "showingResults": "Showing Results",
+    "showingEntries": "Showing Entries",
+    "noEntriesFound": "No Entries Found",
+    "tryDifferentKeywords": "Try Different Keywords",
+    "loadingEntries": "Loading Entries...",
+    "first": "First",
+    "previous": "Previous",
+    "next": "Next",
+    "last": "Last",
+    "sortUpdatedAt": "Sort by Updated At",
+    "sortCreatedAt": "Sort by Created At",
+    "sortName": "Sort by Name",
+    "sortLanguage": "Sort by Language"
   }
 }

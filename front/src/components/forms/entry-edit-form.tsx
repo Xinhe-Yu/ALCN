@@ -82,7 +82,7 @@ export default function EntryEditForm({ entry, onSave, onCancel }: EntryEditForm
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.primary_name?.trim()) {
       error('Error', 'Primary name is required');
       return;
@@ -96,7 +96,7 @@ export default function EntryEditForm({ entry, onSave, onCancel }: EntryEditForm
         const fieldKey = key as keyof EntryUpdateData;
         const currentValue = formData[fieldKey];
         const originalValue = entry[fieldKey];
-        
+
         if (currentValue !== originalValue) {
           (updates as Record<string, unknown>)[fieldKey] = currentValue;
         }
@@ -147,7 +147,7 @@ export default function EntryEditForm({ entry, onSave, onCancel }: EntryEditForm
                       type="checkbox"
                       checked={isShortVersion}
                       onChange={(e) => setIsShortVersion(e.target.checked)}
-                      className="rounded border-gray-300 text-amber-600 focus:ring-amber-500"
+                      className="rounded border-gray-300 text-amber-600 focus:outline-none focus:ring-amber-500"
                     />
                     <span className="ml-2 text-sm text-gray-700">Short version (essential fields only)</span>
                   </label>
@@ -173,7 +173,7 @@ export default function EntryEditForm({ entry, onSave, onCancel }: EntryEditForm
                       type="text"
                       value={formData.primary_name || ''}
                       onChange={(e) => setFormData(prev => ({ ...prev, primary_name: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-amber-500 focus:border-amber-500"
                       required
                     />
                   </div>
@@ -186,7 +186,7 @@ export default function EntryEditForm({ entry, onSave, onCancel }: EntryEditForm
                     <select
                       value={formData.language_code || ''}
                       onChange={(e) => setFormData(prev => ({ ...prev, language_code: e.target.value as LanguageCode }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-amber-500 focus:border-amber-500"
                       required
                     >
                       <option value="">Select Language</option>
@@ -203,11 +203,11 @@ export default function EntryEditForm({ entry, onSave, onCancel }: EntryEditForm
                     </label>
                     <select
                       value={formData.entry_type || ''}
-                      onChange={(e) => setFormData(prev => ({ 
-                        ...prev, 
-                        entry_type: e.target.value ? e.target.value as EntryType : null 
+                      onChange={(e) => setFormData(prev => ({
+                        ...prev,
+                        entry_type: e.target.value ? e.target.value as EntryType : null
                       }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-amber-500 focus:border-amber-500"
                     >
                       <option value="">Other</option>
                       {Object.entries(ENTRY_TYPE_OPTIONS).map(([code, name]) => (
@@ -225,7 +225,7 @@ export default function EntryEditForm({ entry, onSave, onCancel }: EntryEditForm
                       value={formData.definition || ''}
                       onChange={(e) => setFormData(prev => ({ ...prev, definition: e.target.value }))}
                       rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-amber-500 focus:border-amber-500"
                     />
                   </div>
                 </div>
@@ -233,9 +233,9 @@ export default function EntryEditForm({ entry, onSave, onCancel }: EntryEditForm
                 {/* Extended Fields - Only shown when not in short version */}
                 {!isShortVersion && (
                   <>
-                    <hr className="my-6" />
+                    <hr className="my-6 opacity-20" />
                     <h4 className="text-md font-medium text-gray-900 mb-4">Extended Fields</h4>
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {/* Original Script */}
                       <div>
@@ -246,7 +246,7 @@ export default function EntryEditForm({ entry, onSave, onCancel }: EntryEditForm
                           type="text"
                           value={formData.original_script || ''}
                           onChange={(e) => setFormData(prev => ({ ...prev, original_script: e.target.value }))}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-amber-500 focus:border-amber-500"
                           placeholder="Original text in native script"
                         />
                       </div>
@@ -263,7 +263,7 @@ export default function EntryEditForm({ entry, onSave, onCancel }: EntryEditForm
                               value={altNameInput}
                               onChange={(e) => setAltNameInput(e.target.value)}
                               onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addAlternativeName())}
-                              className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                              className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-amber-500 focus:border-amber-500"
                               placeholder="Add alternative name"
                             />
                             <button
@@ -304,7 +304,7 @@ export default function EntryEditForm({ entry, onSave, onCancel }: EntryEditForm
                                 e.target.value = '';
                               }
                             }}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-amber-500 focus:border-amber-500"
                           >
                             <option value="">Add language</option>
                             {Object.entries(LANGUAGE_OPTIONS).map(([code, name]) => (
@@ -339,7 +339,7 @@ export default function EntryEditForm({ entry, onSave, onCancel }: EntryEditForm
                           value={formData.etymology || ''}
                           onChange={(e) => setFormData(prev => ({ ...prev, etymology: e.target.value }))}
                           rows={3}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-amber-500 focus:border-amber-500"
                           placeholder="Origin and history of the term"
                         />
                       </div>
@@ -353,7 +353,7 @@ export default function EntryEditForm({ entry, onSave, onCancel }: EntryEditForm
                           value={formData.historical_context || ''}
                           onChange={(e) => setFormData(prev => ({ ...prev, historical_context: e.target.value }))}
                           rows={3}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-amber-500 focus:border-amber-500"
                           placeholder="Historical background and context"
                         />
                       </div>
@@ -367,7 +367,7 @@ export default function EntryEditForm({ entry, onSave, onCancel }: EntryEditForm
                           value={formData.verification_notes || ''}
                           onChange={(e) => setFormData(prev => ({ ...prev, verification_notes: e.target.value }))}
                           rows={2}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-amber-500 focus:border-amber-500"
                           placeholder="Notes about verification and sources"
                         />
                       </div>
@@ -382,11 +382,10 @@ export default function EntryEditForm({ entry, onSave, onCancel }: EntryEditForm
               <button
                 type="submit"
                 disabled={!isEssentialFieldsValid || isSaving}
-                className={`w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium text-white sm:ml-3 sm:w-auto sm:text-sm ${
-                  isEssentialFieldsValid && !isSaving
-                    ? 'bg-amber-600 hover:bg-amber-700 focus:ring-amber-500' 
-                    : 'bg-gray-400 cursor-not-allowed'
-                } focus:outline-none focus:ring-2 focus:ring-offset-2`}
+                className={`w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium text-white sm:ml-3 sm:w-auto sm:text-sm ${isEssentialFieldsValid && !isSaving
+                  ? 'bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-amber-500'
+                  : 'bg-gray-400 cursor-not-allowed'
+                  } focus:outline-none focus:ring-2 focus:ring-offset-2`}
               >
                 {isSaving ? (
                   <>
@@ -401,7 +400,7 @@ export default function EntryEditForm({ entry, onSave, onCancel }: EntryEditForm
                 type="button"
                 onClick={onCancel}
                 disabled={isSaving}
-                className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:outline-none focus:ring-amber-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
               >
                 Cancel
               </button>

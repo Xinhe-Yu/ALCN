@@ -34,7 +34,7 @@ export default function TranslationEditForm({ translation, onSave, onCancel }: T
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.translated_name?.trim()) {
       error('Error', 'Translation name is required');
       return;
@@ -53,7 +53,7 @@ export default function TranslationEditForm({ translation, onSave, onCancel }: T
         const fieldKey = key as keyof TranslationUpdateData;
         const currentValue = formData[fieldKey];
         const originalValue = translation[fieldKey];
-        
+
         if (currentValue !== originalValue) {
           (updates as Record<string, unknown>)[fieldKey] = currentValue;
         }
@@ -98,7 +98,7 @@ export default function TranslationEditForm({ translation, onSave, onCancel }: T
                       type="checkbox"
                       checked={isShortVersion}
                       onChange={(e) => setIsShortVersion(e.target.checked)}
-                      className="rounded border-gray-300 text-amber-600 focus:ring-amber-500"
+                      className="rounded border-gray-300 text-amber-600 focus:outline-none focus:ring-amber-500"
                     />
                     <span className="ml-2 text-sm text-gray-700">Short version (essential fields only)</span>
                   </label>
@@ -124,7 +124,7 @@ export default function TranslationEditForm({ translation, onSave, onCancel }: T
                       type="text"
                       value={formData.translated_name || ''}
                       onChange={(e) => setFormData(prev => ({ ...prev, translated_name: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-amber-500 focus:border-amber-500"
                       placeholder="Enter the translation"
                       required
                     />
@@ -138,7 +138,7 @@ export default function TranslationEditForm({ translation, onSave, onCancel }: T
                     <select
                       value={formData.language_code || ''}
                       onChange={(e) => setFormData(prev => ({ ...prev, language_code: e.target.value as LanguageCode }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-amber-500 focus:border-amber-500"
                       required
                     >
                       <option value="">Select Language</option>
@@ -166,9 +166,9 @@ export default function TranslationEditForm({ translation, onSave, onCancel }: T
                 {/* Extended Fields - Only shown when not in short version */}
                 {!isShortVersion && (
                   <>
-                    <hr className="my-6" />
+                    <hr className="my-6 opacity-20" />
                     <h4 className="text-md font-medium text-gray-900 mb-4">Extended Fields</h4>
-                    
+
                     <div className="space-y-4">
                       {/* Notes */}
                       <div>
@@ -179,31 +179,12 @@ export default function TranslationEditForm({ translation, onSave, onCancel }: T
                           value={formData.notes || ''}
                           onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
                           rows={4}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-amber-500 focus:border-amber-500"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-amber-500 focus:border-amber-500"
                           placeholder="Additional notes, context, or explanations about this translation..."
                         />
                         <p className="mt-1 text-xs text-gray-500">
                           Add context, usage notes, regional variations, or explanations that help users understand this translation better.
                         </p>
-                      </div>
-
-                      {/* Translation Info */}
-                      <div className="bg-gray-50 p-4 rounded-lg">
-                        <h5 className="text-sm font-medium text-gray-900 mb-2">Translation Statistics</h5>
-                        <div className="grid grid-cols-2 gap-4 text-sm text-gray-600">
-                          <div>
-                            <span className="font-medium">Upvotes:</span> {translation.upvotes}
-                          </div>
-                          <div>
-                            <span className="font-medium">Downvotes:</span> {translation.downvotes}
-                          </div>
-                          <div>
-                            <span className="font-medium">Created:</span> {new Date(translation.created_at).toLocaleDateString()}
-                          </div>
-                          <div>
-                            <span className="font-medium">Updated:</span> {new Date(translation.updated_at).toLocaleDateString()}
-                          </div>
-                        </div>
                       </div>
 
                       {/* Help Text */}
@@ -227,11 +208,10 @@ export default function TranslationEditForm({ translation, onSave, onCancel }: T
               <button
                 type="submit"
                 disabled={!isEssentialFieldsValid || isSaving}
-                className={`w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium text-white sm:ml-3 sm:w-auto sm:text-sm ${
-                  isEssentialFieldsValid && !isSaving
-                    ? 'bg-amber-600 hover:bg-amber-700 focus:ring-amber-500' 
-                    : 'bg-gray-400 cursor-not-allowed'
-                } focus:outline-none focus:ring-2 focus:ring-offset-2`}
+                className={`w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium text-white sm:ml-3 sm:w-auto sm:text-sm ${isEssentialFieldsValid && !isSaving
+                  ? 'bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-amber-500'
+                  : 'bg-gray-400 cursor-not-allowed'
+                  } focus:outline-none focus:ring-2 focus:ring-offset-2`}
               >
                 {isSaving ? (
                   <>
@@ -246,7 +226,7 @@ export default function TranslationEditForm({ translation, onSave, onCancel }: T
                 type="button"
                 onClick={onCancel}
                 disabled={isSaving}
-                className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2  focus:outline-none focus:ring-amber-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
               >
                 Cancel
               </button>

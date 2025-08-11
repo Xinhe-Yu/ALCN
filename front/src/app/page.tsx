@@ -4,7 +4,7 @@ import { useEffect, useState, startTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { entriesService } from '@/lib/services';
-import type { EntryMetadata, EntryWithTranslations } from '@/app/types';
+import type { EntryMetadata, EntryWithTranslations, EntryWithComment } from '@/app/types';
 import { useAuth } from '@/lib/context/AuthContext';
 import { useDebounce } from '@/lib/hooks/useDebounce';
 import { MagnifyingGlassIcon, ClockIcon, ChatBubbleLeftIcon, AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
@@ -18,6 +18,7 @@ import SearchResults from '@/components/entries/search-results';
 import EntryList from '@/components/entries/entry-list';
 import TranslationList from '@/components/entries/translation-list';
 import CommentList from '@/components/comments/comment-list';
+import EntryModal from '@/components/ui/entry-modal';
 
 export default function Home() {
   const { user, logout } = useAuth();
@@ -29,6 +30,8 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [searchLoading, setSearchLoading] = useState(false);
   const [error, setError] = useState('');
+  const [selectedEntry, setSelectedEntry] = useState<EntryWithTranslations | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Debounce search query with 300ms delay
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
@@ -90,6 +93,23 @@ export default function Home() {
     }
   }, [searchQuery, debouncedSearchQuery]);
 
+  // Handle entry click from comment list
+  const handleEntryClick = async (entryWithComment: EntryWithComment) => {
+    try {
+      // Fetch full entry details
+      const fullEntry = await entriesService.getEntry(entryWithComment.id);
+      setSelectedEntry(fullEntry);
+      setIsModalOpen(true);
+    } catch (err) {
+      console.error('Failed to fetch entry details:', err);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedEntry(null);
+  };
+
 
   if (loading) {
     return (
@@ -127,7 +147,7 @@ export default function Home() {
                 value={searchQuery}
                 onChange={setSearchQuery}
                 loading={searchLoading}
-                placeholder={t('landing.searchPlaceholder')}
+                placeholder={t('landing.quickSearchPlaceholder')}
               />
             </div>
           </div>
@@ -190,6 +210,7 @@ export default function Home() {
                 <CommentList
                   title={t('landing.sections.recentDiscussions')}
                   entries={metadata.entries_with_newest_comments}
+                  onEntryClick={handleEntryClick}
                 />
               </div>
 
@@ -197,6 +218,13 @@ export default function Home() {
           )}
         </div>
       </main>
+
+      {/* Entry Modal */}
+      <EntryModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        entry={selectedEntry}
+      />
     </div >
   );
 }

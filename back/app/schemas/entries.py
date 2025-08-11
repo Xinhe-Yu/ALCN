@@ -88,15 +88,6 @@ class EntryWithTranslationsAndVotes(EntryResponse):
         from_attributes = True
 
 
-# Metadata schemas
-class TranslationWithComment(TranslationResponse):
-    """Translation with its newest comment"""
-    newest_comment: Optional[CommentResponse] = None
-
-    class Config:
-        from_attributes = True
-
-
 class EntryWithComment(EntryResponse):
     """Entry with its newest comment"""
     newest_comment: Optional[CommentWithUser] = None
