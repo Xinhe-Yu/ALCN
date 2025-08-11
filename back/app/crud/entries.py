@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session, joinedload
-from sqlalchemy import text, desc, asc, func
+from sqlalchemy import text, desc, asc, func, or_
 from app.models.models import Entry, Translation, Comment
 from app.schemas.entries import BulkEntryUpdates, EntryCreate, EntryUpdate, PaginatedEntries
 from typing import Optional, List, Dict, Any
@@ -44,12 +44,24 @@ def get_entries(
 ) -> PaginatedEntries:
     query = db.query(Entry)
 
-    if include_translations:
+    # Always include translations when searching to search translation content
+    if search or include_translations:
         query = query.options(joinedload(Entry.translations))
 
     if search:
+        # Create a comprehensive search using EXISTS subqueries to avoid JOIN issues
+        translation_search_subquery = db.query(Translation.entry_id).filter(
+            Translation.entry_id == Entry.id,
+            text("translations.search_vector @@ plainto_tsquery('english', :search_term)").params(search_term=search)
+        ).exists()
+        
         query = query.filter(
-            Entry.search_vector.op("@@")(func.plainto_tsquery(search))
+            or_(
+                # Search in entry fields
+                text("entries.search_vector @@ plainto_tsquery('english', :search_term)").params(search_term=search),
+                # Search in translation fields using EXISTS
+                translation_search_subquery
+            )
         )
 
     if fuzzy_search:
@@ -74,7 +86,8 @@ def get_entries(
         "updated_at": Entry.updated_at
     }
 
-    if not fuzzy_search and sorted_by in allowed_sort_columns:
+    # Apply manual sorting only if not using fuzzy search and not using search ranking
+    if not fuzzy_search and not search and sorted_by in allowed_sort_columns:
         sort_column = allowed_sort_columns[sorted_by]
         if sort_direction and sort_direction.lower() == "desc":
             query = query.order_by(desc(sort_column))
