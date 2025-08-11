@@ -1,5 +1,6 @@
 import type { EntryWithComment } from '@/app/types';
 import Badge from '../ui/badge';
+import { MdToHtml } from '@/lib/utils';
 
 interface CommentListProps {
   title: string;
@@ -24,9 +25,9 @@ export default function CommentList({ title, entries }: CommentListProps) {
                 <div>
                   {entry.newest_comment && (
                     <p className="text-sm text-gray-600 leading-tight">
-                      {entry.newest_comment.user?.username}
-
-                      {entry.newest_comment.content}</p>
+                      {entry.newest_comment.user?.username}:
+                      <span dangerouslySetInnerHTML={{ __html: MdToHtml(entry.newest_comment.content) }} />
+                    </p>
                   )}
                   <div className="flex items-center space-x-2 mb-1 text-sm">
                     <p className="font-medium text-gray-900">{entry.primary_name}</p>

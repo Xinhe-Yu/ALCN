@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { EntryWithTranslations, EntryWithTranslationsAndVotes, Translation, TranslationWithUserVote, UpdateEntryRequest } from "@/app/types";
 import { Comment } from "@/app/types/comments";
 import Badge from "../ui/badge";
-import { formatDate } from '@/lib/utils';
+import { formatDate, MdToHtml } from '@/lib/utils';
 import { useToast } from '@/lib/context/ToastContext';
 import ConfirmationModal from '../ui/confirmation-modal';
 import { useAuth } from '@/lib/context/AuthContext';
@@ -141,7 +141,7 @@ export default function EntryItem({ entry, type = 'entry', showDate = true, onEn
       }
     } catch (err) {
       console.error('Failed to load detailed entry:', err);
-      error('Error', 'Failed to load entry details');
+      error(t('entry.error'), t('entry.failedToLoadDetails'));
     } finally {
       setLoadingDetailedEntry(false);
     }
@@ -154,7 +154,7 @@ export default function EntryItem({ entry, type = 'entry', showDate = true, onEn
       setComments(response);
     } catch (err) {
       console.error('Failed to load comments:', err);
-      error('Error', 'Failed to load comments');
+      error(t('entry.error'), t('entry.failedToLoadComments'));
     } finally {
       setLoadingComments(false);
     }
@@ -172,10 +172,10 @@ export default function EntryItem({ entry, type = 'entry', showDate = true, onEn
       newComment.user = { id: user?.id || '', username: user?.username || 'Unknown' };
       setComments([...comments, newComment]);
       setCommentText('');
-      success('Success', 'Comment posted successfully');
+      success(t('entry.success'), t('entry.commentPostedSuccessfully'));
     } catch (err) {
       console.error('Failed to post comment:', err);
-      error('Error', 'Failed to post comment');
+      error(t('entry.error'), t('entry.failedToPostComment'));
     } finally {
       setIsPostingComment(false);
     }
@@ -203,10 +203,10 @@ export default function EntryItem({ entry, type = 'entry', showDate = true, onEn
       setComments(comments.map(c => c.id === commentId ? { ...updatedComment, user: c.user } : c));
       setEditingCommentId(null);
       setEditingCommentText('');
-      success('Success', 'Comment updated successfully');
+      success(t('entry.success'), t('entry.commentUpdatedSuccessfully'));
     } catch (err) {
       console.error('Failed to update comment:', err);
-      error('Error', 'Failed to update comment');
+      error(t('entry.error'), t('entry.failedToUpdateComment'));
     }
   };
 
@@ -227,14 +227,14 @@ export default function EntryItem({ entry, type = 'entry', showDate = true, onEn
     try {
       await commentsService.deleteComment(commentToDelete);
       setComments(comments.filter(c => c.id !== commentToDelete));
-      success('Success', 'Comment deleted successfully');
+      success(t('entry.success'), t('entry.commentDeletedSuccessfully'));
 
       // Close modal and reset state
       setShowDeleteCommentConfirm(false);
       setCommentToDelete(null);
     } catch (err) {
       console.error('Failed to delete comment:', err);
-      error('Error', 'Failed to delete comment');
+      error(t('entry.error'), t('entry.failedToDeleteComment'));
     } finally {
       setIsDeletingComment(false);
     }
@@ -331,7 +331,7 @@ export default function EntryItem({ entry, type = 'entry', showDate = true, onEn
 
   const handleVote = async (translationId: string, voteType: VoteType) => {
     if (!user) {
-      error('Error', 'Please log in to vote');
+      error(t('entry.error'), t('entry.pleaseLoginToVote'));
       return;
     }
 
@@ -412,7 +412,7 @@ export default function EntryItem({ entry, type = 'entry', showDate = true, onEn
       }
     } catch (err) {
       console.error('Failed to vote:', err);
-      error('Error', 'Failed to submit vote');
+      error(t('entry.error'), t('entry.failedToSubmitVote'));
     } finally {
       setVotingStates(prev => ({ ...prev, [translationId]: false }));
     }
@@ -454,14 +454,23 @@ export default function EntryItem({ entry, type = 'entry', showDate = true, onEn
             {/* Alternative names in compact form */}
             {currentEntry.alternative_names && currentEntry.alternative_names.length > 0 && (
               <div className="text-gray-600 text-xs mb-1 font-medium">
-                aka: {currentEntry.alternative_names.join(' • ')}
+                {t('entry.aka')}: {currentEntry.alternative_names.join(' • ')}
               </div>
             )}
 
             {/* Definition with serif for readability */}
+            {currentEntry.etymology && (
+              <p className="text-gray-800 text-sm font-serif leading-snug mb-1.5 line-clamp-2" dangerouslySetInnerHTML={{ __html: MdToHtml(currentEntry.etymology) }}>
+              </p>
+            )}
+
             {currentEntry.definition && (
-              <p className="text-gray-800 text-sm font-serif leading-snug mb-1.5 line-clamp-2">
-                {currentEntry.definition}
+              <p className="text-gray-800 text-sm font-serif leading-snug mb-1.5 line-clamp-2" dangerouslySetInnerHTML={{ __html: MdToHtml(currentEntry.definition) }}>
+              </p>
+            )}
+
+            {currentEntry.historical_context && (
+              <p className="text-gray-800 text-sm font-serif leading-snug mb-1.5 line-clamp-2" dangerouslySetInnerHTML={{ __html: MdToHtml(currentEntry.historical_context) }}>
               </p>
             )}
 
@@ -477,18 +486,18 @@ export default function EntryItem({ entry, type = 'entry', showDate = true, onEn
                         ? 'bg-emerald-200 text-emerald-900'
                         : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
                         }`}
-                      title={`Click to copy${translation.notes ? ' • ' + translation.notes : ''}`}
+                      title={t('entry.clickToCopy')}
                     >
                       {translation.translated_name}
                     </span>
                     {translation.notes && (
-                      <span className="text-gray-600 font-serif">
+                      <span className="text-gray-600 font-serif" >
                         :{' '}{translation.notes.length > 150 ? translation.notes.substring(0, 150) + '...' : translation.notes}
                       </span>
                     )}
                   </span>
                 ))}
-                {length > 4 && <span className="text-gray-500"> and {length - 4} more</span>}
+                {length > 4 && <span className="text-gray-500"> {t('entry.andMore', { count: length - 4 })}</span>}
               </div>
             )}
           </div>
@@ -504,7 +513,7 @@ export default function EntryItem({ entry, type = 'entry', showDate = true, onEn
               onClick={toggleExpanded}
               disabled={loadingDetailedEntry || loadingComments}
               className="p-1 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition-all duration-200 cursor-pointer group disabled:opacity-50 disabled:cursor-default"
-              title={isExpanded ? "Collapse" : "Expand"}
+              title={isExpanded ? t('entry.collapse') : t('entry.expand')}
             >
               {(loadingDetailedEntry || loadingComments) ? (
                 <div className="animate-spin h-4 w-4 border border-gray-500 border-t-transparent rounded-full"></div>
@@ -531,7 +540,7 @@ export default function EntryItem({ entry, type = 'entry', showDate = true, onEn
                   className="inline-flex items-center px-2 py-1 text-xs font-medium text-amber-700 bg-amber-100 hover:bg-amber-200 transition-colors rounded"
                 >
                   <PencilIcon className="h-3 w-3 mr-1" />
-                  Edit
+                  {t('entry.edit')}
                 </button>
               )}
               {canAddTranslation() && (
@@ -540,7 +549,7 @@ export default function EntryItem({ entry, type = 'entry', showDate = true, onEn
                   className="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 hover:bg-blue-200 transition-colors rounded"
                 >
                   <PlusIcon className="h-3 w-3 mr-1" />
-                  Add
+                  {t('entry.add')}
                 </button>
               )}
             </div>
@@ -549,7 +558,7 @@ export default function EntryItem({ entry, type = 'entry', showDate = true, onEn
           {/* All translations - dense layout */}
           <div className="px-2 py-1.5">
             <h4 className="font-sans font-semibold text-gray-900 text-sm mb-2">
-              Translations ({currentEntry.translations.length})
+              {t('entry.translations', { count: currentEntry.translations.length })}
             </h4>
 
             {/* Translation list - compact grid */}
@@ -580,22 +589,22 @@ export default function EntryItem({ entry, type = 'entry', showDate = true, onEn
                       <div className="flex items-center gap-3 text-xs text-gray-500 font-mono">
                         <span>{formatDate(translation.created_at)}</span>
                         {translation.updated_at !== translation.created_at && (
-                          <span>• edited {formatDate(translation.updated_at)}</span>
+                          <span>• {t('entry.edited')} {formatDate(translation.updated_at)}</span>
                         )}
                       </div>
                     </div>
 
                     {/* Compact voting and actions */}
                     <div className="flex items-center gap-1 ml-2 flex-shrink-0">
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center">
                         <button
                           onClick={() => handleVote(translation.id, 'up')}
                           disabled={votingStates[translation.id] || !user}
-                          className={`p-0.5 rounded transition-colors ${userVotes[translation.id] === 'up'
+                          className={`p-1 rounded transition-colors ${userVotes[translation.id] === 'up'
                             ? 'text-green-700 bg-green-200 hover:bg-green-300'
                             : 'text-green-600 hover:bg-green-100'
-                            } disabled:opacity-50 disabled:cursor-default`}
-                          title={user ? (userVotes[translation.id] === 'up' ? "Remove upvote" : "Upvote") : "Login to vote"}
+                            } disabled:opacity-50 disabled:cursor-default cursor-pointer`}
+                          title={user ? (userVotes[translation.id] === 'up' ? t('entry.removeUpvote') : t('entry.upvote')) : t('entry.loginToVote')}
                         >
                           {votingStates[translation.id] ? (
                             <div className="animate-spin h-3 w-3 border border-green-600 border-t-transparent rounded-full"></div>
@@ -609,15 +618,15 @@ export default function EntryItem({ entry, type = 'entry', showDate = true, onEn
                           {translation.upvotes}
                         </span>
                       </div>
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center">
                         <button
                           onClick={() => handleVote(translation.id, 'down')}
                           disabled={votingStates[translation.id] || !user}
-                          className={`p-0.5 rounded transition-colors ${userVotes[translation.id] === 'down'
+                          className={`p-1 rounded transition-colors ${userVotes[translation.id] === 'down'
                             ? 'text-red-700 bg-red-200 hover:bg-red-300'
                             : 'text-red-600 hover:bg-red-100'
-                            } disabled:opacity-50 disabled:cursor-default`}
-                          title={user ? (userVotes[translation.id] === 'down' ? "Remove downvote" : "Downvote") : "Login to vote"}
+                            } disabled:opacity-50 disabled:cursor-default cursor-pointer`}
+                          title={user ? (userVotes[translation.id] === 'down' ? t('entry.removeDownvote') : t('entry.downvote')) : t('entry.loginToVote')}
                         >
                           {votingStates[translation.id] ? (
                             <div className="animate-spin h-3 w-3 border border-red-600 border-t-transparent rounded-full"></div>
@@ -636,7 +645,7 @@ export default function EntryItem({ entry, type = 'entry', showDate = true, onEn
                         <button
                           onClick={() => setEditingTranslationId(translation.id)}
                           className="p-0.5 text-amber-600 hover:bg-amber-100 rounded transition-colors ml-1"
-                          title="Edit"
+                          title={t('entry.edit')}
                         >
                           <PencilIcon className="h-3 w-3" />
                         </button>
@@ -651,7 +660,7 @@ export default function EntryItem({ entry, type = 'entry', showDate = true, onEn
           {/* Comments section - compact */}
           <div className="px-2 py-1.5 border-t border-gray-200">
             <h4 className="font-sans font-semibold text-gray-900 text-sm mb-2">
-              Comments ({comments.length})
+              {t('entry.comments', { count: comments.length })}
             </h4>
 
             {/* Compact comment input */}
@@ -661,7 +670,7 @@ export default function EntryItem({ entry, type = 'entry', showDate = true, onEn
                   value={commentText}
                   onChange={(e) => setCommentText(e.target.value)}
                   onKeyDown={handleKeyPress}
-                  placeholder="Add comment... (Ctrl+Enter to post)"
+                  placeholder={t('entry.addCommentPlaceholder')}
                   className="text-xs w-full px-2 py-1.5 pr-8 border border-gray-300 rounded resize-none focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-300 font-serif"
                   rows={2}
                   disabled={isPostingComment}
@@ -673,7 +682,7 @@ export default function EntryItem({ entry, type = 'entry', showDate = true, onEn
                     ? 'text-gray-400 cursor-not-allowed'
                     : 'text-green-600 hover:text-green-700 hover:bg-green-50'
                     }`}
-                  title="Post"
+                  title={t('entry.post')}
                 >
                   {isPostingComment ? (
                     <div className="animate-spin h-3 w-3 border border-gray-300 border-t-green-600 rounded-full"></div>
@@ -686,7 +695,7 @@ export default function EntryItem({ entry, type = 'entry', showDate = true, onEn
 
             {/* Compact comments list - inline flow */}
             {loadingComments ? (
-              <div className="text-center py-2 text-gray-500 text-xs">Loading...</div>
+              <div className="text-center py-2 text-gray-500 text-xs">{t('entry.loading')}</div>
             ) : comments.length > 0 ? (
               <div className="space-y-1.5">
                 {comments.map((comment) => (
@@ -695,28 +704,28 @@ export default function EntryItem({ entry, type = 'entry', showDate = true, onEn
                       // Edit mode
                       <div className="space-y-2">
                         <div className="text-xs font-sans font-medium text-amber-700 mb-1">
-                          {comment.user.username} (editing):
+                          {comment.user.username} ({t('entry.editing')}):
                         </div>
                         <textarea
                           value={editingCommentText}
                           onChange={(e) => setEditingCommentText(e.target.value)}
                           className="text-xs w-full px-2 py-1.5 border border-gray-300 rounded resize-none focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-300 font-serif"
                           rows={3}
-                          placeholder="Edit your comment..."
+                          placeholder={t('entry.editCommentPlaceholder')}
                         />
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => handleSaveCommentEdit(comment.id)}
                             disabled={!editingCommentText.trim()}
-                            className="px-2 py-1 text-xs bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50 disabled:cursor-default"
+                            className="px-2 py-1 text-xs bg-lime-600 text-white rounded hover:bg-lime-700 disabled:opacity-50 disabled:cursor-default"
                           >
-                            Save
+                            {t('entry.save')}
                           </button>
                           <button
                             onClick={handleCancelCommentEdit}
                             className="px-2 py-1 text-xs bg-gray-600 text-white rounded hover:bg-gray-700"
                           >
-                            Cancel
+                            {t('entry.cancel')}
                           </button>
                         </div>
                       </div>
@@ -728,23 +737,21 @@ export default function EntryItem({ entry, type = 'entry', showDate = true, onEn
                             <span className="font-sans font-medium text-amber-700">
                               {comment.user.username}:
                             </span>
-                            <span className="font-serif text-gray-800 ml-1">
-                              {comment.content}
-                            </span>
+                            <span className="font-serif text-gray-800 ml-1" dangerouslySetInnerHTML={{ __html: MdToHtml(comment.content) }} />
                           </div>
                           {canEditComment(comment) && (
                             <div className="flex items-center gap-1 ml-2 flex-shrink-0">
                               <button
                                 onClick={() => handleEditComment(comment)}
                                 className="p-0.5 text-amber-600 hover:bg-amber-100 rounded transition-colors"
-                                title="Edit comment"
+                                title={t('entry.editComment')}
                               >
                                 <PencilIcon className="h-3 w-3" />
                               </button>
                               <button
                                 onClick={() => handleDeleteComment(comment.id)}
                                 className="p-0.5 text-red-600 hover:bg-red-100 rounded transition-colors"
-                                title="Delete comment"
+                                title={t('entry.deleteComment')}
                               >
                                 <TrashIcon className="h-3 w-3" />
                               </button>
@@ -753,7 +760,7 @@ export default function EntryItem({ entry, type = 'entry', showDate = true, onEn
                         </div>
                         <div className="text-xs text-gray-500 font-mono">
                           {formatDate(comment.created_at)}
-                          {comment.is_edited && <span className="ml-2 italic">(edited)</span>}
+                          {comment.is_edited && <span className="ml-2 italic">({t('entry.edited')})</span>}
                         </div>
                       </div>
                     )}
@@ -761,7 +768,7 @@ export default function EntryItem({ entry, type = 'entry', showDate = true, onEn
                 ))}
               </div>
             ) : (
-              <div className="text-center py-2 text-gray-500 text-xs">No comments</div>
+              <div className="text-center py-2 text-gray-500 text-xs">{t('entry.noComments')}</div>
             )}
           </div>
         </div>
@@ -796,10 +803,10 @@ export default function EntryItem({ entry, type = 'entry', showDate = true, onEn
         isOpen={showDeleteCommentConfirm}
         onClose={handleCancelDeleteComment}
         onConfirm={handleConfirmDeleteComment}
-        title="Delete Comment"
-        message="Are you sure you want to delete this comment? This action cannot be undone."
-        confirmText="Delete Comment"
-        cancelText="Cancel"
+        title={t('entry.deleteComment')}
+        message={t('entry.deleteCommentConfirmation')}
+        confirmText={t('entry.deleteComment')}
+        cancelText={t('entry.cancel')}
         type="danger"
         isLoading={isDeletingComment}
       />
