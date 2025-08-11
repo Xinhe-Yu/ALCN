@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import and_
-from app.models.models import User, VerificationCode
+from sqlalchemy import and_, func
+from app.models.models import User, VerificationCode, Entry, Translation, Source
 from app.schemas.users import UserCreate, UserUpdate
-from typing import Optional
+from typing import Optional, Dict, Any
 from datetime import datetime, timezone, timedelta
 import uuid
 
@@ -100,3 +100,111 @@ def cleanup_expired_codes(db: Session) -> int:
     ).delete()
     db.commit()
     return result
+
+
+def get_user_metadata(db: Session, user_id: str) -> Dict[str, Any]:
+    """
+    Get comprehensive metadata about a user including:
+    1. Number of entries created
+    2. Number of entries updated
+    3. Number of translations created
+    4. Number of translations updated
+    5. Books they translated (from sources.translator_id)
+    6. Recent activity statistics
+    """
+    
+    # Count entries created by user
+    entries_created = db.query(Entry).filter(Entry.created_by == user_id).count()
+    
+    # Count entries updated by user (but not created by them)
+    entries_updated = db.query(Entry).filter(
+        and_(Entry.updated_by == user_id, Entry.created_by != user_id)
+    ).count()
+    
+    # Count translations created by user
+    translations_created = db.query(Translation).filter(
+        Translation.created_by == user_id
+    ).count()
+    
+    # Count translations updated by user (but not created by them)
+    translations_updated = db.query(Translation).filter(
+        and_(Translation.updated_by == user_id, Translation.created_by != user_id)
+    ).count()
+    
+    # Get books/sources the user has translated
+    translated_books_query = db.query(Source).filter(
+        Source.translator_id == user_id
+    ).all()
+    
+    # Convert to dictionaries for serialization
+    translated_books = [
+        {
+            'id': str(book.id),
+            'title': book.title,
+            'author': book.author,
+            'publisher': book.publisher,
+            'publication_year': book.publication_year,
+            'language_code': book.language_code,
+            'isbn': book.isbn,
+            'description': book.description,
+            'created_at': book.created_at.isoformat(),
+            'updated_at': book.updated_at.isoformat()
+        } for book in translated_books_query
+    ]
+    
+    # Recent activity (last 30 days)
+    thirty_days_ago = datetime.now(timezone.utc) - timedelta(days=30)
+    
+    recent_entries_created = db.query(Entry).filter(
+        and_(Entry.created_by == user_id, Entry.created_at >= thirty_days_ago)
+    ).count()
+    
+    recent_translations_created = db.query(Translation).filter(
+        and_(Translation.created_by == user_id, Translation.created_at >= thirty_days_ago)
+    ).count()
+    
+    # Get user's most recent entries and translations
+    recent_entries_query = db.query(Entry).filter(
+        Entry.created_by == user_id
+    ).order_by(Entry.created_at.desc()).limit(5).all()
+    
+    recent_translations_query = db.query(Translation).filter(
+        Translation.created_by == user_id
+    ).order_by(Translation.created_at.desc()).limit(5).all()
+    
+    # Convert to dictionaries for serialization
+    recent_entries = [
+        {
+            'id': str(entry.id),
+            'primary_name': entry.primary_name,
+            'language_code': entry.language_code,
+            'entry_type': entry.entry_type,
+            'created_at': entry.created_at.isoformat(),
+            'updated_at': entry.updated_at.isoformat()
+        } for entry in recent_entries_query
+    ]
+    
+    recent_translations = [
+        {
+            'id': str(translation.id),
+            'translated_name': translation.translated_name,
+            'language_code': translation.language_code,
+            'entry_id': str(translation.entry_id),
+            'created_at': translation.created_at.isoformat(),
+            'updated_at': translation.updated_at.isoformat()
+        } for translation in recent_translations_query
+    ]
+    
+    return {
+        'entries_created': entries_created,
+        'entries_updated': entries_updated,
+        'translations_created': translations_created,
+        'translations_updated': translations_updated,
+        'translated_books': translated_books,
+        'recent_activity': {
+            'entries_created_last_30_days': recent_entries_created,
+            'translations_created_last_30_days': recent_translations_created,
+        },
+        'recent_entries': recent_entries,
+        'recent_translations': recent_translations
+    }

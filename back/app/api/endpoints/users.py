@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Dict, Any
 
 from app.core.database import get_db
 from app.crud import users as crud_users
@@ -82,3 +82,42 @@ async def list_users(
     """
     users = db.query(crud_users.User).offset(skip).limit(limit).all()
     return [UserResponse.model_validate(user) for user in users]
+
+
+@router.get("/me/metadata", response_model=Dict[str, Any])
+async def get_current_user_metadata(
+    db: Session = Depends(get_db),
+    current_user: AuthUserResponse = Depends(get_current_user)
+):
+    """
+    Get current user's metadata including contributions, activity, and translated books.
+    """
+    metadata = crud_users.get_user_metadata(db, user_id=current_user.id)
+    return metadata
+
+
+@router.get("/{user_id}/metadata", response_model=Dict[str, Any])
+async def get_user_metadata(
+    user_id: str,
+    db: Session = Depends(get_db),
+    current_user: AuthUserResponse = Depends(get_current_user)
+):
+    """
+    Get user metadata by ID. Users can only see their own metadata unless they're admin.
+    """
+    if current_user.id != user_id and current_user.role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not enough permissions"
+        )
+
+    # Check if user exists
+    user = crud_users.get_user(db, user_id=user_id)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+
+    metadata = crud_users.get_user_metadata(db, user_id=user_id)
+    return metadata
