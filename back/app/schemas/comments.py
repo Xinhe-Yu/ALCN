@@ -1,7 +1,9 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 from typing import Optional, Dict, Any
 from datetime import datetime
 from uuid import UUID
+
+from app.schemas.users import UserBasic
 
 class CommentBase(BaseModel):
     content: str
@@ -27,3 +29,24 @@ class CommentResponse(CommentBase):
 
     class Config:
         from_attributes = True
+
+
+class CommentWithUser(CommentResponse):
+    user: UserBasic
+
+    class Config:
+        from_attributes = True
+    
+    @field_validator('user', mode='before')
+    @classmethod
+    def validate_user(cls, v):
+        # If it's already a UserBasic instance or dict, return as-is
+        if isinstance(v, (dict, UserBasic)):
+            return v
+        # If it's a SQLAlchemy User model, convert it to dict
+        if hasattr(v, 'id') and hasattr(v, 'username'):
+            return {
+                'id': v.id,
+                'username': v.username
+            }
+        return v

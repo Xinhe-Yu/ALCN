@@ -38,3 +38,7 @@ class UserResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+class UserBasic(BaseModel):
+    id: UUID
+    username: str

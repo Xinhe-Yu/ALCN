@@ -183,16 +183,16 @@ export default function Home() {
                   title={t('landing.sections.recentlyUpdated')}
                   entries={metadata.newest_updated_entries}
                 />
-                <TranslationList
+                {/* <TranslationList
                   title={t('landing.sections.recentTranslations')}
                   entries={metadata.entries_with_newest_translations}
+                /> */}
+                <CommentList
+                  title={t('landing.sections.recentDiscussions')}
+                  entries={metadata.entries_with_newest_comments}
                 />
               </div>
 
-              <CommentList
-                title={t('landing.sections.recentDiscussions')}
-                entries={metadata.entries_with_newest_comments}
-              />
             </>
           )}
         </div>

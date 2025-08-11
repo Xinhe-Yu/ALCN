@@ -57,7 +57,7 @@ export function useInlineEditing(onUpdateEntry: (entryId: string, field: string,
             updateData.language_code = valueToSave as LanguageCode;
             break;
           case 'entry_type':
-            updateData.entry_type = valueToSave ? (valueToSave as EntryType) : null;
+            updateData.entry_type = valueToSave ? (valueToSave as EntryType) : undefined;
             break;
           case 'alternative_names':
             updateData.alternative_names = valueToSave ? valueToSave.split(', ').map(name => name.trim()) : [];

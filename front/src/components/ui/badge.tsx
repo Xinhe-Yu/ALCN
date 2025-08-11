@@ -5,7 +5,8 @@ import { LANGUAGE_COLORS, ENTRY_TYPE_COLORS } from '../entries/data-table/column
 
 interface BadgeProps {
   code: string;
-  type?: 'lang' | 'type';
+  type?: 'lang' | 'type' | 'user' | 'role';
+  role?: string;
 }
 
 export default function Badge({ code, type = 'lang' }: BadgeProps) {
@@ -20,6 +21,9 @@ export default function Badge({ code, type = 'lang' }: BadgeProps) {
   } else if (type === 'type') {
     colorClass = ENTRY_TYPE_COLORS[code] || ENTRY_TYPE_COLORS[''];
     displayText = t(`entryTypes.${code}`, { defaultValue: code });
+  } else if (type === 'user') {
+    // User badge styling based on role
+    colorClass = 'bg-yellow-100 text-yellow-800 border-yellow-200';
   }
 
   return (

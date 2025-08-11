@@ -3,7 +3,6 @@ from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.crud import translation_votes as crud_votes
-from app.crud import entries as crud_entries
 from app.schemas.translations import VoteCreate, VoteResponse
 from app.schemas.auth import UserResponse
 from app.api.endpoints.auth import get_current_user
@@ -22,8 +21,7 @@ async def vote_on_translation(
     Vote on a translation (up or down).
     If user already voted, this will update their existing vote.
     """
-    # TODO: Add check that translation exists
-    
+    # The create_or_update_vote function already handles both creating new votes and updating existing ones
     db_vote = crud_votes.create_or_update_vote(
         db, translation_id=translation_id, user_id=current_user.id, vote=vote
     )
@@ -47,7 +45,7 @@ async def remove_vote(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Vote not found"
         )
-    
+
     return {"message": "Vote removed successfully"}
 
 
@@ -68,7 +66,7 @@ async def get_user_vote(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="No vote found for this translation"
         )
-    
+
     return VoteResponse.model_validate(vote)
 
 
@@ -88,9 +86,9 @@ async def recalculate_votes(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Admin access required"
         )
-    
+
     upvotes, downvotes = crud_votes.recalculate_vote_counts(db, translation_id)
-    
+
     return {
         "message": "Vote counts recalculated",
         "upvotes": upvotes,

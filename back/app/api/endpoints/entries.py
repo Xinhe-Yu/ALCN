@@ -1,19 +1,49 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from typing import List, Optional
 
 from app.core.database import get_db
 from app.crud import entries as crud_entries
+from app.crud import translation_votes as crud_votes
 from app.schemas.entries import (
-    EntryCreate, EntryUpdate, EntryResponse, EntryWithTranslations,
-    EntryMetadata, PaginatedEntries, TranslationWithComment, EntryWithComment, BulkEntryUpdateRequest
+    EntryCreate, EntryUpdate, EntryResponse, EntryWithTranslations, EntryWithTranslationsAndVotes,
+    EntryMetadata, PaginatedEntries, EntryWithComment, BulkEntryUpdateRequest
 )
 from app.schemas.translations import TranslationResponse
-from app.schemas.comments import CommentResponse
+from app.schemas.comments import CommentResponse, CommentWithUser
 from app.schemas.auth import UserResponse
 from app.api.endpoints.auth import get_current_user, get_current_admin_user
+from app.core.security import verify_token
+from app.crud import users as crud_users
 
 router = APIRouter()
+security = HTTPBearer(auto_error=False)
+
+async def get_current_user_optional(
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
+    db: Session = Depends(get_db)
+) -> Optional[UserResponse]:
+    """
+    Get current user from token if provided, otherwise return None.
+    """
+    if not credentials:
+        return None
+
+    try:
+        token = credentials.credentials
+        user_id = verify_token(token)
+
+        if not user_id:
+            return None
+
+        user = crud_users.get_user(db, user_id=user_id)
+        if not user:
+            return None
+
+        return UserResponse.model_validate(user)
+    except:
+        return None
 
 
 @router.get("/", response_model=PaginatedEntries)
@@ -62,31 +92,6 @@ async def list_entries(
 
     return result
 
-def _map_translation_with_comment(translation) -> TranslationWithComment:
-    """
-    Helper function to map Translation model with dynamic comment to TranslationWithComment schema.
-    """
-    # Convert translation to dict first
-    translation_data = {
-        'id': translation.id,
-        'entry_id': translation.entry_id,
-        'language_code': translation.language_code,
-        'translated_name': translation.translated_name,
-        'notes': translation.notes,
-        'source_id': translation.source_id,
-        'is_preferred': translation.is_preferred,
-        'upvotes': translation.upvotes,
-        'downvotes': translation.downvotes,
-        'created_by': translation.created_by,
-        'updated_by': translation.updated_by,
-        'created_at': translation.created_at,
-        'updated_at': translation.updated_at,
-        'newest_comment': CommentResponse.model_validate(translation.newest_comment) if hasattr(translation, 'newest_comment') and translation.newest_comment else None
-    }
-
-    return TranslationWithComment.model_validate(translation_data)
-
-
 def _map_entry_with_comment(entry) -> EntryWithComment:
     """
     Helper function to map Entry model with dynamic comment to EntryWithComment schema.
@@ -109,7 +114,7 @@ def _map_entry_with_comment(entry) -> EntryWithComment:
         'verification_notes': entry.verification_notes,
         'created_at': entry.created_at,
         'updated_at': entry.updated_at,
-        'newest_comment': CommentResponse.model_validate(entry.newest_comment) if hasattr(entry, 'newest_comment') and entry.newest_comment else None
+        'newest_comment': CommentWithUser.model_validate(entry.newest_comment) if hasattr(entry, 'newest_comment') and entry.newest_comment else None
     }
     return EntryWithComment.model_validate(entry_data)
 
@@ -148,31 +153,59 @@ async def get_entries_metadata(db: Session = Depends(get_db)):
     return processed_metadata
 
 
-@router.get("/{entry_id}", response_model=EntryWithTranslations)
+@router.get("/{entry_id}")
 async def get_entry(
     entry_id: str,
-    include_translations: bool = Query(True, description="Include translations in response"),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: Optional[UserResponse] = Depends(get_current_user_optional)
 ):
     """
     Get entry by ID.
     """
-    if include_translations:
-        entry = crud_entries.get_entry_with_translations(db, entry_id=entry_id)
-        if not entry:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Entry not found"
-            )
-        return EntryWithTranslations.model_validate(entry)
+    # if include_translations:
+    entry = crud_entries.get_entry_with_translations(db, entry_id=entry_id)
+    if not entry:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Entry not found"
+        )
+
+    if current_user:
+        # Enrich translations with user vote data
+        enriched_translations = crud_votes.enrich_translations_with_user_votes(
+            entry.translations, current_user.id, db
+        )
+        # Create entry with enriched translations
+        entry_dict = {
+            'id': entry.id,
+            'primary_name': entry.primary_name,
+            'original_script': entry.original_script,
+            'language_code': entry.language_code,
+            'entry_type': entry.entry_type,
+            'alternative_names': entry.alternative_names,
+            'other_language_codes': entry.other_language_codes,
+            'etymology': entry.etymology,
+            'definition': entry.definition,
+            'historical_context': entry.historical_context,
+            'created_by': entry.created_by,
+            'updated_by': entry.updated_by,
+            'is_verified': entry.is_verified,
+            'verification_notes': entry.verification_notes,
+            'created_at': entry.created_at,
+            'updated_at': entry.updated_at,
+            'translations': enriched_translations
+        }
+        return EntryWithTranslationsAndVotes(**entry_dict)
     else:
-        entry = crud_entries.get_entry(db, entry_id=entry_id)
-        if not entry:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Entry not found"
-            )
-        return EntryResponse.model_validate(entry)
+        return EntryWithTranslations.model_validate(entry)
+    # else:
+    #     entry = crud_entries.get_entry(db, entry_id=entry_id)
+    #     if not entry:
+    #         raise HTTPException(
+    #             status_code=status.HTTP_404_NOT_FOUND,
+    #             detail="Entry not found"
+    #         )
+    #     return EntryResponse.model_validate(entry)
 
 
 @router.post("/", response_model=EntryResponse)

@@ -102,13 +102,13 @@ export interface UpdateEntryRequest {
   verification_notes?: string;
 }
 
-export interface UpdateTranslationRequest {
+export interface UpdateTranslationCrudRequest {
   id: string;
   translated_name?: string;
   notes?: string;
 }
 export type UpdateEntryField = keyof UpdateEntryRequest
-export type UpdateTranslationField = keyof UpdateTranslationRequest;
+export type UpdateTranslationField = keyof UpdateTranslationCrudRequest;
 
 export interface BulkUpdates {
   language_code?: string;

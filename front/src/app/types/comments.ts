@@ -4,24 +4,14 @@ export interface Comment {
   user_id: string;
   parent_comment_id?: string;
   content: string;
+  user: {
+    id: string;
+    username: string;
+  };
   is_edited: boolean;
-  edit_history?: Record<string, any>;
+  edit_history?: Record<string, unknown>;
   created_at: string;
   updated_at: string;
-}
-
-export interface TranslationWithComment {
-  id: string;
-  entry_id: string;
-  language_code: string;
-  translated_name: string;
-  notes?: string;
-  is_preferred: boolean;
-  upvotes: number;
-  downvotes: number;
-  created_at: string;
-  updated_at: string;
-  newest_comment?: Comment;
 }
 
 export interface EntryWithComment {
@@ -39,6 +29,6 @@ export interface EntryWithComment {
   verification_notes?: string;
   created_at: string;
   updated_at: string;
-  translations?: any[];
+  translations?: unknown[];
   newest_comment?: Comment;
 }

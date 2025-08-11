@@ -32,8 +32,16 @@ export interface Translation {
   updated_at: string;
 }
 
+export interface TranslationWithUserVote extends Translation {
+  user_vote?: 'up' | 'down' | null;
+}
+
 export interface EntryWithTranslations extends Entry {
   translations: Translation[];
+}
+
+export interface EntryWithTranslationsAndVotes extends Entry {
+  translations: TranslationWithUserVote[];
 }
 
 export interface Pagination {
@@ -63,4 +71,21 @@ export interface TrigramSearchParams {
   skip?: number;
   limit?: number;
   threshold?: number;
+}
+
+// Translation request types for API calls
+export interface CreateTranslationRequest {
+  entry_id: string;
+  language_code: string;
+  translated_name: string;
+  notes?: string;
+  is_preferred?: boolean;
+}
+
+export interface UpdateTranslationRequest {
+  id: string;
+  language_code?: string;
+  translated_name?: string;
+  notes?: string;
+  is_preferred?: boolean;
 }

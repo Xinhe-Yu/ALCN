@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from typing import List
 
 from app.core.database import get_db
 from app.crud import entries as crud_entries
-from app.models.models import Comment
-from app.schemas.comments import CommentCreate, CommentUpdate, CommentResponse
+from app.models.models import Comment, User
+from app.schemas.comments import CommentCreate, CommentUpdate, CommentResponse, CommentWithUser
 from app.schemas.auth import UserResponse
 from app.api.endpoints.auth import get_current_user
 import uuid
@@ -13,10 +13,10 @@ import uuid
 router = APIRouter()
 
 
-@router.get("/entry/{entry_id}", response_model=List[CommentResponse])
+@router.get("/entry/{entry_id}", response_model=List[CommentWithUser])
 async def get_entry_comments(entry_id: str, db: Session = Depends(get_db)):
     """
-    Get all comments for an entry.
+    Get all comments for an entry with user information.
     """
     # Check if entry exists
     entry = crud_entries.get_entry(db, entry_id=entry_id)
@@ -25,11 +25,32 @@ async def get_entry_comments(entry_id: str, db: Session = Depends(get_db)):
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Entry not found"
         )
+    
+    # Debug: Check the entry_id conversion
+    import uuid as uuid_lib
+    try:
+        uuid_entry_id = uuid_lib.UUID(entry_id)
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid entry ID format"
+        )
 
-    comments = db.query(Comment).filter(
-        Comment.entry_id == entry_id
+    # Query comments with eagerly loaded user information
+    comments = db.query(Comment).options(
+        joinedload(Comment.user)
+    ).filter(
+        Comment.entry_id == uuid_entry_id
     ).order_by(Comment.created_at).all()
-    return [CommentResponse.model_validate(comment) for comment in comments]
+    
+    # Debug: Check if we found any comments
+    print(f"Found {len(comments)} comments for entry {entry_id}")
+    
+    # Convert to CommentWithUser objects using automatic mapping with custom validator
+    # The field_validator in CommentWithUser handles SQLAlchemy User -> UserBasic conversion
+    result = [CommentWithUser.model_validate(comment) for comment in comments]
+    
+    return result
 
 
 @router.post("/", response_model=CommentResponse)

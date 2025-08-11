@@ -64,7 +64,7 @@ class BulkEntryUpdateRequest(BaseModel):
     updates: BulkEntryUpdates
 
 from app.schemas.translations import TranslationResponse, TranslationWithUserVote
-from app.schemas.comments import CommentResponse
+from app.schemas.comments import CommentResponse, CommentWithUser
 
 class EntryWithTranslations(EntryResponse):
     translations: List[TranslationResponse] = []
@@ -99,7 +99,7 @@ class TranslationWithComment(TranslationResponse):
 
 class EntryWithComment(EntryResponse):
     """Entry with its newest comment"""
-    newest_comment: Optional[CommentResponse] = None
+    newest_comment: Optional[CommentWithUser] = None
 
     class Config:
         from_attributes = True

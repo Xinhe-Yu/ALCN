@@ -6,7 +6,7 @@ import { NextIntlClientProvider } from 'next-intl';
 type Locale = 'en' | 'zh';
 
 interface Messages {
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 interface I18nContextType {

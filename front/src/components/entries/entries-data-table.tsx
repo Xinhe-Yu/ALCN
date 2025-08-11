@@ -23,6 +23,7 @@ import ColumnSelector from './data-table/column-selector';
 import EditableCell from './data-table/editable-cell';
 import Badge from '../ui/badge';
 import { useToast } from '@/lib/context/ToastContext';
+import ConfirmationModal from '../ui/confirmation-modal';
 import {
   saveVisibleColumns,
   getVisibleColumns,
@@ -75,6 +76,11 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
   // Selection state
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [isAllSelected, setIsAllSelected] = useState(false);
+
+  // Confirmation modal state
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [entryToDelete, setEntryToDelete] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Column visibility state
   const [visibleColumns, setVisibleColumns] = useState<Set<string>>(() => {
@@ -432,31 +438,27 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
   };
 
   // Handle delete entry
-  const handleDeleteEntry = async (entryId: string) => {
+  const handleDeleteEntry = (entryId: string) => {
     // Check if user is authenticated
     const token = localStorage.getItem('token');
     if (!token) {
       toast.warning('Authentication Required', 'You must be logged in to delete entries. Please login first.');
       return;
     }
+    // Show confirmation modal
+    setEntryToDelete(entryId);
+    setShowDeleteConfirm(true);
+  };
 
-    const confirmed = await toast.confirm({
-      title: 'Delete Entry',
-      message: 'Are you sure you want to delete this entry? This action cannot be undone.',
-      confirmText: 'Delete',
-      cancelText: 'Cancel',
-      type: 'danger'
-    });
+  const handleConfirmDelete = async () => {
+    if (!entryToDelete) return;
 
-    if (!confirmed) {
-      return;
-    }
-
+    setIsDeleting(true);
     try {
-      await entriesService.deleteEntry({ id: entryId });
+      await entriesService.deleteEntry({ id: entryToDelete });
 
       // Remove the entry from the local state immediately
-      setEntries(currentEntries => currentEntries.filter(entry => entry.id !== entryId));
+      setEntries(currentEntries => currentEntries.filter(entry => entry.id !== entryToDelete));
 
       // Update total count
       setTotalEntries(prev => prev - 1);
@@ -464,14 +466,27 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
       // Clear selection if deleted entry was selected
       setSelectedIds(prev => {
         const newSelected = new Set(prev);
-        newSelected.delete(entryId);
+        newSelected.delete(entryToDelete);
         return newSelected;
       });
 
       toast.success('Entry Deleted', 'Entry was successfully deleted.');
+
+      // Close modal and reset state
+      setShowDeleteConfirm(false);
+      setEntryToDelete(null);
     } catch (error) {
       console.error('Failed to delete entry:', error);
+      toast.error('Delete Failed', 'Failed to delete entry. Please try again.');
+    } finally {
+      setIsDeleting(false);
     }
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteConfirm(false);
+    setEntryToDelete(null);
+    setIsDeleting(false);
   };
 
   // Define column widths based on content type - MOVED OUTSIDE RENDER FOR PERFORMANCE
@@ -919,6 +934,19 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
           )}
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showDeleteConfirm}
+        onClose={handleCancelDelete}
+        onConfirm={handleConfirmDelete}
+        title="Delete Entry"
+        message="Are you sure you want to delete this entry? This action cannot be undone and will remove all associated translations and comments."
+        confirmText="Delete Entry"
+        cancelText="Cancel"
+        type="danger"
+        isLoading={isDeleting}
+      />
     </div>
   );
 }
