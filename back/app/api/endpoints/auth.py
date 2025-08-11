@@ -1,3 +1,4 @@
+import re
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
@@ -28,9 +29,14 @@ async def login(request: LoginRequest, db: Session = Depends(get_db)):
     user = crud_users.get_user_by_email(db, email=request.email)
 
     if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
         # Create new user if doesn't exist
-        user_create = UserCreate(email=request.email)
-        user = crud_users.create_user(db, user_create)
+        # username = re.search("^\w+", request.email).group(0);
+        # user_create = UserCreate(email=request.email, username=username)
+        # user = crud_users.create_user(db, user_create)
 
     # Generate verification code
     if settings.environment == "development":

@@ -92,17 +92,6 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
 
   // Fetch data with smooth loading states
   const fetchEntries = useCallback(async () => {
-    console.log('🚀 fetchEntries called with params:', {
-      currentPage,
-      pageSize,
-      sortBy,
-      sortDirection,
-      debouncedSearchQuery,
-      languageFilter,
-      typeFilter,
-      isInitial: isInitialMountRef.current
-    });
-
     try {
       // Only show full loading on initial load, not during search
       if (isInitialMountRef.current) {
@@ -157,7 +146,6 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
   const handleOptimisticUpdate = useCallback((entryId: string, field: string, value: string) => {
     const timestamp = Date.now();
     const updateKey = `${entryId}-${field}-${value}-${timestamp}`;
-    console.log('Optimistic update:', { entryId, field, value, updateKey });
 
     // Check for duplicates BEFORE calling setEntries
     const recentUpdates = Array.from(processedUpdatesRef.current).filter(key => {
@@ -170,7 +158,6 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
     );
 
     if (duplicateKey) {
-      console.log(`[${updateKey}] Skipping recent duplicate update (before setState)`);
       return; // Exit early, don't call setEntries at all
     }
 
@@ -192,11 +179,8 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
       // Find the index of the entry to update
       const entryIndex = currentEntries.findIndex(entry => entry.id === entryId);
       if (entryIndex === -1) {
-        console.log('Entry not found:', entryId);
         return currentEntries; // No change if entry not found
       }
-
-      console.log(`[${updateKey}] Found entry to update at index:`, entryIndex, 'in array of', currentEntries.length);
 
       // Create a shallow copy of the array
       const updatedEntries = [...currentEntries];
@@ -208,43 +192,33 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
       // Update the specific field
       switch (field) {
         case 'primary_name':
-          console.log('Updating primary_name:', value);
           updatedEntry.primary_name = value;
           break;
         case 'original_script':
-          console.log('Updating original_script:', value);
           updatedEntry.original_script = value;
           break;
         case 'language_code':
-          console.log('Updating language_code:', value);
           updatedEntry.language_code = value;
           break;
         case 'entry_type':
-          console.log('Updating entry_type:', value);
           updatedEntry.entry_type = value || undefined;
           break;
         case 'alternative_names':
-          console.log('Updating alternative_names:', value);
           updatedEntry.alternative_names = value ? value.split(', ').map(name => name.trim()) : [];
           break;
         case 'etymology':
-          console.log('Updating etymology:', value);
           updatedEntry.etymology = value;
           break;
         case 'definition':
-          console.log('Updating definition:', value);
           updatedEntry.definition = value;
           break;
         case 'historical_context':
-          console.log('Updating historical_context:', value);
           updatedEntry.historical_context = value;
           break;
         case 'verification_notes':
-          console.log('Updating verification_notes:', value);
           updatedEntry.verification_notes = value;
           break;
         case 'first_translation':
-          console.log('Updating first_translation:', value);
           // Update the first translation if it exists
           if (updatedEntry.translations && updatedEntry.translations[0]) {
             updatedEntry.translations = [...updatedEntry.translations];
@@ -495,7 +469,6 @@ export default function EntriesDataTable({ }: EntriesDataTableProps) {
       });
 
       toast.success('Entry Deleted', 'Entry was successfully deleted.');
-      console.log('Entry deleted successfully:', entryId);
     } catch (error) {
       console.error('Failed to delete entry:', error);
     }

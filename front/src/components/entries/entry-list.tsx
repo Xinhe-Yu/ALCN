@@ -1,5 +1,5 @@
 import type { EntryWithTranslations } from '@/app/types';
-import RecentItem from './recent-item';
+import EntryItem from './entry-item';
 
 interface EntryListProps {
   title: string;
@@ -15,7 +15,7 @@ export default function EntryList({ title, entries }: EntryListProps) {
         </h3>
         <div className="space-y-2">
           {entries.map((entry) => (
-            <RecentItem
+            <EntryItem
               key={entry.id}
               entry={entry}
             />

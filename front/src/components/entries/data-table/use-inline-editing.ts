@@ -26,15 +26,11 @@ export function useInlineEditing(onUpdateEntry: (entryId: string, field: string,
     if (!editingCell) return;
 
     const valueToSave = valueOverride ?? editValue;
-    const saveId = Math.random().toString(36).substr(2, 9); // Unique ID for this save operation
 
     try {
-      console.log(`[${saveId}] Saving edit:`, editingCell, valueToSave);
-
       const entryId: string = editingCell.entryId;
 
       // Optimistically update the UI first
-      console.log(`[${saveId}] Calling optimistic update:`, { entryId: editingCell.entryId, field: editingCell.field, value: valueToSave });
       onUpdateEntry(editingCell.entryId, editingCell.field, valueToSave);
 
       // Clear editing state immediately
@@ -71,7 +67,6 @@ export function useInlineEditing(onUpdateEntry: (entryId: string, field: string,
         // Call the update API in the background
         try {
           await entriesService.updateEntry(updateData);
-          console.log(`[${saveId}] Successfully saved edit to backend`);
         } catch (apiError) {
           console.error('Backend save failed, but UI is already updated:', apiError);
           // TODO: Show error notification and optionally revert the change
@@ -79,7 +74,6 @@ export function useInlineEditing(onUpdateEntry: (entryId: string, field: string,
       } else if (editingCell.field.startsWith('translation_') || editingCell.field === 'first_translation') {
         // Handle translation fields
         if (!editingCell.translationId) {
-          console.log('Translation ID missing for field:', editingCell.field);
           return;
         }
 
@@ -100,7 +94,6 @@ export function useInlineEditing(onUpdateEntry: (entryId: string, field: string,
           // Call the translation update API in the background
           try {
             await translationsService.updateTranslation(updateData);
-            console.log(`[${saveId}] Successfully saved translation to backend`);
           } catch (apiError) {
             console.error('Translation save failed, but UI is already updated:', apiError);
             // TODO: Show error notification and optionally revert the change

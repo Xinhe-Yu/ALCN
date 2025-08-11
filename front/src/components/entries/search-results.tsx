@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import type { EntryWithTranslations } from '@/app/types';
-import SearchResultItem from './search-result-item';
+import EntryItem from './entry-item';
 import LoadingSpinner from '../ui/loading-spinner';
 
 interface SearchResultsProps {
@@ -33,17 +33,15 @@ export default function SearchResults({ results, loading, query }: SearchResults
   }
 
   return (
-    <div className="mb-12">
+    <div className="mb-12 w-168 bg-white mx-auto p-5 rounded-lg">
       <p className="text-xs text-gray-500 mb-1 text-start w-full max-w-3xl mx-auto">
         {t('searchResults.foundResults', { count: results.length })}
       </p>
-      <div>
-        {results.map((entry, index) => (
-          <SearchResultItem
+      <div className="space-y-2">
+        {results.map((entry) => (
+          <EntryItem
             key={entry.id}
             entry={entry}
-            isFirst={index === 0}
-            isLast={index === results.length - 1}
           />
         ))}
       </div>

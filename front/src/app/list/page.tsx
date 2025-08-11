@@ -17,7 +17,7 @@ import Navbar from '@/components/ui/navbar';
 import AutoSearchBar from '@/components/ui/auto-search-bar';
 import LoadingSpinner from '@/components/ui/loading-spinner';
 import ErrorMessage from '@/components/ui/error-message';
-import RecentItem from '@/components/entries/recent-item';
+import EntryItem from '@/components/entries/entry-item';
 import { ChevronUpIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 
 const SORT_OPTIONS = {
@@ -58,9 +58,7 @@ export default function ListPage() {
   // Fetch data
   const fetchEntries = useCallback(async () => {
     try {
-      if (entries.length === 0) {
-        setLoading(true);
-      }
+      setLoading(true);
       setError(null);
 
       const params: EntrySearchParams = {
@@ -93,7 +91,7 @@ export default function ListPage() {
     } finally {
       setLoading(false);
     }
-  }, [currentPage, pageSize, sortBy, sortDirection, debouncedSearchQuery, languageFilter, typeFilter, entries.length]);
+  }, [currentPage, pageSize, sortBy, sortDirection, debouncedSearchQuery, languageFilter, typeFilter]);
 
   // Effect to fetch data when params change
   useEffect(() => {
@@ -149,7 +147,7 @@ export default function ListPage() {
       <ChevronDownIcon className="h-4 w-4 ml-1" />;
   };
 
-  if (loading && entries.length === 0) {
+  if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
         <Navbar user={user} onLogout={logout} />
@@ -279,7 +277,7 @@ export default function ListPage() {
           {/* Entries grid */}
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {entries.map((entry) => (
-              <RecentItem
+              <EntryItem
                 key={entry.id}
                 entry={entry}
                 showDate={sortBy === 'updated_at' || sortBy === 'created_at'}

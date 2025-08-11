@@ -113,10 +113,8 @@ const EditableCell = memo(function EditableCell({
     setShowDropdown(false);
 
     if (typeof onSaveEdit === 'function') {
-      console.log('Calling onSaveEdit with:', value);
       onSaveEdit(value);
     } else {
-      console.log('onSaveEdit not available, using keyboard event fallback');
       // Fallback to keyboard event
       const event = {
         key: 'Enter',

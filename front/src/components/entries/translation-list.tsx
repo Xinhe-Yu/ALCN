@@ -1,5 +1,5 @@
 import type { EntryWithTranslations } from '@/app/types';
-import RecentItem from './recent-item';
+import EntryItem from './entry-item';
 interface TranslationListProps {
   title: string;
   entries: EntryWithTranslations[];
@@ -14,7 +14,7 @@ export default function TranslationList({ title, entries }: TranslationListProps
         </h3>
         <div className="space-y-2">
           {entries.map((entry) => (
-            <RecentItem
+            <EntryItem
               key={entry.id}
               entry={entry}
               type="translation" // Specify type for translations

@@ -7,13 +7,13 @@ import Badge from "../ui/badge";
 import { formatDate } from '@/lib/utils';
 import { useToast } from '@/lib/context/ToastContext';
 
-interface RecentItemProps {
+interface EntryItemProps {
   entry: EntryWithTranslations;
   type?: 'entry' | 'translation' | 'comment';
   showDate?: boolean;
 }
 
-export default function RecentItem({ entry, type = 'entry', showDate = true }: RecentItemProps) {
+export default function EntryItem({ entry, type = 'entry', showDate = true }: EntryItemProps) {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const { success, error } = useToast();
   const t = useTranslations();
@@ -70,19 +70,16 @@ export default function RecentItem({ entry, type = 'entry', showDate = true }: R
         <p className="text-gray-600 text-sm mt-1">{entry.definition}</p>
       )}
 
-
-
       <div className="text-sm text-gray-700">
         {displayed_translations.map((translation, index) => (
           <span key={translation.id} className="inline-block mr-2 mb-1">
             {length > 1 && <span className="font-semibold text-xs mr-1">{index + 1}:</span>}
-            <span 
+            <span
               onClick={() => copyToClipboard(translation.translated_name, translation.id)}
-              className={`px-2 py-1 rounded-md text-xs font-medium cursor-pointer transition-colors duration-200 ${
-                copiedId === translation.id 
-                  ? 'bg-green-200 text-green-800' 
-                  : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
-              }`}
+              className={`px-2 py-1 rounded-md text-xs font-medium cursor-pointer transition-colors duration-200 ${copiedId === translation.id
+                ? 'bg-green-200 text-green-800'
+                : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+                }`}
               title="Click to copy"
             >
               {translation.translated_name}
@@ -107,7 +104,5 @@ export default function RecentItem({ entry, type = 'entry', showDate = true }: R
         )}
       </div>
     </div >
-
-
-  )
+  );
 }

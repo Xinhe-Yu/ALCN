@@ -31,6 +31,7 @@ class UserResponse(BaseModel):
     email: str
     role: str
     is_activated: bool
+    username: str
     userdata: Optional[Dict[str, Any]] = None
     created_at: datetime
     updated_at: datetime
