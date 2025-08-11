@@ -151,7 +151,7 @@ async def delete_translation(
         )
 
     # Check permissions
-    if (str(db_translation.created_by) != current_user.id and
+    if (db_translation.created_by != current_user.id and
         current_user.role != "admin"):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,

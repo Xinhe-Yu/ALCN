@@ -25,7 +25,7 @@ async def get_entry_comments(entry_id: str, db: Session = Depends(get_db)):
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Entry not found"
         )
-    
+
     # Debug: Check the entry_id conversion
     import uuid as uuid_lib
     try:
@@ -42,14 +42,14 @@ async def get_entry_comments(entry_id: str, db: Session = Depends(get_db)):
     ).filter(
         Comment.entry_id == uuid_entry_id
     ).order_by(Comment.created_at).all()
-    
+
     # Debug: Check if we found any comments
     print(f"Found {len(comments)} comments for entry {entry_id}")
-    
+
     # Convert to CommentWithUser objects using automatic mapping with custom validator
     # The field_validator in CommentWithUser handles SQLAlchemy User -> UserBasic conversion
     result = [CommentWithUser.model_validate(comment) for comment in comments]
-    
+
     return result
 
 
@@ -114,7 +114,7 @@ async def update_comment(
         )
 
     # Check permissions
-    if str(db_comment.user_id) != current_user.id:
+    if db_comment.user_id != current_user.id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Not enough permissions"
@@ -157,7 +157,7 @@ async def delete_comment(
         )
 
     # Check permissions
-    if (str(db_comment.user_id) != current_user.id and
+    if (db_comment.user_id != current_user.id and
         current_user.role != "admin"):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,

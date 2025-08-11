@@ -272,7 +272,7 @@ async def update_entry(
         )
 
     # Check permissions
-    if (str(existing_entry.created_by) != current_user.id and
+    if (existing_entry.created_by != current_user.id and
         current_user.role not in ["admin", "verified_translator"]):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -302,7 +302,7 @@ async def delete_entry(
         )
 
     # Check permissions
-    if (str(existing_entry.created_by) != current_user.id and
+    if (existing_entry.created_by != current_user.id and
         current_user.role != "admin"):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
