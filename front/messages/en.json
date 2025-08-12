@@ -1,0 +1,175 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "search": "Search",
+    "close": "Close"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "email": "Email",
+    "password": "Password",
+    "loginButton": "Sign In",
+    "loginError": "Login failed",
+    "title": "Ancient Lexicon CN",
+    "emailStep": {
+      "description": "Enter your email to get started",
+      "emailAddress": "Email address",
+      "sendCode": "Send Verification Code",
+      "sending": "Sending...",
+      "failedToSend": "Failed to send verification code"
+    },
+    "codeStep": {
+      "description": "Enter the 6-digit code sent to your email",
+      "verificationCode": "Verification Code",
+      "devMode": "Development Mode: Use code",
+      "back": "Back",
+      "verify": "Verify",
+      "verifying": "Verifying...",
+      "invalidCode": "Invalid verification code"
+    }
+  },
+  "navigation": {
+    "welcome": "Welcome, ",
+    "dashboard": "Dashboard",
+    "entries": "Entries",
+    "translations": "Translations"
+  },
+  "entries": {
+    "title": "Entries",
+    "addNew": "Add New Entry",
+    "searchPlaceholder": "Search...",
+    "noResults": "No results found"
+  },
+  "entry": {
+    "aka": "aka",
+    "andMore": "and more",
+    "expand": "Expand",
+    "collapse": "Collapse",
+    "edit": "Edit Entry",
+    "add": "Add Translation",
+    "translations": "Translations",
+    "edited": "Edited",
+    "upvote": "Upvote",
+    "removeUpvote": "Remove Upvote",
+    "downvote": "Downvote",
+    "removeDownvote": "Remove Downvote",
+    "loginToVote": "Login to Vote",
+    "comments": "Comments",
+    "addCommentPlaceholder": "Add a comment...",
+    "editCommentPlaceholder": "Edit your comment...",
+    "post": "Post",
+    "save": "Save",
+    "cancel": "Cancel",
+    "loading": "Loading...",
+    "noComments": "No comments yet.",
+    "editing": "Editing...",
+    "editComment": "Edit Comment",
+    "deleteComment": "Delete Comment",
+    "deleteCommentConfirmation": "Are you sure you want to delete this comment?",
+    "clickToCopy": "Click to copy",
+    "error": "Error",
+    "success": "Success",
+    "failedToLoadDetails": "Failed to load entry details",
+    "failedToLoadComments": "Failed to load comments",
+    "commentPostedSuccessfully": "Comment posted successfully",
+    "failedToPostComment": "Failed to post comment",
+    "commentUpdatedSuccessfully": "Comment updated successfully",
+    "failedToUpdateComment": "Failed to update comment",
+    "commentDeletedSuccessfully": "Comment deleted successfully",
+    "failedToDeleteComment": "Failed to delete comment",
+    "pleaseLoginToVote": "Please login to vote",
+    "failedToSubmitVote": "Failed to submit vote"
+  },
+  "landing": {
+    "title": "Ancient Lexicon CN",
+    "subtitle": "A comprehensive dictionary for Greco-Roman name/term translations",
+    "quickSearchPlaceholder": "Search entries...",
+    "regularSearchPlaceholder": "Search entries...",
+    "stats": {
+      "detailedSearch": "Detailed Search",
+      "totalEntries": "Total Entries",
+      "recentlyUpdated": "Recently Updated",
+      "activeDiscussions": "Active Discussions"
+    },
+    "sections": {
+      "recentlyUpdated": "Recently Updated Entries",
+      "recentTranslations": "Recent Translations",
+      "recentDiscussions": "Recent Discussions"
+    },
+    "errors": {
+      "failedToLoad": "Failed to load data",
+      "searchFailed": "Search failed"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "version": "Ancient Lexicon CN v1.0",
+    "general": {
+      "title": "General Dashboard",
+      "subtitle": "🚧In development"
+    },
+    "sidebar": {
+      "general": "General",
+      "entries": "Entries"
+    },
+    "errors": {
+      "failedToLoad": "Failed to load dashboard data",
+      "backToLogin": "Back to Login"
+    }
+  },
+  "languageCodes": {
+    "en": "en",
+    "fr": "fr",
+    "lat": "lat",
+    "gr": "gr",
+    "el": "el",
+    "de": "de",
+    "it": "it",
+    "es": "es",
+    "tu": "tu",
+    "ar": "ar"
+  },
+  "entryTypes": {
+    "term": "Term",
+    "personal_name": "Person Name",
+    "place_name": "Place Name",
+    "artWork_title": "Art Work",
+    "concept": "Concept"
+  },
+  "searchResults": {
+    "searching": "Searching for",
+    "noResults": "No results found for",
+    "tryDifferent": "Try different keywords or check your spelling",
+    "foundResults": "Found {count} result{count, plural, one {} other {s}}"
+  },
+  "clipboard": {
+    "copied": "Copied!",
+    "copiedMessage": "\"{text}\" has been copied to clipboard"
+  },
+  "list": {
+    "allLanguages": "All Languages",
+    "allTypes": "All Types",
+    "clearFilters": "Clear Filters",
+    "subtitle": "With {count} result{count, plural, one {} other {s}}",
+    "showingResults": "Showing Results",
+    "showingEntries": "Showing Entries",
+    "noEntriesFound": "No Entries Found",
+    "tryDifferentKeywords": "Try Different Keywords",
+    "loadingEntries": "Loading Entries...",
+    "first": "First",
+    "previous": "Previous",
+    "next": "Next",
+    "last": "Last",
+    "sortUpdatedAt": "Sort by Updated At",
+    "sortCreatedAt": "Sort by Created At",
+    "sortName": "Sort by Name",
+    "sortLanguage": "Sort by Language"
+  }
+}

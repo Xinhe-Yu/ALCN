@@ -1,0 +1,176 @@
+{
+  "common": {
+    "loading": "加载中...",
+    "error": "错误",
+    "success": "成功",
+    "save": "保存",
+    "cancel": "取消",
+    "delete": "删除",
+    "edit": "编辑",
+    "search": "搜索",
+    "close": "关闭"
+  },
+  "auth": {
+    "login": "登录",
+    "logout": "退出登录",
+    "email": "邮箱",
+    "password": "密码",
+    "loginButton": "登录",
+    "loginError": "登录失败",
+    "title": "古代译名数据库",
+    "emailStep": {
+      "description": "输入您的邮箱地址以登录",
+      "emailAddress": "邮箱地址",
+      "sendCode": "发送验证码",
+      "sending": "发送中...",
+      "failedToSend": "发送验证码失败"
+    },
+    "codeStep": {
+      "description": "输入发送到您邮箱的6位验证码",
+      "verificationCode": "验证码",
+      "devMode": "开发模式：使用验证码",
+      "back": "返回",
+      "verify": "验证",
+      "verifying": "验证中...",
+      "invalidCode": "无效的验证码"
+    }
+  },
+  "navigation": {
+    "welcome": "欢迎, ",
+    "dashboard": "管理面板",
+    "entries": "词条批量处理",
+    "translations": "翻译"
+  },
+  "entries": {
+    "title": "词条",
+    "addNew": "添加新词条",
+    "searchPlaceholder": "搜索词条...",
+    "noResults": "未找到结果"
+  },
+  "entry": {
+    "aka": "又名",
+    "andMore": "更多",
+    "expand": "展开",
+    "collapse": "折叠",
+    "edit": "编辑词条",
+    "add": "添加翻译",
+    "translations": "翻译",
+    "edited": "已编辑",
+    "upvote": "顶",
+    "removeUpvote": "取消顶",
+    "downvote": "踩",
+    "removeDownvote": "取消踩",
+    "loginToVote": "请登录后投票",
+    "comments": "评论",
+    "addCommentPlaceholder": "添加评论...",
+    "editCommentPlaceholder": "编辑评论...",
+    "post": "发布",
+    "save": "保存",
+    "cancel": "取消",
+    "loading": "加载中...",
+    "noComments": "未找到评论",
+    "editing": "编辑中...",
+    "editComment": "编辑评论...",
+    "deleteComment": "删除评论",
+    "deleteCommentConfirmation": "您确定要删除此评论吗？",
+    "clickToCopy": "点击复制",
+    "error": "错误",
+    "success": "成功",
+    "failedToLoadDetails": "加载详细信息失败",
+    "failedToLoadComments": "加载评论失败",
+    "commentPostedSuccessfully": "评论发布成功",
+    "failedToPostComment": "发布评论失败",
+    "commentUpdatedSuccessfully": "评论更新成功",
+    "failedToUpdateComment": "更新评论失败",
+    "commentDeletedSuccessfully": "评论删除成功",
+    "failedToDeleteComment": "删除评论失败",
+    "pleaseLoginToVote": "请登录后投票",
+    "failedToSubmitVote": "提交投票失败"
+  },
+  "landing": {
+    "title": "古代译名数据库",
+    "subtitle": "希腊罗马名称/术语翻译的综合词典",
+    "quickSearchPlaceholder": "快速搜索古代术语、名称或地点中译...",
+    "regularSearchPlaceholder": "搜索古代术语、名称或地点...",
+    "stats": {
+      "detailedSearch": "详细搜索",
+      "totalEntries": "词条总数",
+      "recentlyUpdated": "近期更新",
+      "activeDiscussions": "活跃讨论"
+    },
+    "sections": {
+      "recentlyUpdated": "最近更新的词条",
+      "recentTranslations": "最新翻译",
+      "recentDiscussions": "最近讨论"
+    },
+    "errors": {
+      "failedToLoad": "数据加载失败",
+      "searchFailed": "搜索失败"
+    }
+  },
+  "dashboard": {
+    "title": "管理面板",
+    "version": "古代译名数据库 v1.0",
+    "general": {
+      "title": "通用面板",
+      "subtitle": "🚧开发中"
+    },
+    "sidebar": {
+      "general": "概览",
+      "entries": "词条管理"
+    },
+    "errors": {
+      "failedToLoad": "仪表板数据加载失败",
+      "backToLogin": "返回登录"
+    }
+  },
+  "languageCodes": {
+    "en": "英",
+    "fr": "法",
+    "lat": "拉",
+    "gr": "希",
+    "el": "现希",
+    "de": "德",
+    "it": "意",
+    "es": "西",
+    "tu": "土",
+    "ar": "阿",
+    "ro": "罗"
+  },
+  "entryTypes": {
+    "term": "术语",
+    "personal_name": "人名",
+    "place_name": "地名",
+    "artWork_title": "作品名",
+    "concept": "概念"
+  },
+  "searchResults": {
+    "searching": "正在搜索",
+    "noResults": "未找到相关结果",
+    "tryDifferent": "请尝试不同的关键词或检查拼写",
+    "foundResults": "找到 {count} 个结果"
+  },
+  "clipboard": {
+    "copied": "已复制！",
+    "copiedMessage": "已将 \"{text}\" 复制到剪贴板"
+  },
+  "list": {
+    "allLanguages": "所有语言",
+    "allTypes": "所有类型",
+    "clearFilters": "清除筛选",
+    "subtitle": "共有 {count} 条目",
+    "showingResults": "显示结果",
+    "showingEntries": "显示条目",
+    "noEntriesFound": "未找到条目",
+    "tryDifferentKeywords": "请尝试不同的关键词",
+    "loadingEntries": "加载条目中...",
+    "first": "第一页",
+    "previous": "上一页",
+    "next": "下一页",
+    "last": "最后一页",
+    "sortUpdatedAt": "按更新时间排序",
+    "sortCreatedAt": "按创建时间排序",
+    "sortName": "按名称排序",
+    "sortLanguage": "按语言排序"
+  }
+}
