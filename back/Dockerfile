@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y \
     gcc \
     postgresql-client \
     curl \
+    cron \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy dependency files
@@ -22,6 +23,9 @@ RUN uv sync --frozen --no-dev
 
 # Copy application code
 COPY . .
+
+# Create backup and scripts directories
+RUN mkdir -p /app/backups /app/scripts
 
 # Create non-root user for security
 RUN adduser --disabled-password --gecos '' --shell /bin/bash user \

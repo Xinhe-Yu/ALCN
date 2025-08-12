@@ -94,6 +94,7 @@ app.include_router(
 app.include_router(
     translation_votes.router, prefix="/api/v1", tags=["votes"]
 )
+# app.include_router(backup.router, prefix="/api/v1/backup", tags=["backup"])
 
 
 @app.get("/")
