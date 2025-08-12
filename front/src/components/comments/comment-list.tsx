@@ -23,9 +23,9 @@ export default function CommentList({ title, entries, onEntryClick }: CommentLis
         </h3>
         <div className="space-y-3">
           {entries.map((entry) => (
-            <div 
-              key={entry.id} 
-              className="bg-white border border-transparent transition-all duration-150 hover:shadow-sm cursor-pointer"
+            <div
+              key={entry.id}
+              className="bg-white border border-transparent transition-all duration-150 hover:shadow-md cursor-pointer"
               onClick={() => onEntryClick?.(entry)}
             >
               <div className="border-l-4 border-amber-400 px-2">

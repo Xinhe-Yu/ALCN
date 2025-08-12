@@ -16,7 +16,6 @@ import ErrorMessage from '@/components/ui/error-message';
 import StatCard from '@/components/ui/stat-card';
 import SearchResults from '@/components/entries/search-results';
 import EntryList from '@/components/entries/entry-list';
-import TranslationList from '@/components/entries/translation-list';
 import CommentList from '@/components/comments/comment-list';
 import EntryModal from '@/components/ui/entry-modal';
 
@@ -182,17 +181,17 @@ export default function Home() {
                 <StatCard
                   title={t('landing.stats.totalEntries')}
                   value={metadata.total_entries}
-                  icon={<AdjustmentsHorizontalIcon className="h-6 w-6 text-gray-400" />}
+                  icon={<AdjustmentsHorizontalIcon className="h-6 w-6 text-orange-500" />}
                 />
                 <StatCard
                   title={t('landing.stats.recentlyUpdated')}
                   value={metadata.recently_updated_count}
-                  icon={<ClockIcon className="h-6 w-6 text-blue-400" />}
+                  icon={<ClockIcon className="h-6 w-6 text-amber-500" />}
                 />
                 <StatCard
                   title={t('landing.stats.activeDiscussions')}
                   value={metadata.entries_with_newest_comments.length}
-                  icon={<ChatBubbleLeftIcon className="h-6 w-6 text-amber-400" />}
+                  icon={<ChatBubbleLeftIcon className="h-6 w-6 text-pink-400" />}
                 />
               </div>
 

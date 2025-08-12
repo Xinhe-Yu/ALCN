@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { NextIntlClientProvider } from 'next-intl';
+import LoadingSpinner from '@/components/ui/loading-spinner';
 
 type Locale = 'en' | 'zh';
 
@@ -59,7 +60,9 @@ export function I18nProvider({ children }: I18nProviderProps) {
   }, [locale]);
 
   if (!messages) {
-    return <div>Loading translations...</div>;
+    return (<div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <LoadingSpinner size="lg" />
+    </div>);
   }
 
   return (

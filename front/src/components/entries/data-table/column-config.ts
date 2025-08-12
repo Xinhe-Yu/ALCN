@@ -20,7 +20,6 @@ export const AVAILABLE_COLUMNS: ColumnConfig[] = [
   { key: 'verification_notes', label: 'Verification Notes', source: 'entry' },
   { key: 'first_translation', label: 'Translation', source: 'computed' },
   { key: 'translation_notes', label: 'Translation Notes', source: 'translation' },
-  { key: 'translation_votes', label: 'Votes', source: 'translation' },
   { key: 'created_at', label: 'Created', sortable: true, source: 'entry' },
   { key: 'updated_at', label: 'Updated', sortable: true, source: 'entry' }
 ];

@@ -37,7 +37,7 @@
   },
   "navigation": {
     "welcome": "欢迎, ",
-    "dashboard": "个人面板",
+    "dashboard": "管理面板",
     "entries": "词条批量处理",
     "translations": "翻译"
   },
@@ -109,7 +109,7 @@
     }
   },
   "dashboard": {
-    "title": "个人面板",
+    "title": "管理面板",
     "version": "古代译名数据库 v1.0",
     "general": {
       "title": "通用面板",
