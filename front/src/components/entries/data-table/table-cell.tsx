@@ -82,9 +82,8 @@ export default function TableCell({
 
   if (column.key === 'first_translation' && !isEditing && firstTranslation) {
     return (
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center">
         <span className="text-sm text-gray-900">{firstTranslation.translated_name}</span>
-        <Badge code={firstTranslation.language_code} />
       </div>
     );
   }

@@ -10,7 +10,6 @@ class VoteType(str, Enum):
     DOWN = "down"
 
 class TranslationBase(BaseModel):
-    language_code: str
     translated_name: str
     notes: Optional[str] = None
     source_id: Optional[UUID] = None
@@ -22,7 +21,6 @@ class TranslationCreate(TranslationBase):
 
 
 class TranslationUpdate(BaseModel):
-    language_code: Optional[str] = None
     translated_name: Optional[str] = None
     notes: Optional[str] = None
     source_id: Optional[UUID] = None

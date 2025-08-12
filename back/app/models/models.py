@@ -186,7 +186,6 @@ class Translation(Base):
         UUID(as_uuid=True), ForeignKey("entries.id", ondelete="CASCADE"),
         nullable=False
     )
-    language_code = Column(String(10), nullable=False)
     translated_name = Column(String(500), nullable=False)
     notes = Column(Text)
     source_id = Column(UUID(as_uuid=True), ForeignKey("sources.id"))
@@ -201,11 +200,10 @@ class Translation(Base):
 
     __table_args__ = (
         UniqueConstraint(
-            'entry_id', 'language_code', 'translated_name',
-            name='translations_entry_lang_name_unique'
+            'entry_id', 'translated_name',
+            name='translations_entry_name_unique'
         ),
         Index('idx_translations_entry_id', 'entry_id'),
-        Index('idx_translations_language', 'language_code'),
         Index('idx_translations_source', 'source_id'),
         Index('idx_translations_name', 'translated_name'),
         Index('idx_translations_preferred', 'is_preferred'),

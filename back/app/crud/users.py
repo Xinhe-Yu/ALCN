@@ -188,7 +188,6 @@ def get_user_metadata(db: Session, user_id: str) -> Dict[str, Any]:
         {
             'id': str(translation.id),
             'translated_name': translation.translated_name,
-            'language_code': translation.language_code,
             'entry_id': str(translation.entry_id),
             'created_at': translation.created_at.isoformat(),
             'updated_at': translation.updated_at.isoformat()

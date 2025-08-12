@@ -54,7 +54,6 @@ async def create_translation(
     db_translation = Translation(
         id=uuid.uuid4(),
         entry_id=translation.entry_id,
-        language_code=translation.language_code,
         translated_name=translation.translated_name,
         notes=translation.notes,
         source_id=translation.source_id,
@@ -71,7 +70,7 @@ async def create_translation(
         if "unique constraint" in str(e).lower():
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Translation already exists for this entry and language"
+                detail="Translation with this name already exists for this entry"
             )
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -122,7 +121,7 @@ async def update_translation(
         if "unique constraint" in str(e).lower():
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Translation already exists for this entry and language"
+                detail="Translation with this name already exists for this entry"
             )
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

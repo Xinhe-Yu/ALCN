@@ -170,7 +170,6 @@ def enrich_translations_with_user_votes(
         translation_dict = {
             'id': translation.id,
             'entry_id': translation.entry_id,
-            'language_code': translation.language_code,
             'translated_name': translation.translated_name,
             'notes': translation.notes,
             'source_id': translation.source_id,

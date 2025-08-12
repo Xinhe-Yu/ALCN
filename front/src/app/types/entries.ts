@@ -20,7 +20,6 @@ export interface Entry {
 export interface Translation {
   id: string;
   entry_id: string;
-  language_code: string;
   translated_name: string;
   notes?: string;
   created_by: string;
@@ -76,7 +75,6 @@ export interface TrigramSearchParams {
 // Translation request types for API calls
 export interface CreateTranslationRequest {
   entry_id: string;
-  language_code: string;
   translated_name: string;
   notes?: string;
   is_preferred?: boolean;
@@ -84,7 +82,6 @@ export interface CreateTranslationRequest {
 
 export interface UpdateTranslationRequest {
   id: string;
-  language_code?: string;
   translated_name?: string;
   notes?: string;
   is_preferred?: boolean;

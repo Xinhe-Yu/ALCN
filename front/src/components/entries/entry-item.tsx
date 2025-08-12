@@ -128,7 +128,7 @@ export default function EntryItem({
       }
 
       const [commentsResponse, detailedEntry] = await Promise.all(promises);
-      
+
       // Update comments if they were fetched
       if (comments.length === 0 && Array.isArray(commentsResponse)) {
         setComments(commentsResponse);
@@ -154,7 +154,7 @@ export default function EntryItem({
       }
     } catch (err) {
       console.error('Failed to load expanded data:', err);
-      error(t('entry.error'), t('entry.failedToLoadData'));
+      error(t('entry.error'), t('entry.failedToLoadDetails'));
     } finally {
       setLoadingComments(false);
     }

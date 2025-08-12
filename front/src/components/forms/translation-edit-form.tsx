@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { Translation } from '@/app/types/entries';
-import { LanguageCode, LANGUAGE_OPTIONS } from '@/app/types/crud';
 import { useToast } from '@/lib/context/ToastContext';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 
@@ -14,7 +13,6 @@ interface TranslationEditFormProps {
 
 export interface TranslationUpdateData {
   translated_name?: string;
-  language_code?: LanguageCode;
   notes?: string;
   is_preferred?: boolean;
 }
@@ -27,7 +25,6 @@ export default function TranslationEditForm({ translation, onSave, onCancel }: T
   // Form state
   const [formData, setFormData] = useState<TranslationUpdateData>({
     translated_name: translation.translated_name || '',
-    language_code: translation.language_code as LanguageCode,
     notes: translation.notes || '',
     is_preferred: translation.is_preferred || false,
   });
@@ -40,10 +37,6 @@ export default function TranslationEditForm({ translation, onSave, onCancel }: T
       return;
     }
 
-    if (!formData.language_code) {
-      error('Error', 'Language is required');
-      return;
-    }
 
     setIsSaving(true);
     try {
@@ -77,7 +70,7 @@ export default function TranslationEditForm({ translation, onSave, onCancel }: T
   };
 
   // Essential fields for short version
-  const isEssentialFieldsValid = formData.translated_name?.trim() && formData.language_code;
+  const isEssentialFieldsValid = formData.translated_name?.trim();
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
@@ -130,23 +123,6 @@ export default function TranslationEditForm({ translation, onSave, onCancel }: T
                     />
                   </div>
 
-                  {/* Language Code */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Target Language *
-                    </label>
-                    <select
-                      value={formData.language_code || ''}
-                      onChange={(e) => setFormData(prev => ({ ...prev, language_code: e.target.value as LanguageCode }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-amber-500 focus:border-amber-500"
-                      required
-                    >
-                      <option value="">Select Language</option>
-                      {Object.entries(LANGUAGE_OPTIONS).map(([code, name]) => (
-                        <option key={code} value={code}>{name}</option>
-                      ))}
-                    </select>
-                  </div>
 
                   {/* Is Preferred */}
                   <div className="flex items-center">

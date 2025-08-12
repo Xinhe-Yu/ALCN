@@ -39,7 +39,6 @@ export interface RecentEntry {
 export interface RecentTranslation {
   id: string;
   translated_name: string;
-  language_code: string;
   entry_id: string;
   created_at: string;
   updated_at: string;
