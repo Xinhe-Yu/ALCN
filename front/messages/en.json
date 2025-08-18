@@ -125,22 +125,22 @@
     }
   },
   "languageCodes": {
-    "en": "en",
-    "fr": "fr",
-    "lat": "lat",
-    "gr": "gr",
-    "el": "el",
-    "de": "de",
-    "it": "it",
-    "es": "es",
-    "tu": "tu",
-    "ar": "ar"
+    "en": "EN",
+    "fr": "FR",
+    "lat": "LA",
+    "gr": "GR",
+    "el": "EL",
+    "de": "DE",
+    "it": "IT",
+    "es": "ES",
+    "tu": "TU",
+    "ar": "AR"
   },
   "entryTypes": {
     "term": "Term",
     "personal_name": "Person Name",
     "place_name": "Place Name",
-    "artWork_title": "Art Work",
+    "artwork_title": "Art Work",
     "concept": "Concept"
   },
   "searchResults": {
