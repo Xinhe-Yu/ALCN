@@ -50,12 +50,6 @@ body {
     @apply bottom-0;
   }
 
-  .comment-card:hover,
-  .comment-card:focus-visible {
-    @apply bg-amber-50/60 shadow-[inset_0_0_0_1px_rgba(245,158,11,0.35)];
-    border-left-color: #d97706;
-  }
-
   .comment-card:hover::before,
   .comment-card:hover::after,
   .comment-card:focus-visible::before,
