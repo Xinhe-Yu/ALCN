@@ -1,9 +1,15 @@
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import EmailStr, field_validator
 import json
 
-
 class Settings(BaseSettings):
+    # Pydantic v2 settings configuration
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        case_sensitive=False,   # matches your old intent
+        extra="ignore",         # or "forbid" if you add all fields explicitly
+    )
+
     # Database
     database_url: str
 
@@ -26,7 +32,7 @@ class Settings(BaseSettings):
     # CORS - can be a JSON string or list
     backend_cors_origins: list[str] = [
         "http://localhost:3000",
-        "http://localhost:8000", 
+        "http://localhost:8000",
         "http://127.0.0.1:3000",
         "http://127.0.0.1:8000",
     ]
@@ -42,10 +48,5 @@ class Settings(BaseSettings):
                 # If not JSON, split by comma
                 return [origin.strip() for origin in v.split(',') if origin.strip()]
         return v
-
-    class Config:
-        env_file = ".env"
-        case_sensitive = False
-
 
 settings = Settings()
