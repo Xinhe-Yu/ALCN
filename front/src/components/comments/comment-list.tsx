@@ -25,54 +25,61 @@ export default function CommentList({ title, entries, onEntryClick }: CommentLis
           {entries.map((entry) => (
             <div
               key={entry.id}
-              className="bg-white border border-transparent transition-all duration-150 hover:shadow-md cursor-pointer"
+              className="comment-card group px-3 py-2 transition-colors duration-300 cursor-pointer"
+              role={onEntryClick ? 'button' : undefined}
+              tabIndex={onEntryClick ? 0 : undefined}
               onClick={() => onEntryClick?.(entry)}
+              onKeyDown={(event) => {
+                if (!onEntryClick) return;
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  onEntryClick(entry);
+                }
+              }}
             >
-              <div className="border-l-4 border-amber-400 px-2">
-                <div className="flex justify-between items-start">
-                  <div className="flex-1 min-w-0">
-                    {/* Comment - Primary focus with emphasis */}
-                    {entry.newest_comment && (
-                      <div className="mb-2">
-                        <div className="flex items-center gap-1.5 mb-1">
-                          <span className="font-sans font-semibold text-amber-700 text-sm">
-                            {entry.newest_comment.user?.username}
-                          </span>
-                          <span className="text-gray-400 text-xs">•</span>
-                          <span className="text-gray-500 text-xs font-mono">
-                            {formatDate(entry.newest_comment.created_at)}
-                          </span>
-                        </div>
-                        <div className="bg-amber-50 border border-amber-200 rounded-md p-2.5">
-                          <div
-                            className="text-sm font-serif text-gray-800 leading-relaxed"
-                            dangerouslySetInnerHTML={{ __html: MdToHtml(entry.newest_comment.content) }}
-                          />
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Entry information - Secondary, more subdued */}
-                    <div className="flex items-center flex-wrap gap-1.5 mb-0.5">
-                      <h4 className="font-serif font-medium text-gray-700 text-sm leading-tight">
-                        {entry.primary_name}
-                      </h4>
-                      {entry.original_script && (
-                        <span className="font-serif italic text-gray-600 text-xs">
-                          {entry.original_script}
+              <div className="flex justify-between items-start">
+                <div className="flex-1 min-w-0">
+                  {/* Comment - Primary focus with emphasis */}
+                  {entry.newest_comment && (
+                    <div className="mb-2">
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <span className="font-sans font-semibold text-amber-700 text-sm">
+                          {entry.newest_comment.user?.username}
                         </span>
-                      )}
-                      <Badge code={entry.language_code} />
-                      {entry.entry_type && <Badge code={entry.entry_type} type="type" />}
+                        <span className="text-gray-400 text-xs">•</span>
+                        <span className="text-gray-500 text-xs font-mono">
+                          {formatDate(entry.newest_comment.created_at)}
+                        </span>
+                      </div>
+                      <div className="bg-amber-50 border border-amber-200 rounded-md p-2.5">
+                        <div
+                          className="text-sm font-serif text-gray-800 leading-relaxed"
+                          dangerouslySetInnerHTML={{ __html: MdToHtml(entry.newest_comment.content) }}
+                        />
+                      </div>
                     </div>
+                  )}
 
-                    {/* Definition - Compact and subdued */}
-                    {entry.definition && (
-                      <p className="text-gray-600 text-xs font-serif leading-snug line-clamp-2">
-                        {entry.definition}
-                      </p>
+                  {/* Entry information - Secondary, more subdued */}
+                  <div className="flex items-center flex-wrap gap-1.5 mb-0.5">
+                    <h4 className="font-serif font-medium text-gray-700 text-sm leading-tight">
+                      {entry.primary_name}
+                    </h4>
+                    {entry.original_script && (
+                      <span className="font-serif italic text-gray-600 text-xs">
+                        {entry.original_script}
+                      </span>
                     )}
+                    <Badge code={entry.language_code} />
+                    {entry.entry_type && <Badge code={entry.entry_type} type="type" />}
                   </div>
+
+                  {/* Definition - Compact and subdued */}
+                  {entry.definition && (
+                    <p className="text-gray-600 text-xs font-serif leading-snug line-clamp-2">
+                      {entry.definition}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>

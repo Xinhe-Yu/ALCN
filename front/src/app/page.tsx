@@ -162,7 +162,7 @@ export default function Home() {
             <>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8 mt-8">
                 {/* Detailed Search Button */}
-                <div className="bg-amber-600 text-white font-medium rounded-lg hover:bg-amber-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 flex items-center">
+                <div className="bg-amber-500 text-white font-medium rounded-lg hover:bg-amber-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 flex items-center shadow ">
                   <button
                     onClick={() => {
                       startTransition(() => {
