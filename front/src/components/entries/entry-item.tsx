@@ -107,6 +107,27 @@ export default function EntryItem({
     setIsExpanded(!isExpanded);
   };
 
+  const shouldPreventHeaderToggle = (target: EventTarget | null) => {
+    return target instanceof HTMLElement && !!target.closest('[data-prevent-toggle="true"]');
+  };
+
+  const handleHeaderClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (shouldPreventHeaderToggle(event.target)) {
+      return;
+    }
+    void toggleExpanded();
+  };
+
+  const handleHeaderKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      if (shouldPreventHeaderToggle(event.target)) {
+        return;
+      }
+      event.preventDefault();
+      void toggleExpanded();
+    }
+  };
+
 
   const loadExpandedData = async () => {
     setLoadingComments(true);
@@ -431,10 +452,24 @@ export default function EntryItem({
     displayed_translations = currentEntry.translations.slice(0, 5);
   }
 
+  const headerToggleProps = !isModal ? {
+    role: 'button' as const,
+    tabIndex: 0,
+    onClick: handleHeaderClick,
+    onKeyDown: handleHeaderKeyDown,
+    'aria-expanded': isExpanded,
+  } : {};
+
   return (
-    <div key={currentEntry.id} className={`${isModal ? 'bg-transparent border-0 shadow-none' : 'bg-white border border-gray-300 hover:rounded-lg transition-all duration-150 hover:shadow-sm'}`}>
+    <div
+      key={currentEntry.id}
+      className={`${isModal ? 'bg-transparent border-0 shadow-none' : 'bg-white border border-gray-300 hover:rounded-lg transition-all duration-150 hover:shadow-sm'}`}
+    >
       {/* Header - Always visible */}
-      <div className="px-2 py-1.5">
+      <div
+        className={`px-2 py-1.5 ${!isModal ? 'group cursor-pointer duration-150' : ''}`}
+        {...headerToggleProps}
+      >
         <div className="flex justify-between items-start">
           <div className="flex-1 min-w-0">
             {/* Primary name with serif font for elegance */}
@@ -481,7 +516,11 @@ export default function EntryItem({
                   <span key={translation.id}>
                     {index > 0 && <span className="text-gray-400"> • </span>}
                     <span
-                      onClick={() => copyToClipboard(translation.translated_name, translation.id)}
+                      data-prevent-toggle="true"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        void copyToClipboard(translation.translated_name, translation.id);
+                      }}
                       className={`p-1 rounded font-medium cursor-pointer transition-all duration-150 ${copiedId === translation.id
                         ? 'bg-emerald-200 text-emerald-900'
                         : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
@@ -511,16 +550,20 @@ export default function EntryItem({
             )}
             {!isModal && (
               <button
-                onClick={toggleExpanded}
+                data-prevent-toggle="true"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  void toggleExpanded();
+                }}
                 disabled={loadingComments}
-                className="p-1 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition-all duration-200 cursor-pointer group disabled:opacity-50 disabled:cursor-default"
+                className="p-1 text-gray-500 hover:text-gray-700 hover:bg-gray-100 group-hover:text-gray-700 group-hover:bg-gray-100 rounded transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-default"
                 title={isExpanded ? t('entry.collapse') : t('entry.expand')}
               >
                 {loadingComments ? (
                   <div className="animate-spin h-4 w-4 border border-gray-500 border-t-transparent rounded-full"></div>
                 ) : (
                   <div className={`transform transition-transform duration-300 ease-in-out ${isExpanded ? 'rotate-180' : 'rotate-0'}`}>
-                    <ChevronDownIcon className="h-4 w-4 group-hover:scale-110 transition-transform duration-200" />
+                    <ChevronDownIcon className="h-4 w-4 transition-transform duration-200 group-hover:scale-110 hover:scale-110" />
                   </div>
                 )}
               </button>
